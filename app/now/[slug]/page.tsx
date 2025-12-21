@@ -37,18 +37,26 @@ export default async function NowExperimentPage({
   <span>Back to Now</span>
 </Link>
   
-      <h1 className="mt-6 text-3xl font-medium tracking-tight">
-        {String(data.title ?? slug)}
-      </h1>
-  
-      {data.summary ? (
-        <p className="mt-3 text-neutral-400">
-          {String(data.summary)}
-        </p>
-      ) : null}
+<header className="mt-8 rounded-2xl border border-neutral-800/60 bg-neutral-950/40 p-8 shadow-sm">
+  <p className="text-sm text-neutral-400">Now</p>
+
+  <h1 className="mt-3 text-4xl font-semibold tracking-tight">
+    {String(data.title ?? slug)}
+  </h1>
+
+  {data.summary ? (
+    <p className="mt-3 max-w-2xl text-neutral-300">
+      {String(data.summary)}
+    </p>
+  ) : null}
+</header>
       <hr className="mt-8 border-neutral-800/60" />
-  
-      <div className="mt-12 rounded-2xl bg-neutral-900/40 p-8 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed">
+      <div className="mt-12 flex items-center gap-3 text-xs uppercase tracking-wide text-neutral-500">
+  <span className="h-px flex-1 bg-neutral-800" />
+  <span>Overview</span>
+  <span className="h-px flex-1 bg-neutral-800" />
+</div>
+      <div className="mt-10 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed">
         <MDXRemote
           source={content}
           components={{
