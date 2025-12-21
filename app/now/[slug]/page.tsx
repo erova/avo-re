@@ -28,20 +28,27 @@ export default async function NowExperimentPage({
   const { content, data } = matter(raw);
 
   return (
-    <div className="py-10">
-      <Link href="/now" className="text-sm text-neutral-400 hover:text-neutral-200">
-        ← Back to Now
-      </Link>
-
+    <article className="mx-auto max-w-3xl px-6 py-16">
+      <Link 
+      href="/now"
+  className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-neutral-200"
+>
+  <span aria-hidden>←</span>
+  <span>Back to Now</span>
+</Link>
+  
       <h1 className="mt-6 text-3xl font-medium tracking-tight">
         {String(data.title ?? slug)}
       </h1>
-
+  
       {data.summary ? (
-        <p className="mt-3 text-neutral-400">{String(data.summary)}</p>
+        <p className="mt-3 text-neutral-400">
+          {String(data.summary)}
+        </p>
       ) : null}
-
-      <div className="mt-10 prose prose-invert prose-neutral max-w-none">
+      <hr className="mt-8 border-neutral-800/60" />
+  
+      <div className="mt-12 rounded-2xl bg-neutral-900/40 p-8 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed">
         <MDXRemote
           source={content}
           components={{
@@ -50,6 +57,6 @@ export default async function NowExperimentPage({
           }}
         />
       </div>
-    </div>
+    </article>
   );
 }
