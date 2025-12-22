@@ -1,3 +1,4 @@
+import { Target } from "lucide-react";
 import Link from "next/link";
 
 export default function AboutPage() {
@@ -40,7 +41,7 @@ export default function AboutPage() {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {[
-            { href: "/about/speaking", title: "Speaking", desc: "Talks, topics, and upcoming events." },
+            { href: "/about/tenets", title: "Tenets", desc: "Principles and tenets that guide my work." },
             { href: "/about/resume", title: "Resume", desc: "Executive product design leadership." },
             { href: "/about/book", title: "My book", desc: "Liftoff! + resources." },
             {

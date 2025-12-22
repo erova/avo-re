@@ -2,26 +2,18 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 
-export type AboutDocMeta = {
-  slug: string;
-  title: string;
-  summary: string;
-};
-
-const ABOUT_DIR = path.join(process.cwd(), "content", "about");
-
-export function getAboutSource(slug: string): string {
-  const fullPath = path.join(ABOUT_DIR, `${slug}.mdx`);
-  return fs.readFileSync(fullPath, "utf8");
+function aboutPath(slug: string) {
+  return path.join(process.cwd(), "content/about", `${slug}.mdx`);
 }
 
-export function getAboutMeta(slug: string): AboutDocMeta {
-  const source = getAboutSource(slug);
-  const { data } = matter(source);
+export function getAboutMeta(slug: string) {
+  const raw = fs.readFileSync(aboutPath(slug), "utf8");
+  const { data } = matter(raw);
+  return { title: data.title ?? "", summary: data.summary ?? "" };
+}
 
-  return {
-    slug,
-    title: String(data.title ?? slug),
-    summary: String(data.summary ?? ""),
-  };
+export function getAboutSource(slug: string) {
+  const raw = fs.readFileSync(aboutPath(slug), "utf8");
+  const { content } = matter(raw);
+  return content; // ✅ no front-matter
 }

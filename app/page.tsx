@@ -182,8 +182,8 @@ export default function Home() {
             <CardLink
               href="/about"
               eyebrow="About"
-              title="Bio & principles"
-              desc="How I work: clarity, craft, and operational excellence—without losing humanity."
+              title="Bio & tenets"
+              desc="How I work: clarity, craft, and operational excellence. Principles that guide my work."
               meta="Leadership • product • systems"
             />
           </div>

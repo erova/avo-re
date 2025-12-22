@@ -57,3 +57,298 @@ a.accent-link {
 a.accent-link:hover {
   text-decoration: underline;
 }
+/* --- Prose baseline (Resume + Write-ups) --- */
+.prose {
+  max-width: 72ch;              /* readable line length */
+  margin-inline: auto;
+  padding-inline: 1.25rem;      /* mobile gutters */
+  padding-block: 2.5rem;        /* vertical breathing room */
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.prose h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 1rem; }
+.prose h2 { font-size: 1.4rem; line-height: 1.25; margin: 2.25rem 0 0.75rem; }
+.prose h3 { font-size: 1.15rem; line-height: 1.3; margin: 1.75rem 0 0.5rem; }
+
+.prose p { margin: 0.9rem 0; }
+
+.prose ul, .prose ol { margin: 0.9rem 0 0.9rem 1.25rem; }
+.prose li { margin: 0.35rem 0; }
+
+.prose a { text-underline-offset: 0.2em; }
+
+.prose hr { margin: 2rem 0; opacity: 0.35; }
+.prose blockquote { margin: 1.25rem 0; padding-left: 1rem; opacity: 0.9; }
+
+
+/* Resume: denser, more scannable */
+.prose.resume-prose {
+  max-width: 82ch;     /* just a bit wider than essays */
+  font-size: 0.98rem; /* slightly smaller than prose */
+  line-height: 1.5;   /* tighter rhythm */
+}
+
+.prose.resume-prose h2 {
+  margin-top: 1.4rem;
+  margin-bottom: 0.35rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+}
+
+.prose.resume-prose h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+}
+
+.prose.resume-prose p {
+  margin: 0.4rem 0;
+}
+
+/* Resume: contact/meta block styling */
+.prose.resume-prose > p:nth-of-type(-n+4) {
+  margin: 0.15rem 0;
+  font-size: 0.92rem;
+  opacity: 0.9;
+}
+
+.prose.resume-prose > p:nth-of-type(2) {
+  opacity: 0.75;
+}
+
+/* Make the "Senior Design Executive | ..." line feel like a label */
+.prose.resume-prose > p:first-of-type strong {
+  font-size: 1.02rem;
+  letter-spacing: 0.01em;
+}
+
+/* Better link affordance in the contact block */
+.prose.resume-prose > p:nth-of-type(-n+4) a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  opacity: 0.95;
+}
+.prose.resume-prose > p:nth-of-type(-n+4) a:hover {
+  opacity: 1;
+}
+
+/* Core Capabilities: 2-column list */
+.prose.resume-prose h2 + ul {
+  columns: 2;
+  column-gap: 2.5rem;
+}
+
+.prose.resume-prose h2 + ul li {
+  break-inside: avoid;
+}
+/* Resume: contact/meta block */
+.prose.resume-prose > p:first-of-type {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.prose.resume-prose > p:nth-of-type(2),
+.prose.resume-prose > p:nth-of-type(3) {
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+.prose.resume-prose > p:nth-of-type(-n+3) {
+  margin-bottom: 0.15rem;
+}
+
+
+/* Resume: experience headers */
+.prose.resume-prose h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.prose.resume-prose h3 strong {
+  font-weight: 600;
+}
+
+.prose.resume-prose h3 + p em {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* Resume: contact/meta block (only before first divider) */
+.prose.resume-prose > p:has(+ hr),
+.prose.resume-prose > p:first-child,
+.prose.resume-prose > p:first-child + p,
+.prose.resume-prose > p:first-child + p + p {
+  font-size: 0.9rem;
+  opacity: 0.75;
+  margin-bottom: 0.15rem;
+}
+
+/* Resume: experience role + date pairing */
+.prose.resume-prose h3 {
+  margin-bottom: 0.15rem;
+}
+
+.prose.resume-prose h3 + p em {
+  display: inline-block;
+  font-size: 0.9rem;
+  opacity: 0.65;
+  margin-bottom: 0.5rem;
+}
+
+/* Resume: contact/meta block */
+.prose.resume-prose .resume-meta {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0.9rem;
+  background: rgba(255,255,255,0.03);
+  line-height: 1.45;
+  font-size: 0.92rem;
+  opacity: 0.9;
+}
+
+.prose.resume-prose .resume-meta a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.prose.resume-prose .resume-meta a:hover {
+  opacity: 1;
+}
+
+/* Resume: contact/meta as 2-column labeled grid */
+.prose.resume-prose .resume-meta {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.03);
+}
+
+.prose.resume-prose .resume-meta dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1.5rem;
+  margin: 0;
+}
+
+.prose.resume-prose .resume-meta dt {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin: 0;
+}
+
+.prose.resume-prose .resume-meta dd {
+  margin: 0.2rem 0 0;
+  font-size: 0.95rem;
+  opacity: 0.92;
+}
+
+.prose.resume-prose .resume-meta a {
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.22);
+}
+
+.prose.resume-prose .resume-meta a:hover {
+  border-bottom-color: rgba(255,255,255,0.45);
+}
+
+/* Resume: contact/meta as 2-column labeled grid */
+.prose.resume-prose .resume-meta > dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1.5rem;
+  margin: 0;
+}
+.prose.resume-prose .resume-meta > dl > div {
+  break-inside: avoid;
+}
+
+.prose.resume-prose .resume-meta {
+  margin-bottom: 2rem;
+}
+
+.prose.resume-prose .resume-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.prose.resume-prose .resume-actions a {
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  padding: 0.4rem 0.7rem;
+  text-decoration: none;
+  background: rgba(255,255,255,0.03);
+}
+
+
+/* Resume: action row */
+.prose.resume-prose .resume-actions {
+  display: flex;
+  margin-top: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose.resume-prose .resume-actions a.accent-link {
+  display: inline-flex;            /* 🔑 this is the missing piece */
+  align-items: center;
+
+  font-size: 0.9rem;
+  text-decoration: none;
+
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.04);
+}
+
+.prose.resume-prose .resume-actions a.accent-link:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.prose.resume-prose .resume-meta {
+  position: relative;
+  padding-bottom: 3rem; /* room for the button */
+}
+
+.prose.resume-prose .resume-actions {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.9rem;
+  margin: 0;
+}
+
+.prose.resume-prose .resume-meta-divider {
+  height: 1px;
+  margin: 1rem 0 0.75rem;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.12),
+    rgba(255,255,255,0.06)
+  );
+}
+
+/* Mobile: stack to one column */
+@media (max-width: 640px) {
+  .prose.resume-prose .resume-meta dl {
+    grid-template-columns: 1fr;
+  }
+}
+/* prose baseline override */
+.prose {
+  max-width: 72ch;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
