@@ -5,234 +5,137 @@ summary: "An experiment applying the same scannability, restraint, and progressi
 tags: ["design-experiment", "enterprise-ux", "progressive-disclosure", "risk", "data-visualization"]
 ---
 
+<OutlineSection title="At a glance">
+  <div className="text-lg leading-snug text-neutral-200">
+    Reduce unnecessary clicks in a familiar stoplight risk heatmap by adding intent-aware previews and clearer change
+    signals—without breaking the click-to-table workflow users already trust.
+  </div>
+
+  <div className="mt-5 flex flex-wrap gap-3">
+    <PrimaryCta href="/now/risk-heatmap/demo">Open the interactive demo →</PrimaryCta>
+
+    <a
+      href="#changes"
+      className="inline-flex items-center rounded-full border border-neutral-800 bg-neutral-950/30 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-900/40"
+    >
+      What changed
+    </a>
+
+    <a
+      href="#before"
+      className="inline-flex items-center rounded-full border border-neutral-800 bg-neutral-950/30 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-900/40"
+    >
+      Before state
+    </a>
+  </div>
+<div className="mt-2 text-sm text-neutral-400">
+  Best for: enterprise product leaders, GRC teams, and designers working with dense decision dashboards.
+</div>
+  <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-neutral-400">
+    <span className="rounded-full border border-neutral-800 bg-neutral-950/40 px-2 py-1">
+      Pattern: Progressive disclosure
+    </span>
+    <span className="rounded-full border border-neutral-800 bg-neutral-950/40 px-2 py-1">
+      Mental model: Stoplight heatmap
+    </span>
+    <span className="rounded-full border border-neutral-800 bg-neutral-950/40 px-2 py-1">
+      Click behavior: unchanged
+    </span>
+  </div>
+
+  <MetricTiles
+    items={[
+      { label: "Preview interaction", value: "Hover-hold" },
+      { label: "Change signal", value: "Δ vs last 30 days" },
+      { label: "Focus behavior", value: "Dim others + highlight active" },
+    ]}
+  />
+</OutlineSection>
+
+<a id="changes" />
+
+<OutlineSection title="What changed">
+  <ul>
+    <li>
+      <strong>Intent-aware preview:</strong> hover-hold reveals a compact panel so users can “peek” without navigating.
+    </li>
+    <li>
+      <strong>Anchored context:</strong> the panel appears near the active cell so your eye stays on the grid.
+    </li>
+    <li>
+      <strong>Clear change:</strong> stable, legible deltas communicate movement without adding noise.
+    </li>
+  </ul>
+</OutlineSection>
+
 ## Why this experiment
 
-In recent experiments (resume presentation and onboarding flows), I focused on a consistent set of principles:
+Across recent experiments (resume presentation and onboarding), I’ve been exploring the same question:
 
-- **Make the primary surface scannable**
-- **Reveal detail only when intent is clear**
-- **Avoid forcing users into early commitment**
-- **Preserve existing mental models**
+> How do we help people understand what matters—without forcing early commitment?
 
-This risk heatmap experiment applies those same ideas to a very different problem space:  
-**high-density, high-stakes enterprise data.**
-<PrimaryCta href="/now/risk-heatmap/" subtext="Interactive prototype · 1 minute">
-  Launch demo
-</PrimaryCta>
----
+Risk heatmaps are familiar and trusted in enterprise GRC. That trust comes from consistency: stoplight colors, likelihood × impact, and a click to drill into a table below. The opportunity here isn’t to reinvent the heatmap—it’s to reduce friction *inside* the pattern.
 
-## Context
+## The core problem
 
-Risk heatmaps are one of the most entrenched visual patterns in GRC software.
+In the existing experience, users frequently click a cell just to answer “what’s inside?” Clicking immediately refreshes the dense table below, which interrupts scanning and forces context switching.
 
-Users already understand:
-- stoplight color systems
-- likelihood × impact grids
-- clicking a cell to refresh a detailed table below
+<a id="before" />
 
-Because of that familiarity, the goal was *not* to redesign the heatmap — it was to **reduce friction inside a pattern users already trust**.
-
----
-
-## The Core Problem
-
-Across the existing experience:
-
-- Users frequently click cells just to *peek*
-- Clicking immediately replaces context with a dense table
-- Users then navigate back to continue scanning
-
-This mirrors the same problem seen in early onboarding flows:
-> users are forced to commit before they’re ready.
-
-
-<figure>
+<figure className="my-8">
   <video
-    src="/now/risk-heatmap/before.mp4"
-    autoPlay
-    loop
-    muted
+    className="w-full rounded-2xl border border-neutral-800/60 shadow-sm"
+    src="/now/risk-heatmap/risk-currentstate.mov"
+    controls
     playsInline
-    className="rounded-xl border shadow-sm"
+    preload="metadata"
   />
-  <figcaption>
-    Before: exploring a cell requires a click and replaces the heatmap with a dense table.
+  <figcaption className="mt-3 text-sm text-neutral-400">
+    Current state: clicking a heatmap cell immediately refreshes the table below.
   </figcaption>
 </figure>
 
----
+## Design constraints
 
-## Hypothesis
+- Preserve the stoplight mental model and grid layout.
+- Keep click behavior unchanged (click still applies the filter and refreshes the table).
+- Add only “earned” motion—feedback that clarifies state, not decoration.
 
-If the heatmap supported **progressive disclosure** — similar to resume sections or onboarding checkpoints — users could:
+## Two high-signal additions
 
-- understand what’s inside a cell without navigating away
-- reserve clicks for intentional deep dives
-- scan risk concentration faster and with more confidence
+### Most common risk (single line)
 
----
+In the preview panel, add one line that answers “what is this cluster actually about?” without overwhelming detail.
 
-## Design Principles (Shared Across Experiments)
+Example:
+<div className="mt-3 rounded-lg border border-neutral-800 bg-neutral-950/40 px-4 py-3 text-sm text-neutral-300">
+  <strong className="block text-neutral-100">Example</strong>
+  Most common risk: Third-party access controls
+</div>
 
-This experiment intentionally reuses the same principles introduced elsewhere:
+### Last updated (humanized)
 
-### 1. Scan First, Commit Later
-Just as the resume surfaces highlights before details, the heatmap should answer:
-> “Is this worth my attention?”
+Add a lightweight recency indicator to reinforce trust and freshness.
 
-Before asking for a click.
+Example:
+- “Last updated 3 days ago”
 
----
+## What stayed the same (intentionally)
 
-### 2. Intentional Interaction
-Borrowed from onboarding patterns:
-- hover alone is too noisy
-- clicks are too final
+- Stoplight semantics
+- Likelihood × impact grid
+- Click-to-filter behavior and the downstream table view
 
-A **hover-hold** introduces a lightweight signal of intent without adding friction.
+Familiarity is treated as a trust signal, not a constraint to redesign away.
 
----
+## Early takeaways
 
-### 3. No Surprise Navigation
-Click behavior remains unchanged.
+- Users can scan the grid with fewer “peek clicks.”
+- Clicks become more intentional (used for commitment, not curiosity).
+- The heatmap feels more informative without becoming more complex.
 
-This mirrors the resume and onboarding approach:
-> never punish curiosity with disorientation.
+## Next steps
 
----
-
-## The Experiment
-
-### Hover-Hold Preview (Primary Change)
-
-After a short, intentional pause, a preview panel appears adjacent to the active cell.
-
-- No click required
-- No layout shift
-- No interruption to scanning
-
-Clicking the cell still applies filters and refreshes the table exactly as before.
-
----
-
-### Anchored Preview Panel
-
-As with onboarding callouts and resume annotations, the panel is **anchored close to its source**.
-
-This keeps:
-- eye movement minimal
-- spatial context intact
-- cognitive load low
-
-The panel includes only summary-level information:
-
-- Risk count
-- Change vs last 30 days
-- Workflow status distribution
-- Top drivers
-- Top owners
-
-It deliberately avoids full tables or scrollable content.
-
----
-
-### Focus Without Flash
-
-Consistent with other experiments:
-- the active element is elevated
-- surrounding elements are gently dimmed
-- motion is minimal and purposeful
-
-This reinforces focus without visual noise or novelty effects.
-
----
-
-### Change as a First-Class Signal
-
-Change indicators follow the same principles used in resume metrics and onboarding progress:
-
-- high-contrast pills
-- tabular numerals to prevent jitter
-- familiar stoplight semantics
-
-Change is visible at a glance, not buried in secondary views.
-
----
-
-## Two New Elements Being Explored
-
-These extend the same thinking already applied elsewhere.
-
-### Most Common Risk (Single Line)
-
-A single truncated line such as:
-
-> “Most common risk: Third-party access controls”
-
-This mirrors resume summary patterns:
-- one strong signal
-- no overwhelming detail
-
----
-
-### Last Updated (Humanized Timestamp)
-
-A lightweight timestamp:
-
-> “Last updated 3 days ago”
-
-This reinforces trust and freshness — the same way onboarding steps signal progress and recency.
-
----
-
-## What Stayed the Same (Intentionally)
-
-- Stoplight color system
-- Grid layout
-- Click-to-filter behavior
-- Downstream table views
-
-As with onboarding, familiarity was treated as an asset, not a constraint.
-
----
-
-## Early Observations
-
-- Users can answer “what’s here?” without committing
-- Clicks become more intentional
-- Scanning across the grid feels faster and calmer
-- The heatmap feels more informative without becoming more complex
-
-These are the same outcomes seen in the resume and onboarding experiments — just applied to a denser, more operational surface.
-
----
-
-## Why This Matters
-
-Across these experiments, a consistent pattern is emerging:
-
-> The biggest UX gains often come from *removing unnecessary commitment*, not adding features.
-
-In enterprise software — especially risk — restraint builds trust faster than novelty.
-
----
-
-## Next Directions
-
-Potential follow-ups include:
-
-- Measuring preview usage vs click-through
-- Comparing stoplight vs modern color modes with identical interactions
-- Evaluating keyboard and accessibility parity
-- Applying the same preview pattern to other dense dashboards
-
----
-
-## Closing Thought
-
-This experiment isn’t about making the heatmap “cooler.”
-
-It’s about applying the same discipline used in resumes and onboarding:
-- clarity first
-- intent-aware disclosure
-- and respect for how people already work
+- Validate whether preview reduces click churn and speeds scanning.
+- Compare stoplight vs alternate color modes (same interactions).
+- Ensure keyboard + accessibility parity for preview behavior.

@@ -1,4 +1,9 @@
+@config "../tailwind.config.ts";
 @import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
@@ -19,9 +24,7 @@
   }
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
 
 html {
   scroll-behavior: smooth;
@@ -372,6 +375,57 @@ a.accent-link:hover {
   0% { transform: scale(1); }
   40% { transform: scale(1.045); }
   100% { transform: scale(1); }
+}
+
+
+/* Narrative content styling for Now / essays / onboarding */
+
+.prose-now {
+  @apply prose prose-invert prose-neutral max-w-none;
+}
+
+/* Section hierarchy */
+.prose-now h2 {
+  @apply mt-14 mb-4 text-3xl font-semibold tracking-tight text-neutral-100;
+}
+
+.prose-now h3 {
+  @apply mt-10 mb-3 text-xl font-semibold tracking-tight text-neutral-100;
+}
+
+.prose-now h4 {
+  @apply mt-6 mb-2 text-base font-semibold tracking-tight text-neutral-200;
+}
+
+/* Body text */
+.prose-now p {
+  @apply text-neutral-300 leading-relaxed;
+}
+
+.prose-now li {
+  @apply text-neutral-300;
+}
+
+.prose-now strong {
+  @apply text-neutral-100;
+}
+
+/* Examples / callouts */
+.prose-now blockquote {
+  @apply border-l-2 border-neutral-800 pl-4 italic text-neutral-300;
+}
+
+/* Dividers */
+.prose-now hr {
+  @apply border-neutral-800/60;
+}
+.prose-now h2 {
+  @apply relative pl-4;
+}
+
+.prose-now h2::before {
+  content: "";
+  @apply absolute left-0 top-2 h-6 w-px bg-neutral-700;
 }
 /* prose baseline override */
 .prose {
