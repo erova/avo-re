@@ -1,21 +1,19 @@
-import HeatmapDemo from "./components/HeatMapDemo";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import { PrimaryCta, OutlineSection } from "@/components/now/patterns";
+import { getNowSource } from "@/lib/now";
 
-export default function Page() {
+export default async function Page() {
+  const source = getNowSource("risk-heatmap");
+
   return (
-    <div className="mx-auto max-w-5xl px-6 py-12 space-y-8">
-      <header className="space-y-3">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Risk Heatmap Prototype
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          A simple experiment to toggle between a classic red–yellow–green
-          (stoplight) risk heatmap and a more modern, accessibility-friendly
-          palette. Dummy data only; layout loosely follows the internal risk
-          dashboard you’re used to.
-        </p>
-      </header>
-
-      <HeatmapDemo />
-    </div>
+    <article className="prose prose-invert max-w-none">
+      <MDXRemote
+        source={source}
+        components={{
+          PrimaryCta,
+          OutlineSection,
+        }}
+      />
+    </article>
   );
 }

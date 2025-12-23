@@ -339,12 +339,39 @@ a.accent-link:hover {
     rgba(255,255,255,0.06)
   );
 }
-
+@keyframes pulsePop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.045); }
+  100% { transform: scale(1); }
+}
 /* Mobile: stack to one column */
 @media (max-width: 640px) {
   .prose.resume-prose .resume-meta dl {
     grid-template-columns: 1fr;
   }
+}
+/* Shimmer border WITHOUT masks (reliable) *//* Dash shimmer that travels around a rounded-rect stroke */
+.shimmer-comet {
+  animation: cometAround 900ms ease-out 1;
+}
+
+@keyframes cometAround {
+  0%   { stroke-dashoffset: 100; opacity: 0; }
+  15%  { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-comet { animation: none; opacity: 1; }
+}
+/* improves number stability in pills */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+@keyframes pulsePop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.045); }
+  100% { transform: scale(1); }
 }
 /* prose baseline override */
 .prose {

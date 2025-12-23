@@ -1,0 +1,238 @@
+---
+title: "Risk Heatmap: Progressive Disclosure Without Breaking Trust"
+date: 2025-12-22
+summary: "An experiment applying the same scannability, restraint, and progressive disclosure principles used in resume and onboarding flows to a high-density enterprise risk heatmap."
+tags: ["design-experiment", "enterprise-ux", "progressive-disclosure", "risk", "data-visualization"]
+---
+
+## Why this experiment
+
+In recent experiments (resume presentation and onboarding flows), I focused on a consistent set of principles:
+
+- **Make the primary surface scannable**
+- **Reveal detail only when intent is clear**
+- **Avoid forcing users into early commitment**
+- **Preserve existing mental models**
+
+This risk heatmap experiment applies those same ideas to a very different problem space:  
+**high-density, high-stakes enterprise data.**
+<PrimaryCta href="/now/risk-heatmap/" subtext="Interactive prototype · 1 minute">
+  Launch demo
+</PrimaryCta>
+---
+
+## Context
+
+Risk heatmaps are one of the most entrenched visual patterns in GRC software.
+
+Users already understand:
+- stoplight color systems
+- likelihood × impact grids
+- clicking a cell to refresh a detailed table below
+
+Because of that familiarity, the goal was *not* to redesign the heatmap — it was to **reduce friction inside a pattern users already trust**.
+
+---
+
+## The Core Problem
+
+Across the existing experience:
+
+- Users frequently click cells just to *peek*
+- Clicking immediately replaces context with a dense table
+- Users then navigate back to continue scanning
+
+This mirrors the same problem seen in early onboarding flows:
+> users are forced to commit before they’re ready.
+
+
+<figure>
+  <video
+    src="/now/risk-heatmap/before.mp4"
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="rounded-xl border shadow-sm"
+  />
+  <figcaption>
+    Before: exploring a cell requires a click and replaces the heatmap with a dense table.
+  </figcaption>
+</figure>
+
+---
+
+## Hypothesis
+
+If the heatmap supported **progressive disclosure** — similar to resume sections or onboarding checkpoints — users could:
+
+- understand what’s inside a cell without navigating away
+- reserve clicks for intentional deep dives
+- scan risk concentration faster and with more confidence
+
+---
+
+## Design Principles (Shared Across Experiments)
+
+This experiment intentionally reuses the same principles introduced elsewhere:
+
+### 1. Scan First, Commit Later
+Just as the resume surfaces highlights before details, the heatmap should answer:
+> “Is this worth my attention?”
+
+Before asking for a click.
+
+---
+
+### 2. Intentional Interaction
+Borrowed from onboarding patterns:
+- hover alone is too noisy
+- clicks are too final
+
+A **hover-hold** introduces a lightweight signal of intent without adding friction.
+
+---
+
+### 3. No Surprise Navigation
+Click behavior remains unchanged.
+
+This mirrors the resume and onboarding approach:
+> never punish curiosity with disorientation.
+
+---
+
+## The Experiment
+
+### Hover-Hold Preview (Primary Change)
+
+After a short, intentional pause, a preview panel appears adjacent to the active cell.
+
+- No click required
+- No layout shift
+- No interruption to scanning
+
+Clicking the cell still applies filters and refreshes the table exactly as before.
+
+---
+
+### Anchored Preview Panel
+
+As with onboarding callouts and resume annotations, the panel is **anchored close to its source**.
+
+This keeps:
+- eye movement minimal
+- spatial context intact
+- cognitive load low
+
+The panel includes only summary-level information:
+
+- Risk count
+- Change vs last 30 days
+- Workflow status distribution
+- Top drivers
+- Top owners
+
+It deliberately avoids full tables or scrollable content.
+
+---
+
+### Focus Without Flash
+
+Consistent with other experiments:
+- the active element is elevated
+- surrounding elements are gently dimmed
+- motion is minimal and purposeful
+
+This reinforces focus without visual noise or novelty effects.
+
+---
+
+### Change as a First-Class Signal
+
+Change indicators follow the same principles used in resume metrics and onboarding progress:
+
+- high-contrast pills
+- tabular numerals to prevent jitter
+- familiar stoplight semantics
+
+Change is visible at a glance, not buried in secondary views.
+
+---
+
+## Two New Elements Being Explored
+
+These extend the same thinking already applied elsewhere.
+
+### Most Common Risk (Single Line)
+
+A single truncated line such as:
+
+> “Most common risk: Third-party access controls”
+
+This mirrors resume summary patterns:
+- one strong signal
+- no overwhelming detail
+
+---
+
+### Last Updated (Humanized Timestamp)
+
+A lightweight timestamp:
+
+> “Last updated 3 days ago”
+
+This reinforces trust and freshness — the same way onboarding steps signal progress and recency.
+
+---
+
+## What Stayed the Same (Intentionally)
+
+- Stoplight color system
+- Grid layout
+- Click-to-filter behavior
+- Downstream table views
+
+As with onboarding, familiarity was treated as an asset, not a constraint.
+
+---
+
+## Early Observations
+
+- Users can answer “what’s here?” without committing
+- Clicks become more intentional
+- Scanning across the grid feels faster and calmer
+- The heatmap feels more informative without becoming more complex
+
+These are the same outcomes seen in the resume and onboarding experiments — just applied to a denser, more operational surface.
+
+---
+
+## Why This Matters
+
+Across these experiments, a consistent pattern is emerging:
+
+> The biggest UX gains often come from *removing unnecessary commitment*, not adding features.
+
+In enterprise software — especially risk — restraint builds trust faster than novelty.
+
+---
+
+## Next Directions
+
+Potential follow-ups include:
+
+- Measuring preview usage vs click-through
+- Comparing stoplight vs modern color modes with identical interactions
+- Evaluating keyboard and accessibility parity
+- Applying the same preview pattern to other dense dashboards
+
+---
+
+## Closing Thought
+
+This experiment isn’t about making the heatmap “cooler.”
+
+It’s about applying the same discipline used in resumes and onboarding:
+- clarity first
+- intent-aware disclosure
+- and respect for how people already work

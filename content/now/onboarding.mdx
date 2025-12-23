@@ -1,215 +1,126 @@
+# Onboarding System (Experiment)
+
+> A lightweight, AI-assisted experiment exploring whether teams really need heavyweight third-party onboarding platforms to deliver value.
+
 ---
-title: "Onboarding System"
-description: "A lightweight alternative to enterprise onboarding tools like Pendo"
-date: "2025-12-20"
-summary: "A tiny, code-owned onboarding framework: tours, checklists, help indicators, and progress tracking."
+
+<OutlineSection title="Why this experiment exists">
+This experiment pressure-tests a few assumptions I see repeatedly in enterprise product teams:
+
+- Design leaders should still prototype credible, technically sound solutions  
+- Technical rigor isn’t exclusive to engineering leadership  
+- Teams may be over-indexing on expensive third-party onboarding tools  
+
+This is **not** an attempt to reinvent onboarding.  
+It’s a demonstration of judgment, feasibility, and tradeoffs.
+</OutlineSection>
+
+<PrimaryCta href="/now/onboarding/demo" subtext="Interactive prototype · 2–3 minutes">
+  Launch demo
+</PrimaryCta>
+
+This is **not** an attempt to reinvent onboarding.  
+It’s a demonstration of judgment, feasibility, and tradeoffs.
+
 ---
 
-# Onboarding System
+The demo showcases a small set of common onboarding patterns implemented as an owned, code-first system:
+- Guided walkthroughs
+- Progress checklists
+- Contextual help indicators
+- Flexible content, including animated gifs to draw attention and illustrate value
 
-A lightweight, flexible onboarding framework built as an alternative to bloated enterprise tools like Pendo—designed for **teams that want code ownership**, strong UX control, and a small footprint.
 
-<div className="my-8" />
 
-<div className="rounded-2xl border border-neutral-200/70 bg-white/70 p-6 shadow-sm backdrop-blur">
-  <div className="flex flex-wrap items-center gap-2 text-sm">
-    <span className="inline-flex items-center rounded-full border border-neutral-200 bg-white px-3 py-1 font-medium">
-      Status: Prototype / Pilot
-    </span>
-    <span className="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-neutral-700">
-      ~15KB bundle target
-    </span>
-    <span className="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-neutral-700">
-      Type-safe
-    </span>
-    <span className="inline-flex items-center rounded-full bg-neutral-100 px-3 py-1 text-neutral-700">
-      Testable
-    </span>
-  </div>
+<OutlineSection title="What this is (and what it isn’t)">
+**This is:**
+- A prototype built using AI-assisted “vibe coding”
+- A technically deliberate system that separates the onboarding engine from the product UI
+- An example of how teams might reclaim ownership over common product patterns
 
-  <div className="mt-5 grid gap-4 md:grid-cols-3">
-    <div className="rounded-xl border border-neutral-200/70 bg-white p-4">
-      <div className="text-xs font-medium text-neutral-500">Best for</div>
-      <div className="mt-1 font-medium">Enterprise UX</div>
-      <div className="mt-1 text-sm text-neutral-600">
-        Guided discovery without vendor lock-in.
-      </div>
-    </div>
-    <div className="rounded-xl border border-neutral-200/70 bg-white p-4">
-      <div className="text-xs font-medium text-neutral-500">Core patterns</div>
-      <div className="mt-1 font-medium">Tours + Checklist</div>
-      <div className="mt-1 text-sm text-neutral-600">
-        Tooltips, indicators, progress, and toasts.
-      </div>
-    </div>
-    <div className="rounded-xl border border-neutral-200/70 bg-white p-4">
-      <div className="text-xs font-medium text-neutral-500">Ownership</div>
-      <div className="mt-1 font-medium">All in your repo</div>
-      <div className="mt-1 text-sm text-neutral-600">
-        Full customization, analytics hooks, and unit tests.
-      </div>
-    </div>
-  </div>
-</div>
+**This is not:**
+- A claim that onboarding tours are innovative
+- A belief that checklists drive universal adoption
+- A production-ready replacement for enterprise tooling
+</OutlineSection>
 
-<div className="my-12" />
+Onboarding guides are often ignored. That reality is acknowledged here.
 
-## The problem
+---
 
-Most onboarding platforms are optimized for non-technical “overlay editing,” not for building a cohesive product experience.
+## Why explore an owned approach
 
-They tend to be:
+In many enterprise environments, teams default to third-party onboarding platforms that are:
+- Expensive
+- Heavyweight
+- Difficult to customize or evolve
+- Tightly coupled to vendor-specific models
 
-<ul className="space-y-2 my-6">
-  <li><strong>Expensive</strong> — $1000+/month subscriptions</li>
-  <li><strong>Heavy</strong> — 100KB+ bundle sizes</li>
-  <li><strong>Inflexible</strong> — clunky visual editors, limited customization</li>
-  <li><strong>Vendor lock-in</strong> — no code ownership</li>
-</ul>
+This experiment explores what changes when:
+- The team owns the implementation
+- Patterns are composable and context-aware
+- Tradeoffs are explicit rather than hidden behind tooling
 
-What I want instead is a small, composable system that behaves like part of the product—not a third-party layer on top of it.
+The goal is not feature parity — it’s **flexibility, testability, and clarity**.
 
-<div className="my-12" />
+---
 
-## The solution
+<OutlineSection title="Core patterns">
+- **Guided walkthroughs**  
+  Lightweight, dismissible tours tied to real product context
 
-A clean, maintainable onboarding system with:
+- **Progress tracking**  
+  Simple checklists and completion feedback without intrusive UI
 
-<ul className="space-y-2 my-6">
-  <li><strong>Layered architecture</strong> — Separate logic, config, and UI</li>
-  <li><strong>Lightweight</strong> — ~15KB total target</li>
-  <li><strong>Full control</strong> — Own the code; customize everything</li>
-  <li><strong>Type-safe</strong> — End-to-end TypeScript</li>
-  <li><strong>Production-minded</strong> — persistence, events, progress tracking</li>
-</ul>
+- **Ambient help indicators**  
+  Subtle visual cues that surface guidance only when relevant
+</OutlineSection>
 
-<div className="my-12" />
+These patterns are intentionally minimal and opinionated.
 
-## UX patterns included
+---
 
-### 1) Interactive tooltips (guided tour)
+<OutlineSection title="Technical notes">
+- The onboarding engine is decoupled from the demo UI  
+- Configuration is type-safe and testable  
+- The full system is small, fast, and fully owned by the team  
 
-Guide users through features with positioned tooltips that include:
+These choices mirror real-world concerns around scale, maintenance, and experimentation — even at prototype stage.
+</OutlineSection>
+---
 
-<ul className="space-y-1 my-4">
-  <li>Smart positioning (top, bottom, left, right)</li>
-  <li>Arrow + target anchoring</li>
-  <li>Optional media (GIFs) for demonstrations</li>
-  <li>Focus/attention treatment on target elements</li>
-</ul>
+## Comparison to tools like Pendo
 
-<div className="my-8" />
+This experiment is not positioned as a full replacement for platforms like Pendo.
 
-### 2) Progress tracking (checklist)
+However, compared to typical third-party onboarding tools, this approach:
+- Avoids vendor lock-in
+- Is significantly smaller and faster
+- Enables deeper product-specific customization
+- Treats onboarding as a product concern, not a bolt-on
 
-A floating checklist panel that supports:
+For some teams, that tradeoff may be worth exploring.
 
-<ul className="space-y-1 my-4">
-  <li>Completion count (e.g., “2/4 completed”)</li>
-  <li>Expandable task list</li>
-  <li>Toast notifications on progress</li>
-  <li>Visual feedback (checkmarks, strikethrough)</li>
-</ul>
+---
 
-<div className="my-8" />
+## Why this matters
 
-### 3) Help indicators (ambient discovery)
+The value of this experiment is not the onboarding UI itself.
 
-Pulsing “!” badges on interactive elements to show what’s available to explore—without forcing users into a step-by-step flow.
+It’s a signal that:
+- Design leadership can still build and evaluate real solutions
+- AI can accelerate credible prototyping without sacrificing technical integrity
+- Teams should periodically re-examine the tools they default to — especially for well-understood problems
 
-<div className="my-12" />
+This artifact exists to spark that conversation.
 
-## Architecture
+---
 
-The system is intentionally split so you can swap UI without rewriting logic.
+<OutlineSection title="What I’d explore next">
+- Whether onboarding guidance could be progressively revealed based on real usage rather than predefined steps.
+- How AI could generate or adapt onboarding flows per role or context  
+- Where onboarding stops being helpful and becomes noise for experienced users
+- The delta between a solution like this and something that could be production-ready and deployed in an enterprise product
 
-### Core engine
-
-`onboarding-engine.ts` — a pure TypeScript class with **zero UI dependencies**, responsible for:
-- state + persistence
-- step/task progression
-- event emission (analytics-friendly)
-- guardrails (only show once, prerequisites, etc.)
-
-### Configuration
-
-`onboarding-config.ts` — pure data defining flows and steps. This can live in code, load from an API, or be managed in a CMS—without changing UI.
-
-### React integration
-
-`useOnboarding.ts` — a single hook that connects the engine to components. This is the only integration point your app needs.
-
-### UI components
-
-<ul className="space-y-1 my-4">
-  <li><strong>OnboardingTooltip</strong> — the guided tour tooltips</li>
-  <li><strong>HelpIndicator</strong> — pulsing badges on elements</li>
-  <li><strong>ChecklistPanel</strong> — progress tracking UI</li>
-</ul>
-
-<div className="my-12" />
-
-## Why this beats Pendo
-
-| Capability | Pendo | This framework |
-|---|---:|---:|
-| Bundle size | 100KB+ | ~15KB |
-| Monthly cost | $1000+ | $0 |
-| Code ownership | No | Yes |
-| Customization | Limited | Full control |
-| Testing | Hard / limited | Fully testable |
-| Vendor lock-in | Yes | No |
-
-<div className="my-12" />
-
-## Try the demo
-
-<a
-  href="/now/onboarding/demo"
-  className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-5 py-3 text-sm font-medium shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
->
-  <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: "rgb(var(--accent))" }} />
-  View interactive demo →
-</a>
-
-<div className="my-6" />
-
-The demo shows a simulated enterprise dashboard with:
-
-<ul className="space-y-1 my-4">
-  <li>4-step guided tour</li>
-  <li>Interactive checklist</li>
-  <li>Help indicators</li>
-  <li>Progress tracking</li>
-  <li>Toast notifications</li>
-</ul>
-
-<div className="my-12" />
-
-## Use cases
-
-This framework works well for:
-
-<ul className="space-y-2 my-6">
-  <li><strong>Feature discovery</strong> — “What changed?” onboarding after releases</li>
-  <li><strong>Activation flows</strong> — multi-step onboarding experiences</li>
-  <li><strong>Progress tracking</strong> — lightweight gamification for adoption</li>
-  <li><strong>Contextual help</strong> — ambient cues without interrupting work</li>
-</ul>
-
-<div className="my-12" />
-
-## Next steps
-
-After validating with stakeholders, this can be:
-
-<ol className="space-y-2 my-6">
-  <li>Extracted to <code>/src/onboarding/</code> for site-wide use</li>
-  <li>Customized for specific product flows</li>
-  <li>Integrated with analytics for tracking</li>
-  <li>Extended with additional UI patterns (empty states, inline nudges, etc.)</li>
-</ol>
-
-<div className="text-sm text-neutral-500 border-t border-neutral-200 pt-6 mt-12">
-  <p><strong>Last Updated:</strong> December 20, 2025</p>
-</div>
+This experiment established (a degree of isoloated) feasibility. The next step is learning the degree of value to expect if we take this further.
+</OutlineSection>

@@ -7,6 +7,15 @@ import { getNowSlugs, getNowSource } from "@/lib/now";
 import { Callout } from "@/components/mdx/Callout";
 import { MetricTiles } from "@/components/mdx/MetricTiles";
 
+import { PrimaryCta, OutlineSection } from "@/components/now/patterns";
+
+const components = {
+  PrimaryCta,
+  OutlineSection,
+  // keep your existing ones
+};
+
+
 export function generateStaticParams() {
   return getNowSlugs().map((slug) => ({ slug }));
 }
