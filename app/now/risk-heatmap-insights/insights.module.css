@@ -1,0 +1,1232 @@
+.rmSim {
+    /* Light-mode simulated product surface (local only) */
+    --bg: #ffffff;
+    --bg-2: #f7f8fa;
+    --border: rgba(15, 23, 42, 0.12);
+    --border-strong: rgba(15, 23, 42, 0.18);
+    --text: #0f172a;
+    --muted: rgba(15, 23, 42, 0.65);
+    --muted-2: rgba(15, 23, 42, 0.5);
+  
+    --card: #ffffff;
+    --shadow: 0 10px 28px rgba(2, 6, 23, 0.08);
+  
+    --chip: rgba(2, 6, 23, 0.04);
+    --chip-border: rgba(2, 6, 23, 0.12);
+  
+    --low-bg: rgba(22, 163, 74, 0.12);
+    --low-border: rgba(22, 163, 74, 0.35);
+    --low-text: rgba(21, 128, 61, 1);
+  
+    --med-bg: rgba(245, 158, 11, 0.14);
+    --med-border: rgba(245, 158, 11, 0.42);
+    --med-text: rgba(161, 98, 7, 1);
+  
+    --high-bg: rgba(220, 38, 38, 0.12);
+    --high-border: rgba(220, 38, 38, 0.35);
+    --high-text: rgba(185, 28, 28, 1);
+  
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(10, 10, 10, 0.25);
+    background: #ffffff;
+    padding: 14px;
+  }
+  
+  .rmSim > * {
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+      Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  
+  /* Inner canvas */
+  .rmSim {
+    border: 1px solid rgba(255, 255, 255, 0.10);
+  }
+  
+  .topbar,
+  .tabs,
+  .workflowStrip,
+  .mainGrid,
+  .tableWrap {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+  }
+  
+  .topbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 16px 16px 14px;
+  }
+  
+  .appKicker {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  
+  .appTitle {
+    margin-top: 2px;
+    font-size: 22px;
+    font-weight: 650;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  
+  .topbarRight {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .updated {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  
+  .secondaryBtn {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+    color: var(--text);
+    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    font-weight: 650;
+  }
+  
+  .secondaryBtn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  
+  .tabs {
+    margin-top: 12px;
+    padding: 10px 10px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  
+  .tab {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 650;
+    padding: 8px 12px;
+    border-radius: 999px;
+  }
+  
+  .tab:hover {
+    background: rgba(2, 6, 23, 0.03);
+    color: var(--text);
+  }
+  
+  .tabActive {
+    background: rgba(2, 6, 23, 0.06);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  
+  .workflowStrip {
+    margin-top: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  
+  .workflowLabel {
+    font-size: 12px;
+    font-weight: 650;
+    color: var(--muted);
+  }
+  
+  .workflowPills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  /* Cards grid */
+  .mainGrid {
+    margin-top: 12px;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 12px;
+  }
+  
+  @media (max-width: 960px) {
+    .mainGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 5px 10px;
+    border:3px solid pink;
+  }
+  
+  .cardHeader {
+    padding: 12px 12px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .cardTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827; /* neutral-900 */
+    line-height: 1.2;
+  }
+  
+  .cardMeta {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #6b7280; /* neutral-500 */
+    line-height: 1.2;
+  }
+  .headerActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .cardBody {
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 14px;
+    align-items: center;
+  }
+  
+  .cardBodyHeatmap {
+    padding: 12px 16px 16px;
+  }
+  
+  .cardFooterHint {
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  
+  /* Donut placeholder */
+  .donutShell {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    display: grid;
+    place-items: center;
+    margin: 6px auto 2px;
+  }
+  
+  .donutRing {
+    width: 180px;
+    height: 180px;
+    border-radius: 999px;
+    border: 18px solid rgba(2, 6, 23, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(2, 6, 23, 0.08);
+  }
+  
+  .donutCenter {
+    position: absolute;
+    text-align: center;
+  }
+  
+  .donutNumber {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  
+  .donutLabel {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  
+  .legendCol {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .legendRow {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+  }
+  
+  .dotHigh {
+    background: rgba(220, 38, 38, 0.85);
+  }
+  
+  .dotMed {
+    background: rgba(245, 158, 11, 0.9);
+  }
+  
+  .dotLow {
+    background: rgba(22, 163, 74, 0.85);
+  }
+  
+  .legendText {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 650;
+  }
+  
+  .legendValue {
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 750;
+  }
+  
+  /* Pills */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid var(--chip-border);
+    background: var(--chip);
+    color: var(--text);
+    white-space: nowrap;
+  }
+  
+  .pillNeutral {
+    background: rgba(2, 6, 23, 0.05);
+    border-color: rgba(2, 6, 23, 0.12);
+    color: rgba(15, 23, 42, 0.9);
+  }
+  
+  .pillLow {
+    background: var(--low-bg);
+    border-color: var(--low-border);
+    color: var(--low-text);
+  }
+  
+  .pillMed {
+    background: var(--med-bg);
+    border-color: var(--med-border);
+    color: var(--med-text);
+  }
+  
+  .pillHigh {
+    background: var(--high-bg);
+    border-color: var(--high-border);
+    color: var(--high-text);
+  }
+  
+  /* Table */
+  .tableWrap {
+    margin-top: 12px;
+    padding: 12px;
+  }
+  
+  .tableTop {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 4px 10px;
+  }
+  
+  .tableTitle {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  
+  .tableSub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  
+  .tableSubMuted {
+    color: var(--muted-2);
+  }
+  
+  .tableTools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .filterControls {
+    display: flex;
+    gap: 10px;
+   flex-wrap: wrap;
+    align-items: center;
+  }
+  
+  .filterLabel {
+    display: grid;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  
+  .select {
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 650;
+  }
+  
+  .chipsRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 4px 10px;
+    align-items: center;
+  }
+  
+  .chipsEmpty {
+    font-size: 12px;
+    color: var(--muted-2);
+  }
+  
+  .chip {
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 999px;
+  }
+  
+  .tableScroller {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: auto;
+    background: var(--bg);
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 1100px;
+  }
+  
+  .table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg-2);
+    color: rgba(15, 23, 42, 0.8);
+    font-size: 12px;
+    font-weight: 800;
+    text-align: left;
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  
+  .table tbody td {
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: rgba(15, 23, 42, 0.9);
+    vertical-align: top;
+  }
+  
+  .table tbody tr:hover td {
+    background: rgba(2, 6, 23, 0.02);
+  }
+  
+  .cellPrimary {
+    min-width: 260px;
+  }
+  
+  .riskName {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  
+  .riskMeta {
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--muted-2);
+  }
+  
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    color: rgba(15, 23, 42, 0.85);
+  }
+  
+  .tableFooter {
+    padding: 10px 4px 2px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  /* =========================
+   Heatmap header (in-situ)
+   ========================= */
+
+.heatmapHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  
+  .heatmapTitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.2;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .heatmapBadge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+  
+  .heatmapDescription {
+    margin: 4px 0 0 0;
+    font-size: 12px;
+    line-height: 1.35;
+    color: #4b5563;
+  }
+  
+  .heatmapHint {
+    color: #6b7280;
+    font-size: 12px;
+  }
+  
+  .heatmapControls {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .headerMeta {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 600;
+  }
+
+  /* Right-side tray */
+.tray {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(420px, 92vw);
+  background: #ffffff;
+  border-left: 1px solid rgba(15, 23, 42, 0.14);
+  box-shadow: -18px 0 44px rgba(15, 23, 42, 0.14);
+  transform: translateX(105%);
+  transition: transform 180ms ease;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+}
+
+.trayOpen {
+  transform: translateX(0%);
+}
+
+.trayDimmer {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.28);
+  z-index: 35;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.trayHeader {
+  padding: 14px 14px 12px 14px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.10);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.trayKicker {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.trayTitle {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #111827;
+  line-height: 1.15;
+}
+
+.traySubtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.35;
+}
+
+.trayClose {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #fff;
+  color: #111827;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.trayBody {
+  padding: 14px;
+  overflow: auto;
+}
+
+.traySection {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.traySection:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.traySectionTitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.trayList {
+  margin: 0;
+  padding-left: 18px;
+  color: #4b5563;
+  line-height: 1.55;
+}
+
+.trayActions {
+  display: grid;
+  gap: 10px;
+}
+
+.actionCard {
+  text-align: left;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #fff;
+  padding: 12px 12px;
+  cursor: pointer;
+}
+
+.actionCard:hover {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+.actionTitle {
+  font-size: 14px;
+  font-weight: 900;
+  color: #111827;
+}
+
+.actionDesc {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.35;
+}
+
+.trayAsk {
+  font-size: 13px;
+  color: #374151;
+  font-style: italic;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* Button used in heatmap header */
+.primaryBtn {
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 800;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  background: #111827;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+}
+
+/* Right action tray (localized to this prototype) */
+.trayOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.25);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+}
+
+.tray {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  width: 360px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18);
+  z-index: 50;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.trayHeader {
+  padding: 14px 14px 12px 14px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trayTitle {
+  font-size: 13px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.01em;
+}
+
+.trayClose {
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.trayBody {
+  padding: 14px;
+  overflow: auto;
+  color: #111827; /* critical: force legible text on light bg */
+}
+
+.trayH2 {
+  font-size: 18px;
+  font-weight: 900;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.traySub {
+  font-size: 13px;
+  color: #4b5563;
+  margin: 0 0 12px 0;
+}
+
+.traySectionLabel {
+  font-size: 12px;
+  font-weight: 800;
+  color: #374151;
+  margin: 14px 0 8px 0;
+}
+
+.trayList {
+  margin: 0;
+  padding-left: 16px;
+  color: #374151;
+  font-size: 13px;
+}
+
+.trayActions {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.trayActionBtn {
+  width: 100%;
+  text-align: left;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #f8fafc;
+  padding: 10px 10px;
+  cursor: pointer;
+}
+
+.trayActionTitle {
+  font-size: 13px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.trayActionDesc {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.trayFooter {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.trayPromptBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: #ffffff;
+  padding: 8px 12px;
+  font-weight: 800;
+  font-size: 12px;
+  color: #111827;
+  cursor: pointer;
+}/* Make sure the simulated canvas is a positioning context */
+.rmSim {
+  position: relative;
+}
+
+/* Right action tray: hidden by default, slides in when open */
+.actionTray {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 380px;
+  max-width: 44vw;
+
+  background: #ffffff;
+  border-left: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: -20px 0 50px rgba(15, 23, 42, 0.12);
+
+  transform: translateX(102%);
+  transition: transform 180ms ease;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 40;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.actionTrayOpen {
+  transform: translateX(0%);
+  pointer-events: auto;
+  opacity: 1;
+}
+
+/* Click-off backdrop inside the in-situ canvas */
+.trayBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.18);
+  border: 0;
+  padding: 0;
+  margin: 0;
+  z-index: 35;
+}
+
+/* Tray header + tabs */
+.trayHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 14px 10px 14px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+.trayTitle {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.traySub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.62);
+}
+
+.trayClose {
+  height: 30px;
+  width: 30px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #ffffff;
+  color: rgba(15, 23, 42, 0.75);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.trayTabs {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+.trayTab {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #f8fafc;
+  color: rgba(15, 23, 42, 0.72);
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.trayTabActive {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: rgba(15, 23, 42, 0.18);
+}
+
+.trayBody {
+  padding: 12px 14px 16px 14px;
+  overflow: auto;
+}
+
+.traySectionTitle {
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.85);
+  margin-bottom: 8px;
+}
+
+.trayMuted {
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.62);
+}
+
+/* Signals + actions */
+.signalList {
+  display: grid;
+  gap: 8px;
+}
+
+.signalRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 10px;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  border-radius: 12px;
+}
+
+.signalIcon {
+  line-height: 1;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.signalText {
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.82);
+}
+
+.actionList {
+  display: grid;
+  gap: 8px;
+}
+
+.actionRow {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+
+  width: 100%;
+  text-align: left;
+  padding: 10px 10px;
+
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.actionIcon {
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.65);
+  margin-top: 1px;
+}
+
+.actionText {
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.86);
+}
+
+.actionSub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.60);
+}
+
+/* Prompt */
+.trayPrompt {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #ffffff;
+  padding: 10px 10px;
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.86);
+  resize: vertical;
+}
+
+.trayPromptActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* (These buttons may already exist in your module; keep if you don’t have them) */
+.primaryBtn {
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.secondaryBtn {
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #ffffff;
+  color: rgba(15, 23, 42, 0.82);
+  font-weight: 900;
+  font-size: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+/* Stage 2: pinned agent composer + drafted output */
+.trayFooter {
+  border-top: 1px solid rgba(15, 23, 42, 0.12);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.02), rgba(15, 23, 42, 0.06));
+  padding: 12px 14px 14px;
+}
+
+.trayFooterLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.78);
+  margin-bottom: 8px;
+}
+
+.trayComposer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.trayComposerInput {
+  width: 100%;
+  resize: none;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.25;
+  background: rgba(255, 255, 255, 0.86);
+  color: rgba(15, 23, 42, 0.92);
+  outline: none;
+}
+
+.trayComposerInput:disabled {
+  opacity: 0.55;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.traySendBtn {
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-weight: 800;
+  font-size: 13px;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: rgba(15, 23, 42, 0.92);
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.traySendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.trayFooterMeta {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.agentResultCard {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 14px;
+  padding: 12px 12px 10px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.agentResultTitle {
+  font-weight: 800;
+  font-size: 13px;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+.agentBullets {
+  margin: 10px 0 10px 18px;
+  padding: 0;
+  color: rgba(15, 23, 42, 0.82);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.agentResultSub {
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.7);
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.agentActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.agentActionChip {
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.9);
+  color: rgba(15, 23, 42, 0.86);
+  cursor: pointer;
+}
+
+.agentActionChip:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+/* --- Stage 2 composer polish (override) --- */
+.trayFooterLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.traySparkleIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+
+  /* Let the glyph be the "sparkly" part (not the background) */
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+
+  /* Gradient “ink” */
+  background-image: linear-gradient(135deg, #a855f7 0%, #ec4899 55%, #fb7185 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  /* Sparkle/glow */
+  text-shadow:
+    0 0 6px rgba(168, 85, 247, 0.35),
+    0 0 10px rgba(236, 72, 153, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.55);
+
+  font-size: 16px;
+  line-height: 1;
+}
+
+.trayComposer {
+  align-items: stretch;
+}
+
+.trayComposerInput {
+  min-height: 96px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  resize: none;
+  overflow: auto;
+}
+
+.traySendBtn {
+  align-self: stretch;
+  min-height: 96px;
+}

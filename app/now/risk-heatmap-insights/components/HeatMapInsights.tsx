@@ -6,7 +6,7 @@ import {
   HEATMAP_LAST30_COUNTS,
   type RiskLevel,
   type RiskRow,
-} from "@/app/now/risk-heatmap/data/riskSeed";
+} from "@/app/now/risk-heatmap-insights/data/riskSeed";
 
 type TimeMode = "current" | "last30";
 type CellKey = `${RiskLevel}-${RiskLevel}`;
