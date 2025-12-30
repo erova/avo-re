@@ -1,0 +1,174 @@
+/* Patterns-only styles (safe: does not touch Insights) */
+
+.signalCard {
+    margin-top: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+  }
+  
+  .signalHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(180deg, rgba(124, 58, 237, 0.08), rgba(236, 72, 153, 0.05));
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  }
+  
+  .signalTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+  }
+  
+  .sparkle {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    color: #7c3aed;
+    background: rgba(124, 58, 237, 0.12);
+    border: 1px solid rgba(124, 58, 237, 0.22);
+    flex: 0 0 auto;
+  }
+  
+  .signalSubtitle {
+    margin-top: 4px;
+    color: rgba(15, 23, 42, 0.70);
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    color: rgba(15, 23, 42, 0.84);
+    white-space: nowrap;
+  }
+  
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(124, 58, 237, 0.9);
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr;
+    gap: 12px;
+    padding: 14px 16px 16px;
+  }
+  
+  .block {
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+  }
+  
+  .blockLabel {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(15, 23, 42, 0.55);
+    margin-bottom: 6px;
+  }
+  
+  .blockValue {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.92);
+    line-height: 1.35;
+  }
+  
+  .blockStrong {
+    font-weight: 900;
+    color: #0f172a;
+  }
+  
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .actionBtn {
+    width: 100%;
+    text-align: left;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+  }
+  
+  .actionTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.92);
+    font-size: 13px;
+  }
+  
+  .actionSub {
+    margin-top: 4px;
+    font-size: 12px;
+    color: rgba(15, 23, 42, 0.68);
+    line-height: 1.3;
+  }
+  
+  .ctaRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px 16px;
+  }
+  
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(124, 58, 237, 0.28);
+    background: rgba(124, 58, 237, 0.08);
+    color: #5b21b6;
+    font-weight: 900;
+    font-size: 13px;
+  }
+  
+  .cta .sparkleMini {
+    width: 18px;
+    height: 18px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    color: #ec4899;
+    background: rgba(236, 72, 153, 0.12);
+    border: 1px solid rgba(236, 72, 153, 0.22);
+  }
