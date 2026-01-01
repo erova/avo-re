@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getAboutMeta, getAboutSource } from "@/lib/about";
+import { ExperienceOutcomes } from "@/components/work/ExperienceOutcomes";
+import matter from "gray-matter";
 
 export default async function TenetsPage() {
   let meta;
@@ -12,6 +14,8 @@ export default async function TenetsPage() {
   } catch {
     notFound();
   }
+
+  const { content } = matter(source);
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
@@ -29,7 +33,12 @@ export default async function TenetsPage() {
       </header>
 
       <div className="mt-12 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed">
-        <MDXRemote source={source} />
+        <MDXRemote
+          source={content}
+          components={{
+            ExperienceOutcomes,
+          }}
+        />
       </div>
     </article>
   );

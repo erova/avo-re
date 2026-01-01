@@ -1,0 +1,51 @@
+.caseSubtitle {
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+
+  color: var(--muted-foreground);
+}
+
+@supports not (color: color-mix(in srgb, black 50%, white)) {
+  .caseSubtitle {
+    border-top-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+.caseDisclaimer {
+  margin-top: 5rem;
+  padding-top: 1.25rem;
+
+  border-top: 1px solid var(--border);
+
+  font-size: 0.72rem;
+  line-height: 1.45;
+
+  color: var(--muted-foreground);
+
+  max-width: 60ch;
+}
+
+.caseDisclaimer strong {
+  display: block;
+  margin-bottom: 0.5rem;
+
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  opacity: 0.7;
+}
+
+.caseDisclaimer p {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}

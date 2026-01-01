@@ -30,46 +30,58 @@ export default async function WritingPostPage({
   const title = String(data.title ?? slug);
   const date = String(data.date ?? "");
   const summary = String(data.summary ?? "");
+  const category = String(data.category ?? "");
+  const tags = Array.isArray(data.tags) ? data.tags.map(String) : [];
 
   return (
-    <div className="py-10">
-      <div className="max-w-3xl">
-        <div className="flex items-center justify-between gap-6">
-          <Link
-            href="/writing"
-            className="text-sm text-neutral-400 hover:text-neutral-100 transition"
-          >
-            ← Back to Writing
-          </Link>
+    <article className="mx-auto max-w-3xl px-6 py-16">
+      <header className="mt-8 rounded-2xl border border-neutral-800/60 bg-neutral-950/40 p-8 shadow-sm">
+        <Link
+          href="/writing"
+          className="mb-3 inline-block text-sm text-neutral-400 hover:text-neutral-200"
+        >
+          ← Writing
+        </Link>
 
-          {date ? (
-            <div className="text-xs uppercase tracking-wider text-neutral-500">
-              {date}
-            </div>
-          ) : null}
-        </div>
-
-        <h1 className="mt-6 text-4xl md:text-5xl leading-[1.05] font-medium tracking-tight">
-          {title}
-        </h1>
-
-        {summary ? (
-          <p className="mt-4 text-base text-neutral-400">{summary}</p>
+        {category ? (
+          <p className="mt-2 text-xs uppercase tracking-wider text-neutral-500">
+            {category}
+          </p>
         ) : null}
 
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight">{title}</h1>
 
-
-
-        <div className="mt-10 prose prose-invert prose-neutral max-w-none">
-          <MDXRemote
-            source={content}
-            components={{
-              Callout: (props) => <Callout {...props} />,
-              MetricTiles: (props) => <MetricTiles {...props} />,
-            }}
-          />
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-wider text-neutral-500">
+          {date ? <span>{date}</span> : null}
         </div>
+
+        {tags.length ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {tags.map((t) => (
+              <span
+                key={t}
+                className="text-xs rounded-full border border-neutral-800 px-3 py-1 text-neutral-300"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        ) : null}
+
+        {summary ? (
+          <p className="mt-4 max-w-2xl text-neutral-300">{summary}</p>
+        ) : null}
+      </header>
+
+      <div className="mt-12 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed">
+        <MDXRemote
+          source={content}
+          components={{
+            Callout: (props) => <Callout {...props} />,
+            MetricTiles: (props) => <MetricTiles {...props} />,
+          }}
+        />
       </div>
-    </div>
+    </article>
   );
 }

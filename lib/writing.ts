@@ -8,6 +8,7 @@ export type WritingPost = {
   date: string;
   summary: string;
   tags: string[];
+  category?: string;
 };
 
 const WRITING_DIR = path.join(process.cwd(), "content", "writing");
@@ -30,6 +31,7 @@ export function getWritingPostMeta(slug: string): WritingPost {
     date: String(data.date ?? ""),
     summary: String(data.summary ?? ""),
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
+    category: data.category ? String(data.category) : undefined,
   };
 }
 
