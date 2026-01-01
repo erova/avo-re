@@ -1,7 +1,5 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { stagger, fadeUp, cardIn, hoverLift } from "@/components/motion";
+import Link from "next/link";
+import { getAllWritingMeta } from "@/lib/writing";
 
 function Arrow() {
   return (
@@ -43,12 +41,9 @@ function CardLink({
   meta: string;
 }) {
   return (
-    <motion.a
-      variants={cardIn}
+    <Link
       href={href}
-      className="group relative overflow-hidden rounded-2xl border border-neutral-800/70 bg-neutral-950/30 shadow-sm backdrop-blur transition hover:border-neutral-700/80"
-      whileHover={hoverLift.hover}
-      whileTap={hoverLift.tap}
+      className="group relative overflow-hidden rounded-2xl border border-neutral-800/70 bg-neutral-950/30 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-neutral-700/80"
     >
       {/* subtle “sheen” */}
       <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500">
@@ -74,25 +69,31 @@ function CardLink({
 
         <div className="mt-5 text-xs text-neutral-500">{meta}</div>
       </div>
-    </motion.a>
+    </Link>
   );
 }
 
+function parseDate(d?: string) {
+  if (!d) return 0;
+  const t = Date.parse(d);
+  return Number.isFinite(t) ? t : 0;
+}
+
 export default function Home() {
+  const writing = getAllWritingMeta();
+  const latest = [...writing]
+    .sort((a, b) => parseDate(b.date) - parseDate(a.date))
+    .find((p) => p.title);
+
   return (
     <article className="relative mx-auto max-w-6xl px-6 py-16">
-      <motion.div
-        variants={stagger}
-        initial="hidden"
-        animate="show"
-        className="pb-16"
-      >
+      <div className="pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           {/* LEFT: statement */}
           <div className="lg:col-span-5 lg:sticky lg:top-8">
-            <motion.div variants={fadeUp} className="max-w-xl">
+            <div className="max-w-xl">
               <div className="text-xs uppercase tracking-wider text-neutral-500">
-                Design leadership • AI products • Systems & operations
+                Design leadership • AI products • Systems &amp; operations
               </div>
 
               <h1 className="mt-4 text-4xl md:text-5xl leading-[1.05] font-medium tracking-tight">
@@ -100,40 +101,53 @@ export default function Home() {
               </h1>
 
               <p className="mt-5 text-base leading-relaxed text-neutral-400">
-                Work, writing, and experiments across AI, fintech, governance, and complex enterprise systems.
+                Work, writing, and experiments across AI, fintech, GRC, and
+                complex enterprise systems by Chris Avore.
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
-                <a
+                <Link
                   href="/work"
                   className="inline-flex items-center gap-2 rounded-full bg-[rgb(var(--accent)/0.18)] text-[rgb(var(--accent))] border border-[rgb(var(--accent)/0.35)] px-4 py-2 text-sm font-medium hover:opacity-90 transition"
                 >
                   Explore work <span aria-hidden="true">→</span>
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/writing"
                   className="inline-flex items-center gap-2 px-1 py-2 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition"
                 >
-                  Essays & notes <span aria-hidden="true">→</span>
-                </a>
+                  Essays &amp; notes <span aria-hidden="true">→</span>
+                </Link>
               </div>
 
-              <div className="mt-10 grid grid-cols-3 gap-4">
-                {[
-                  ["80+", "Design org scale"],
-                  ["AI", "Patterns + systems"],
-                  ["GRC", "Enterprise domain"],
-                ].map(([k, v]) => (
-                  <div
-                    key={k}
-                    className="rounded-2xl border border-neutral-800/70 bg-neutral-900/30 p-4"
-                  >
-                    <div className="text-lg font-medium">{k}</div>
-                    <div className="mt-1 text-xs text-neutral-500">{v}</div>
+              {latest ? (
+                <section className="mt-10">
+                  <div className="flex items-center gap-3 text-xs uppercase tracking-wider text-neutral-500">
+                    <span className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-neutral-800/80 to-transparent" />
+                    <span>Latest</span>
+                    <span className="h-[2px] flex-1 bg-gradient-to-l from-transparent via-neutral-800/80 to-transparent" />
                   </div>
-                ))}
-              </div>
-            </motion.div>
+
+                  <div className="mt-4">
+                    <Link
+                      href={`/writing/${latest.slug}`}
+                      className="block text-base md:text-lg font-medium tracking-tight text-neutral-100 hover:text-neutral-50 transition"
+                    >
+                      {latest.title}
+                    </Link>
+
+                    <div className="mt-2 text-sm text-neutral-500">
+                      in <span className="italic text-neutral-400">Writing</span>
+                      {latest.date ? (
+                        <>
+                          {" "}| posted <span className="italic text-neutral-400">{latest.date}</span>
+                        </>
+                      ) : null}
+                    </div>
+                  </div>
+                </section>
+              ) : null}
+            </div>
           </div>
 
           {/* RIGHT: cards */}
@@ -144,7 +158,7 @@ export default function Home() {
                 eyebrow="Work"
                 title="Case studies & outcomes"
                 desc="Case studies with decisions, artifacts, and measurable outcomes."
-                meta="3–6 minute reads • visuals + prototypes"
+                meta="3–6 minute reads • real work, real experience"
               />
               <CardLink
                 href="/writing"
@@ -157,20 +171,20 @@ export default function Home() {
                 href="/now"
                 eyebrow="Now"
                 title="What I’m building"
-                desc="Current experiments and prototypes — what I’m testing, shipping, and iterating."
-                meta="Changelog style • WIP"
+                desc="Current experiments and prototypes — tinkering and iterating in code"
+                meta="visuals + prototypes"
               />
               <CardLink
                 href="/about"
                 eyebrow="About"
                 title="Bio & tenets"
                 desc="How I work: clarity, craft, and operational excellence — the principles behind the decisions."
-                meta="Leadership • product • systems"
+                meta="Resume • Principles • Liftoff!"
               />
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </article>
   );
 }
