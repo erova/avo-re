@@ -1,4 +1,3 @@
-import { Target } from "lucide-react";
 import Link from "next/link";
 
 export default function AboutPage() {
@@ -41,14 +40,22 @@ export default function AboutPage() {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {[
-            { href: "/about/tenets", title: "Tenets", desc: "Principles and tenets that guide my work." },
-            { href: "/about/resume", title: "Resume", desc: "Executive product design leadership." },
+            {
+              href: "/about/tenets",
+              title: "Tenets",
+              desc: "Principles and tenets that guide my work.",
+            },
+            {
+              href: "/about/resume",
+              title: "Resume",
+              desc: "Executive product design leadership.",
+            },
             { href: "/about/book", title: "My book", desc: "Liftoff! + resources." },
             {
               href: "https://erova.com",
               title: "erova.com",
               desc: "My evergreen design leadership portfolio site.",
-            }
+            },
           ].map((c) => (
             <Link
               key={c.href}

@@ -1,6 +1,32 @@
 import Link from "next/link";
 import { getAllWritingMeta } from "@/lib/writing";
 
+function formatFrontmatterDate(value?: string) {
+  if (!value) return "";
+
+  // Handle YYYY-MM-DD without timezone shifts
+  const m = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) {
+    const y = Number(m[1]);
+    const mo = Number(m[2]) - 1;
+    const d = Number(m[3]);
+    return new Date(y, mo, d).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  const t = Date.parse(value);
+  if (!Number.isFinite(t)) return value;
+
+  return new Date(t).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export default function WritingPage() {
   const posts = getAllWritingMeta();
 
@@ -57,8 +83,8 @@ export default function WritingPage() {
               </div>
 
               {p.date ? (
-                <div className="shrink-0 text-xs uppercase tracking-wider text-neutral-500 whitespace-nowrap">
-                  {p.date}
+                <div className="shrink-0 whitespace-nowrap text-xs uppercase tracking-wider text-neutral-500">
+                  {formatFrontmatterDate(p.date)}
                 </div>
               ) : null}
             </div>

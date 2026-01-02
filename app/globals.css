@@ -32,8 +32,6 @@
   }
 }
 
-
-
 html {
   scroll-behavior: smooth;
 }
@@ -50,6 +48,7 @@ body {
   --accent: 236 72 153; /* pink-500-ish */
   --accent-soft: 236 72 153 / 0.12;
 }
+
 /* MDX typography */
 .prose :where(a) {
   text-decoration: none;
@@ -68,36 +67,64 @@ a.accent-link {
 a.accent-link:hover {
   text-decoration: underline;
 }
+
 /* --- Prose baseline (Resume + Write-ups) --- */
 .prose {
-  max-width: 72ch;              /* readable line length */
+  max-width: 72ch; /* readable line length */
   margin-inline: auto;
-  padding-inline: 1.25rem;      /* mobile gutters */
-  padding-block: 2.5rem;        /* vertical breathing room */
+  padding-inline: 1.25rem; /* mobile gutters */
+  padding-block: 2.5rem; /* vertical breathing room */
   line-height: 1.7;
   font-size: 1.05rem;
 }
 
-.prose h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 1rem; }
-.prose h2 { font-size: 1.4rem; line-height: 1.25; margin: 2.25rem 0 0.75rem; }
-.prose h3 { font-size: 1.15rem; line-height: 1.3; margin: 1.75rem 0 0.5rem; }
+.prose h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: 0 0 1rem;
+}
+.prose h2 {
+  font-size: 1.4rem;
+  line-height: 1.25;
+  margin: 2.25rem 0 0.75rem;
+}
+.prose h3 {
+  font-size: 1.15rem;
+  line-height: 1.3;
+  margin: 1.75rem 0 0.5rem;
+}
 
-.prose p { margin: 0.9rem 0; }
+.prose p {
+  margin: 0.9rem 0;
+}
 
-.prose ul, .prose ol { margin: 0.9rem 0 0.9rem 1.25rem; }
-.prose li { margin: 0.35rem 0; }
+.prose ul,
+.prose ol {
+  margin: 0.9rem 0 0.9rem 1.25rem;
+}
+.prose li {
+  margin: 0.35rem 0;
+}
 
-.prose a { text-underline-offset: 0.2em; }
+.prose a {
+  text-underline-offset: 0.2em;
+}
 
-.prose hr { margin: 2rem 0; opacity: 0.35; }
-.prose blockquote { margin: 1.25rem 0; padding-left: 1rem; opacity: 0.9; }
-
+.prose hr {
+  margin: 2rem 0;
+  opacity: 0.35;
+}
+.prose blockquote {
+  margin: 1.25rem 0;
+  padding-left: 1rem;
+  opacity: 0.9;
+}
 
 /* Resume: denser, more scannable */
 .prose.resume-prose {
-  max-width: 82ch;     /* just a bit wider than essays */
+  max-width: 82ch; /* just a bit wider than essays */
   font-size: 0.98rem; /* slightly smaller than prose */
-  line-height: 1.5;   /* tighter rhythm */
+  line-height: 1.5; /* tighter rhythm */
 }
 
 .prose.resume-prose h2 {
@@ -119,7 +146,7 @@ a.accent-link:hover {
 }
 
 /* Resume: contact/meta block styling */
-.prose.resume-prose > p:nth-of-type(-n+4) {
+.prose.resume-prose > p:nth-of-type(-n + 4) {
   margin: 0.15rem 0;
   font-size: 0.92rem;
   opacity: 0.9;
@@ -136,12 +163,12 @@ a.accent-link:hover {
 }
 
 /* Better link affordance in the contact block */
-.prose.resume-prose > p:nth-of-type(-n+4) a {
+.prose.resume-prose > p:nth-of-type(-n + 4) a {
   text-decoration: underline;
   text-underline-offset: 0.2em;
   opacity: 0.95;
 }
-.prose.resume-prose > p:nth-of-type(-n+4) a:hover {
+.prose.resume-prose > p:nth-of-type(-n + 4) a:hover {
   opacity: 1;
 }
 
@@ -154,6 +181,7 @@ a.accent-link:hover {
 .prose.resume-prose h2 + ul li {
   break-inside: avoid;
 }
+
 /* Resume: contact/meta block */
 .prose.resume-prose > p:first-of-type {
   font-size: 0.9rem;
@@ -166,10 +194,9 @@ a.accent-link:hover {
   opacity: 0.75;
 }
 
-.prose.resume-prose > p:nth-of-type(-n+3) {
+.prose.resume-prose > p:nth-of-type(-n + 3) {
   margin-bottom: 0.15rem;
 }
-
 
 /* Resume: experience headers */
 .prose.resume-prose h3 {
@@ -214,9 +241,9 @@ a.accent-link:hover {
 .prose.resume-prose .resume-meta {
   margin-top: 1rem;
   padding: 0.9rem 1rem;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0.9rem;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   line-height: 1.45;
   font-size: 0.92rem;
   opacity: 0.9;
@@ -235,9 +262,9 @@ a.accent-link:hover {
 .prose.resume-prose .resume-meta {
   margin-top: 1rem;
   padding: 1rem 1.1rem;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1rem;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .prose.resume-prose .resume-meta dl {
@@ -263,11 +290,11 @@ a.accent-link:hover {
 
 .prose.resume-prose .resume-meta a {
   text-decoration: none;
-  border-bottom: 1px solid rgba(255,255,255,0.22);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .prose.resume-prose .resume-meta a:hover {
-  border-bottom-color: rgba(255,255,255,0.45);
+  border-bottom-color: rgba(255, 255, 255, 0.45);
 }
 
 /* Resume: contact/meta as 2-column labeled grid */
@@ -295,13 +322,12 @@ a.accent-link:hover {
 }
 
 .prose.resume-prose .resume-actions a {
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
   padding: 0.4rem 0.7rem;
   text-decoration: none;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
 }
-
 
 /* Resume: action row */
 .prose.resume-prose .resume-actions {
@@ -311,7 +337,7 @@ a.accent-link:hover {
 }
 
 .prose.resume-prose .resume-actions a.accent-link {
-  display: inline-flex;            /* 🔑 this is the missing piece */
+  display: inline-flex; /* 🔑 this is the missing piece */
   align-items: center;
 
   font-size: 0.9rem;
@@ -320,12 +346,12 @@ a.accent-link:hover {
   padding: 0.4rem 0.7rem;
   border-radius: 999px;
 
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .prose.resume-prose .resume-actions a.accent-link:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .prose.resume-prose .resume-meta {
@@ -345,46 +371,74 @@ a.accent-link:hover {
   margin: 1rem 0 0.75rem;
   background: linear-gradient(
     to right,
-    rgba(255,255,255,0.06),
-    rgba(255,255,255,0.12),
-    rgba(255,255,255,0.06)
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.06)
   );
 }
+
 @keyframes pulsePop {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.045); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.045);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
+
 /* Mobile: stack to one column */
 @media (max-width: 640px) {
   .prose.resume-prose .resume-meta dl {
     grid-template-columns: 1fr;
   }
 }
-/* Shimmer border WITHOUT masks (reliable) *//* Dash shimmer that travels around a rounded-rect stroke */
+
+/* Shimmer border WITHOUT masks (reliable) */
+/* Dash shimmer that travels around a rounded-rect stroke */
 .shimmer-comet {
   animation: cometAround 900ms ease-out 1;
 }
 
 @keyframes cometAround {
-  0%   { stroke-dashoffset: 100; opacity: 0; }
-  15%  { opacity: 1; }
-  100% { stroke-dashoffset: 0; opacity: 0; }
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .shimmer-comet { animation: none; opacity: 1; }
+  .shimmer-comet {
+    animation: none;
+    opacity: 1;
+  }
 }
+
 /* improves number stability in pills */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
-@keyframes pulsePop {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.045); }
-  100% { transform: scale(1); }
-}
 
+@keyframes pulsePop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.045);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 
 /* Narrative content styling for Now / essays / onboarding */
 
@@ -435,9 +489,35 @@ a.accent-link:hover {
   content: "";
   @apply absolute left-0 top-2 h-6 w-px bg-neutral-700;
 }
+
 /* prose baseline override */
 .prose {
   max-width: 72ch;
   font-size: 1.05rem;
   line-height: 1.7;
+}
+
+/* --------------------------------------------------
+   Home page intro animation (server-safe)
+   -------------------------------------------------- */
+.home-anim-up {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: homeFadeUp 700ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes homeFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-anim-up {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
 }

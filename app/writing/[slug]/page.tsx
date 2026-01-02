@@ -1,3 +1,45 @@
+function formatFrontmatterDate(value: unknown): string {
+  if (!value) return "";
+
+  // If gray-matter parsed an unquoted YAML date, it may be a Date object.
+  if (value instanceof Date) {
+    const y = value.getUTCFullYear();
+    const m = value.getUTCMonth();
+    const d = value.getUTCDate();
+    const local = new Date(y, m, d);
+    return local.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  const s = String(value).trim();
+
+  // Handle date-only strings without timezone shifting.
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) {
+    const y = Number(m[1]);
+    const mo = Number(m[2]) - 1;
+    const d = Number(m[3]);
+    const local = new Date(y, mo, d);
+    return local.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  // Fallback: attempt to parse any other string.
+  const t = Date.parse(s);
+  if (!Number.isFinite(t)) return s;
+
+  return new Date(t).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -28,7 +70,8 @@ export default async function WritingPostPage({
   const { content, data } = matter(source);
 
   const title = String(data.title ?? slug);
-  const date = String(data.date ?? "");
+  const dateRaw = data.date;
+  const date = formatFrontmatterDate(dateRaw);
   const summary = String(data.summary ?? "");
   const category = String(data.category ?? "");
   const tags = Array.isArray(data.tags) ? data.tags.map(String) : [];

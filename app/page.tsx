@@ -79,6 +79,46 @@ function parseDate(d?: string) {
   return Number.isFinite(t) ? t : 0;
 }
 
+function formatHomeDate(value: unknown): string {
+  if (!value) return "";
+
+  // If YAML date was unquoted, gray-matter may produce a Date object.
+  if (value instanceof Date) {
+    const y = value.getUTCFullYear();
+    const m = value.getUTCMonth();
+    const d = value.getUTCDate();
+    return new Date(y, m, d).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  const s = String(value).trim();
+
+  // Handle YYYY-MM-DD without timezone shifts.
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) {
+    const y = Number(m[1]);
+    const mo = Number(m[2]) - 1;
+    const d = Number(m[3]);
+    return new Date(y, mo, d).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  const t = Date.parse(s);
+  if (!Number.isFinite(t)) return s;
+
+  return new Date(t).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export default function Home() {
   const writing = getAllWritingMeta();
   const latest = [...writing]
@@ -140,7 +180,7 @@ export default function Home() {
                       in <span className="italic text-neutral-400">Writing</span>
                       {latest.date ? (
                         <>
-                          {" "}| posted <span className="italic text-neutral-400">{latest.date}</span>
+                          {" "}| posted <span className="italic text-neutral-400">{formatHomeDate(latest.date)}</span>
                         </>
                       ) : null}
                     </div>

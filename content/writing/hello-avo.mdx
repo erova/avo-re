@@ -1,16 +1,177 @@
 ---
-title: "Hello, avo.re"
-date: "2025-12-16"
-summary: "Kicking off a Cuberto × Linear playground with a calm motion system."
-tags: ["site", "motion", "systems"]
+title: "Introducing avo.re"
+summary: "A pragmatic look at choosing MDX, modern frameworks, and Vercel over traditional CMS platforms."
+date: 2026-01-01
 ---
 
-# Hello, avo.re
+## TL;DR
 
-This is the first post on **avo.re**.
 
-- The layout is intentionally minimal.
-- Motion is centralized (tokens + variants).
-- Content is MDX so posts can include real components later.
+**Platform**  
+MDX + modern React framework  
+Enables structured storytelling with real components, not screenshots.
 
-Next up: a small set of MDX components (Callout, Gallery, MetricTiles) and a case-study template.
+**CMS**  
+No traditional CMS  
+Fewer abstractions, more intent; content is treated as part of the system.
+
+**Hosting**  
+Vercel  
+Zero-ops deployment, fast iteration, reliable previews.
+
+**WordPress**  
+lolnope 
+Optimized for different constraints than mine.
+
+**erova.com**  
+Evergreen brochure site  
+Stable, scannable, changes infrequently.
+
+**avo.re**  
+Living system  
+Writing, case studies, experiments, and iteration.
+
+---
+
+## Context
+
+This site wasn’t built to showcase technical prowess for its own sake.  
+It was built to support *how I think, write, and work* — and to stay adaptable as those evolve.
+
+I chose to build avo.re using modern tooling (MDX, component-based architecture, server rendering) rather than defaulting to platforms like [WordPress](chatgpt://generic-entity?number=1). That decision was intentional, and worth explaining.
+
+---
+
+## Why Not WordPress?
+
+WordPress is powerful, familiar, and battle-tested. It’s also optimized for a very specific set of needs:
+
+- Content managed primarily through a visual editor
+- Plugin-driven extensibility
+- Long-lived page templates with limited structural variation
+
+None of those were my primary constraints.
+
+What I wanted instead was:
+- Full control over layout and information hierarchy
+- The ability to mix narrative writing with live components
+- A system where structure is explicit, not theme-implied
+
+WordPress *can* be bent to do this — but that bending becomes the work.
+
+---
+
+## Why MDX?
+
+MDX lets me write in Markdown while embedding React components directly in content.
+
+That unlocks a few important things:
+
+- **Narrative + artifacts live together**  
+  Case studies can include real components, not screenshots.
+- **Structure is intentional**  
+  Headings, callouts, metrics, and sections are part of the design system.
+- **Content evolves with the system**  
+  Writing, layout, and components change together, under version control.
+
+For someone who designs systems for a living, this feels like the right abstraction level.
+
+---
+
+## Architecture (High Level)
+
+At a high level:
+
+- Content lives as `.mdx` files
+- Pages are rendered via a modern React framework
+- Styling is handled via utility-first CSS
+- Hosting and deployment are handled by [Vercel](chatgpt://generic-entity?number=2)
+
+There’s no admin UI. No plugins. No database.
+
+That’s not minimalism for its own sake — it’s fewer moving parts aligned to actual needs.
+
+---
+
+## avo.re vs erova.com (Two Sites, Two Jobs)
+
+I maintain two sites intentionally:
+
+### **erova.com**
+- Evergreen, brochure-style
+- Optimized for quick scanning
+- Changes infrequently
+- Designed to be stable and predictable
+
+It answers:  
+**“Who is this person, at a glance?”**
+
+### **avo.re**
+- Living system
+- Writing, case studies, experiments
+- Actively evolving
+- Structure adapts as my work and thinking evolve
+
+It answers:  
+**“How does this person think, work, and make decisions?”**
+
+Trying to make one site do both jobs well usually means neither does.
+
+---
+
+## Hosting on Vercel
+
+Vercel made sense because:
+
+- Deployments are automatic and atomic
+- Preview URLs make iteration easy
+- Performance and caching are handled by default
+
+More importantly, it removes *operational distraction*.  
+I don’t want to maintain servers — I want to write, design, and iterate.
+
+---
+
+## Benefits of This Approach
+
+- **Speed of iteration**  
+  Structural changes are straightforward.
+- **Expressiveness**  
+  Content isn’t constrained by a CMS schema.
+- **Clear signal**  
+  This site reflects curiosity, judgment, and comfort working adjacent to engineering.
+
+---
+
+## Tradeoffs (Real Ones)
+
+This approach isn’t free:
+
+- There’s no visual editor
+- Writing assumes some technical comfort
+- Simple changes sometimes require touching code
+
+For me, those are acceptable tradeoffs.  
+For many teams or use cases, they wouldn’t be.
+
+Architecture should match intent.
+
+---
+
+## Why This Matters Professionally
+
+I’m not trying to be a developer.  
+I *am* trying to be a design leader who understands systems, constraints, and modern production realities.
+
+Choosing MDX over WordPress isn’t about novelty — it’s about staying fluent in the tools and patterns shaping how products are built today.
+
+That fluency informs better decisions everywhere else.
+
+---
+
+## Closing Thought
+
+Good platforms remove friction.  
+Great ones align with how you think.
+
+This site is an experiment in the latter.
