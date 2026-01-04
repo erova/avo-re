@@ -191,7 +191,7 @@ export default function RiskManagerInSituPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-100">
-            Risk Heatmap — In-situ Experiment
+            Risk Heatmap Simulation
           </h1>
           <p className="mt-2 max-w-3xl text-sm text-neutral-400">
             Production-like simulation of the Risk Manager surface to test scanability,
@@ -206,12 +206,7 @@ export default function RiskManagerInSituPage() {
               <span aria-hidden>←</span>
               Back to write-up
             </Link>
-            <Link
-              href="/now/risk-heatmap/demo"
-              className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/20 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-900/30"
-            >
-              Open focused demo →
-            </Link>
+            
           </div>
         </div>
 
