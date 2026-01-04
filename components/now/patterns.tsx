@@ -37,12 +37,14 @@ export function OutlineSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
-      <div className="h-1 bg-gradient-to-r from-[rgb(var(--accent))] via-purple-500 to-pink-400" />
-      <div className="p-6">
-        <h2 className="text-base font-semibold text-white/90">{title}</h2>
-        <div className="mt-4 space-y-4 text-sm text-white/80">{children}</div>
-      </div>
-    </section>
+    <section className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
+  <div className="h-1 padding-2 bg-gradient-to-r from-[rgb(var(--accent))] via-purple-500 to-pink-400" />
+  <div className="p-4">
+    <h2 className="text-base font-semibold text-white/90">{title}</h2>
+    <div className="mt-3 space-y-3 text-sm text-white/80">
+      {children}
+    </div>
+  </div>
+</section>
   );
 }

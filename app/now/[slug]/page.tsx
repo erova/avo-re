@@ -2,17 +2,40 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import matter from "gray-matter";
+import { extractToc, slugify } from "@/lib/toc";
 
 import { getNowSlugs, getNowSource } from "@/lib/now";
 import { Callout } from "@/components/mdx/Callout";
 import { MetricTiles } from "@/components/mdx/MetricTiles.client";
 import { PrimaryCta, OutlineSection } from "@/components/now/patterns";
+import { OnThisPage } from "@/components/mdx/OnThisPage";
+
+function headingText(children: any): string {
+  if (typeof children === "string") return children;
+  if (Array.isArray(children)) {
+    return children
+      .map((c) => (typeof c === "string" ? c : ""))
+      .join(" ")
+      .trim();
+  }
+  return "";
+}
 
 const mdxComponents = {
   PrimaryCta,
   OutlineSection,
   Callout,
   MetricTiles,
+  h2: (props: any) => {
+    const text = headingText(props.children);
+    const id = props.id ?? (text ? slugify(text) : undefined);
+    return <h2 id={id} {...props} />;
+  },
+  h3: (props: any) => {
+    const text = headingText(props.children);
+    const id = props.id ?? (text ? slugify(text) : undefined);
+    return <h3 id={id} {...props} />;
+  },
 };
 
 export function generateStaticParams() {
@@ -35,41 +58,76 @@ export default async function NowExperimentPage({
 
   const { content, data } = matter(raw);
 
+  const extracted = extractToc(content).map((item: any) => ({
+    id: item.id,
+    title: item.title ?? item.text ?? "",
+  }));
+
+  const toc = extracted;
+
+  const formattedDate = (() => {
+    const rawDate = String((data as any).date ?? "");
+    const d = rawDate ? new Date(rawDate) : null;
+    if (!d || Number.isNaN(d.getTime())) return "";
+    return d
+      .toLocaleDateString("en-US", { month: "long", year: "numeric" })
+      .toUpperCase();
+  })();
+
   return (
-    <article className="mx-auto max-w-3xl px-6 py-16">
-      <Link
-        href="/now"
-        className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-neutral-200"
-      >
-        <span aria-hidden>←</span>
-        <span>Back to Now</span>
-      </Link>
+    <article className="py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid gap-x-12 gap-y-10 lg:grid-cols-[220px,minmax(0,1fr)]">
+          {/* Left rail (starts at the top like Work) */}
+          <aside className="hidden lg:block lg:col-start-1 lg:row-start-1">
+            <div className="sticky top-50 -ml-0">
+              <OnThisPage toc={toc} />
+            </div>
+          </aside>
+  
+          {/* Center column */}
+          <div className="lg:col-start-2 lg:row-start-1 w-full">
+            <div className="flex items-center justify-between border-b border-neutral-800/60 pb-6">
+              <Link
+                href="/now"
+                className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-neutral-200"
+              >
+                <span aria-hidden>←</span>
+                <span>Back to Now</span>
+              </Link>
 
-      <header className="mt-8 rounded-2xl border border-neutral-800/60 bg-neutral-950/40 p-8 shadow-sm">
-        <p className="text-sm text-neutral-400">Now</p>
-
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight">
-          {String(data.title ?? slug)}
-        </h1>
-
-        {data.summary ? (
-          <p className="mt-3 max-w-2xl text-neutral-300">{String(data.summary)}</p>
-        ) : null}
-      </header>
-
-      <hr className="mt-8 border-neutral-800/60" />
-
-      <div className="mt-12 flex items-center gap-3 text-xs uppercase tracking-wide text-neutral-500">
-        <span className="h-px flex-1 bg-neutral-800" />
-        <span>Overview</span>
-        <span className="h-px flex-1 bg-neutral-800" />
-      </div>
-
-      <div className="mt-10 prose-now">
-      <MDXRemote
-  source={content}
-  components={{ PrimaryCta, OutlineSection, Callout, MetricTiles }}
-/>
+              <div className="hidden lg:block text-xs uppercase tracking-wide text-neutral-500">
+                {formattedDate || null}
+              </div>
+            </div>
+  
+            <div className="mt-10">
+              <div className="text-xs uppercase tracking-wide text-neutral-500">
+                Now
+              </div>
+  
+              <h1 className="mt-4 text-5xl font-semibold tracking-tight">
+                {String(data.title ?? slug)}
+              </h1>
+  
+              {data.summary ? (
+                <p className="mt-4 text-neutral-300">
+                  {String(data.summary)}
+                </p>
+              ) : null}
+            </div>
+  
+            {/* Mobile TOC (inline, like Work still has a left rail only on desktop) */}
+            <div className="mt-10 lg:hidden">
+              <OnThisPage toc={toc} />
+            </div>
+  
+            <div className="prose-now mt-12">
+              <MDXRemote source={content} components={mdxComponents} />
+            </div>
+          </div>
+  
+        </div>
       </div>
     </article>
   );

@@ -36,9 +36,9 @@ export default function NowPage() {
           ← Home
         </Link>
 
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight">Now</h1>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight">Now: My Scratchpad</h1>
         <p className="mt-3 max-w-2xl text-neutral-300">
-          What I’m building and exploring right now.
+          What I’m tinkering with and exploring right now.
         </p>
       </header>
 
@@ -51,8 +51,8 @@ export default function NowPage() {
               key={e.slug}
               className="rounded-2xl border border-white/10 bg-white/5 p-6"
             >
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-                <div className="min-w-0">
+              <div className="f">
+                <div className="flex-1">
                   <h2 className="text-lg font-semibold tracking-tight">
                     <Link
                       href={`/now/${e.slug}`}

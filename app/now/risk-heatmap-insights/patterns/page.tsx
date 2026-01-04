@@ -36,7 +36,7 @@ export default function RiskHeatmapInsightsPatternsPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-100">
-            Risk Heatmap — Patterns
+            Visualizing Cross-Platform Patterns
           </h1>
           <p className="mt-2 max-w-3xl text-sm text-neutral-400">
             Platform-style pattern visualizations (Risk / Controls / Tests) inside the Risk Manager shell.
@@ -44,18 +44,13 @@ export default function RiskHeatmapInsightsPatternsPage() {
 
           <div className="mt-4 flex flex-wrap gap-3">
             <Link
-              href="/now/risk-heatmap-insights"
+              href="/now/risk-patterns"
               className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/40 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-900/40"
             >
               <span aria-hidden>←</span>
-              Back to Insights
+              Back to the write-up
             </Link>
-            <Link
-              href="/now/risk-heatmap/risk-manager"
-              className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/20 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-900/30"
-            >
-              Back to in-situ →
-            </Link>
+            
           </div>
         </div>
       </div>

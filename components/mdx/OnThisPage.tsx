@@ -13,10 +13,12 @@ type OnThisPageProps = {
 };
 
 export function OnThisPage({
-  toc,
-  rootMarginTop = 120,
+  toc = [],
+  rootMarginTop = 0,
   label = "On this page",
 }: OnThisPageProps) {
+  if (!toc.length) return null;
+
   const [activeId, setActiveId] = React.useState<string>(toc[0]?.id ?? "");
 
   React.useEffect(() => {
@@ -63,21 +65,20 @@ export function OnThisPage({
     };
   }, [toc, rootMarginTop]);
 
-  if (!toc.length) return null;
 
   return (
     <>
-      <div className="text-xs font-semibold tracking-wide opacity-70">{label}</div>
-      <nav className="mt-3" aria-label={label}>
-        <ul className="space-y-2 text-sm">
+      <div className="text-xs font-semibold tracking-wide opacity-70 ml-0 pl-0">{label}</div>
+      <nav className="mt-3 ml-0 pl-0" aria-label={label}>
+        <ul className="space-y-2 text-sm ml-0 pl-0 list-none">
           {toc.map((item) => {
             const isActive = item.id === activeId;
             return (
-              <li key={item.id}>
+              <li key={item.id} className="ml-0 pl-0">
                 <a
                   href={`#${item.id}`}
                   className={
-                    "block transition " +
+                    "block ml-0 pl-0 transition " +
                     (isActive ? "opacity-100" : "opacity-70 hover:opacity-100")
                   }
                   aria-current={isActive ? "location" : undefined}

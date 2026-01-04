@@ -9,6 +9,7 @@ import { Callout } from "@/components/mdx/Callout";
 import { MetricTiles } from "@/components/mdx/MetricTiles";
 import { OnThisPage } from "@/components/mdx/OnThisPage";
 import { ExperienceOutcomes } from "@/components/work/ExperienceOutcomes";
+import { OutlineSection } from "@/components/mdx/OutlineSection";
 
 type TocItem = { id: string; title: string };
 
@@ -79,7 +80,7 @@ export default async function WorkPostPage({
 
   return (
     <div className="py-10">
-      <div className="mx-auto w-full max-w-6xl px-6 lg:px-10">
+      <div className="mx-auto w-full max-w-6xl px-6">
         <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
           <aside className="hidden lg:block">
             <div className="sticky top-24 mt-16">
@@ -111,13 +112,14 @@ export default async function WorkPostPage({
               <p className="mt-4 text-base text-neutral-400">{summary}</p>
             ) : null}
 
-            <div className="mt-10 prose prose-invert prose-neutral max-w-none">
+            <div className="mt-0 prose prose-invert prose-neutral max-w-none">
               <MDXRemote
                 source={content}
                 components={{
                   Callout: (props) => <Callout {...props} />,
                   MetricTiles: (props) => <MetricTiles {...props} />,
                   ExperienceOutcomes: (props) => <ExperienceOutcomes {...props} />,
+                  OutlineSection: (props) => <OutlineSection {...props} />,
                   Disclaimer: ({ children }) => (
                     <footer className={styles.caseDisclaimer}>
                       <strong>Disclaimer</strong>

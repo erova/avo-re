@@ -481,14 +481,6 @@ a.accent-link:hover {
 .prose-now hr {
   @apply border-neutral-800/60;
 }
-.prose-now h2 {
-  @apply relative pl-4;
-}
-
-.prose-now h2::before {
-  content: "";
-  @apply absolute left-0 top-2 h-6 w-px bg-neutral-700;
-}
 
 /* prose baseline override */
 .prose {

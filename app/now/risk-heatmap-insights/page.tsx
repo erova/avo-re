@@ -606,18 +606,13 @@ export default function RiskHeatmapInsightsPage() {
 
           <div className="mt-4 flex flex-wrap gap-3">
             <Link
-              href="/now/risk-heatmap"
+              href="/now/risk-insights"
               className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/40 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-900/40"
             >
               <span aria-hidden>←</span>
               Back to write-up
             </Link>
-            <Link
-              href="/now/risk-heatmap/risk-manager"
-              className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/20 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-900/30"
-            >
-              Back to in-situ →
-            </Link>
+            
           </div>
         </div>
 

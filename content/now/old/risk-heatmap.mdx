@@ -1,7 +1,7 @@
 ---
 title: "Risk Heatmap: Progressive Disclosure Without Breaking Trust"
 date: 2025-12-22
-summary: "I unpack a stable but constrained GRC pattern and apply clearer scannability, stronger information prioritization, and progressive disclosure to a high-density enterprise risk heatmap."
+summary: "An experiment applying the same scannability, restraint, and progressive disclosure principles used in resume and onboarding flows to a high-density enterprise risk heatmap."
 tags: ["design-experiment", "enterprise-ux", "progressive-disclosure", "risk", "data-visualization"]
 ---
 
@@ -12,9 +12,35 @@ tags: ["design-experiment", "enterprise-ux", "progressive-disclosure", "risk", "
   </div>
 
   <div className="mt-5 flex flex-wrap gap-3">
-    <PrimaryCta href="/now/risk-heatmap/risk-manager">Open the interactive demo</PrimaryCta>
+    <PrimaryCta href="/now/risk-heatmap/demo">Open the interactive demo →</PrimaryCta>
 
-    
+    <a
+      href="#changes"
+      className="inline-flex items-center rounded-full border border-neutral-800 bg-neutral-950/30 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-900/40"
+    >
+      What changed
+    </a>
+
+    <a
+      href="#before"
+      className="inline-flex items-center rounded-full border border-neutral-800 bg-neutral-950/30 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-900/40"
+    >
+      Before state
+    </a>
+  </div>
+<div className="mt-2 text-sm text-neutral-400">
+  Best for: enterprise product leaders, GRC teams, and designers working with dense decision dashboards.
+</div>
+  <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-neutral-400">
+    <span className="rounded-full border border-neutral-800 bg-neutral-950/40 px-2 py-1">
+      Pattern: Progressive disclosure
+    </span>
+    <span className="rounded-full border border-neutral-800 bg-neutral-950/40 px-2 py-1">
+      Mental model: Stoplight heatmap
+    </span>
+    <span className="rounded-full border border-neutral-800 bg-neutral-950/40 px-2 py-1">
+      Click behavior: unchanged
+    </span>
   </div>
 
   <MetricTiles
@@ -26,33 +52,7 @@ tags: ["design-experiment", "enterprise-ux", "progressive-disclosure", "risk", "
   />
 </OutlineSection>
 
-
-
-
-
-## Why this experiment
-
-
-Risk heatmaps are familiar and trusted in enterprise GRC. That trust comes from consistency: stoplight colors, likelihood × impact, and a click to drill into a table below. The opportunity here isn’t to reinvent the heatmap—it’s to reduce friction *inside* the pattern.
-
-## The core problem
-
-In the existing experience, users frequently click a cell just to answer “what’s inside?” Clicking immediately refreshes the dense table below, which interrupts scanning and forces context switching.
-
-
-
-<figure className="my-8">
-  <video
-    className="w-full rounded-2xl border border-neutral-800/60 shadow-sm"
-    src="/now/risk-heatmap/risk-currentstate.mov"
-    controls
-    playsInline
-    preload="metadata"
-  />
-  <figcaption className="mt-3 text-sm text-neutral-400">
-    Current state: clicking a heatmap cell immediately refreshes the table below.
-  </figcaption>
-</figure>
+<a id="changes" />
 
 <OutlineSection title="What changed">
   <ul>
@@ -68,6 +68,33 @@ In the existing experience, users frequently click a cell just to answer “what
   </ul>
 </OutlineSection>
 
+## Why this experiment
+
+Across recent experiments (resume presentation and onboarding), I’ve been exploring the same question:
+
+> How do we help people understand what matters—without forcing early commitment?
+
+Risk heatmaps are familiar and trusted in enterprise GRC. That trust comes from consistency: stoplight colors, likelihood × impact, and a click to drill into a table below. The opportunity here isn’t to reinvent the heatmap—it’s to reduce friction *inside* the pattern.
+
+## The core problem
+
+In the existing experience, users frequently click a cell just to answer “what’s inside?” Clicking immediately refreshes the dense table below, which interrupts scanning and forces context switching.
+
+<a id="before" />
+
+<figure className="my-8">
+  <video
+    className="w-full rounded-2xl border border-neutral-800/60 shadow-sm"
+    src="/now/risk-heatmap/risk-currentstate.mov"
+    controls
+    playsInline
+    preload="metadata"
+  />
+  <figcaption className="mt-3 text-sm text-neutral-400">
+    Current state: clicking a heatmap cell immediately refreshes the table below.
+  </figcaption>
+</figure>
+
 ## Design constraints
 
 - Preserve the stoplight mental model and grid layout.
@@ -76,26 +103,24 @@ In the existing experience, users frequently click a cell just to answer “what
 
 ## Two high-signal additions
 
-### New 'Most common risk'
+### Most common risk (single line)
 
 In the preview panel, add one line that answers “what is this cluster actually about?” without overwhelming detail.
 
-
+Example:
 <div className="mt-3 rounded-lg border border-neutral-800 bg-neutral-950/40 px-4 py-3 text-sm text-neutral-300">
- 
+  <strong className="block text-neutral-100">Example</strong>
   Most common risk: Third-party access controls
 </div>
 
-### Last updated label
+### Last updated (humanized)
 
-Add a lightweight recency indicator to reinforce trust and freshness. Seems easy enough, but it's missing today.
+Add a lightweight recency indicator to reinforce trust and freshness.
 
+Example:
+- “Last updated 3 days ago”
 
-<div className="mt-3 rounded-lg border border-neutral-800 bg-neutral-950/40 px-4 py-3 text-sm text-neutral-300">
-  Last updated 3 days ago
-</div>
-
-## What stayed the same
+## What stayed the same (intentionally)
 
 - Stoplight semantics
 - Likelihood × impact grid

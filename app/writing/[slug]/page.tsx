@@ -112,11 +112,11 @@ export default async function WritingPostPage({
         ) : null}
 
         {summary ? (
-          <p className="mt-4 max-w-2xl text-neutral-300">{summary}</p>
+          <p className="mt-5 max-w-2xl text-neutral-300">{summary}</p>
         ) : null}
       </header>
 
-      <div className="mt-12 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed">
+      <div className="mt-0 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed">
         <MDXRemote
           source={content}
           components={{
