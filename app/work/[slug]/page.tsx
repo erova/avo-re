@@ -104,7 +104,7 @@ export default async function WorkPostPage({
               ) : null}
             </div>
             {company ? <p className={styles.caseSubtitle}>{company}</p> : null}
-            <h1 className="mt-6 text-4xl md:text-5xl leading-[1.05] font-medium tracking-tight">
+            <h1 className="page-title">
               {title}
             </h1>
             

@@ -25,8 +25,7 @@ export default function AboutPage() {
             and clearer narrative with executives and customers.
           </p>
           <p>
-            Outside of the day job, I publish experiments and writing at avo.re, and I co-authored
-            <em> Liftoff!</em> (Rosenfeld Media) on design leadership and inclusive teams.
+            Outside of the day job, I publish experiments and writing at here at avo.re, pay way too close attention to my stats on <a href="https://www.strava.com/athletes/6074759">Strava</a>, do my best to forget about all of this nonsense when I'm coaching my son's baseball team and in the stands cheering for my girls' soccer and lacrosse teams. 
           </p>
         </div>
       </section>

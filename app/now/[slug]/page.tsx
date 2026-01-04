@@ -80,7 +80,7 @@ export default async function NowExperimentPage({
         <div className="grid gap-x-12 gap-y-10 lg:grid-cols-[220px,minmax(0,1fr)]">
           {/* Left rail (starts at the top like Work) */}
           <aside className="hidden lg:block lg:col-start-1 lg:row-start-1">
-            <div className="sticky top-50 -ml-0">
+            <div className="sticky top-52">
               <OnThisPage toc={toc} />
             </div>
           </aside>
@@ -106,7 +106,7 @@ export default async function NowExperimentPage({
                 Now
               </div>
   
-              <h1 className="mt-4 text-5xl font-semibold tracking-tight">
+              <h1 className="page-title">
                 {String(data.title ?? slug)}
               </h1>
   
