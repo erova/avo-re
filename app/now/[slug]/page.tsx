@@ -9,6 +9,7 @@ import { Callout } from "@/components/mdx/Callout";
 import { MetricTiles } from "@/components/mdx/MetricTiles.client";
 import { PrimaryCta, OutlineSection } from "@/components/now/patterns";
 import { OnThisPage } from "@/components/mdx/OnThisPage";
+import PromptBoxExperiment, { PromptBoxExperimentTabs } from "@/components/now/PromptBoxExperiment";
 
 function headingText(children: any): string {
   if (typeof children === "string") return children;
@@ -26,6 +27,40 @@ const mdxComponents = {
   OutlineSection,
   Callout,
   MetricTiles,
+  PromptBoxExperiment,
+  PromptBoxExperimentA: (props: any) => (
+    <PromptBoxExperiment
+      variant="A"
+      title="Variant A — Starters only"
+      description="Baseline: a prompt box with suggested prompts, but no explicit scope or previews."
+      {...props}
+    />
+  ),
+  PromptBoxExperimentB: (props: any) => (
+    <PromptBoxExperiment
+      variant="B"
+      title="Variant B — Starters + visible sources"
+      description="Make available data sources explicit so users understand what’s in-scope before they type."
+      {...props}
+    />
+  ),
+  PromptBoxExperimentC: (props: any) => (
+    <PromptBoxExperiment
+      variant="C"
+      title="Variant C — Guardrails + previews"
+      description="Add inline scope checks and a ‘what you’ll get’ preview to reduce failures and increase confidence."
+      {...props}
+    />
+  ),
+  PromptBoxExperimentD: (props: any) => (
+    <PromptBoxExperiment
+      variant="D"
+      title="Variant D — File-first checklist"
+      description="Recognition over recall: after a file is attached, show what can be run and generate the prompt automatically."
+      {...props}
+    />
+  ),
+  PromptBoxExperimentTabs,
   h2: (props: any) => {
     const text = headingText(props.children);
     const id = props.id ?? (text ? slugify(text) : undefined);
@@ -122,7 +157,7 @@ export default async function NowExperimentPage({
               <OnThisPage toc={toc} />
             </div>
   
-            <div className="prose-now mt-12">
+            <div className="prose-now mt-12 [&>*+*]:mt-16">
               <MDXRemote source={content} components={mdxComponents} />
             </div>
           </div>
