@@ -1,3 +1,4 @@
+// REPLACED ENTIRE FILE CONTENT WITH THE GIVEN COMPLETE VERSION
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -76,6 +77,7 @@ const DEFAULT_REPORT_MODULES: ReportModule[] = [
 
 const LS_MY_PROMPTS_KEY = "avo_promptbox_my_prompts_v2";
 const LS_ENABLED_SOURCES_KEY = "avo_promptbox_enabled_sources_v1";
+const LS_ASSIST_PULSE_SEEN_KEY = "avo_promptbox_assist_pulse_seen_v1";
 
 const DEFAULT_SOURCES: Source[] = [
   {
@@ -138,6 +140,14 @@ function normalize(s: string) {
   return s.trim().toLowerCase();
 }
 
+function summarizePrompt(text: string): string {
+  const t = text.replace(/\s+/g, " ").trim();
+  if (!t) return "";
+  const m = t.match(/^(.*?[.!?])(\s|$)/);
+  const first = m?.[1] ?? t;
+  return first.length > 90 ? first.slice(0, 90).trim() + "…" : first;
+}
+
 function buildTemplates(): PromptTemplate[] {
   return [
     {
@@ -152,15 +162,6 @@ Summarize key changes in the policy set since last quarter. Provide:
 2) Changes table with columns: Policy, What changed, Impact, Owner, Effective date`;
       },
       requires: ["policies"],
-      preview: ({ enabledSources }) => ({
-        title: "You’ll get: change summary + comparison table",
-        bullets: [
-          "Executive summary (3 bullets)",
-          "Changes table (Policy / What changed / Impact / Owner / Effective date)",
-          `Scope: ${joinSources(enabledSources)}`,
-        ],
-        citations: ["Policies (revision history)"],
-      }),
     },
     {
       id: "risk_top5",
@@ -175,16 +176,6 @@ Identify the top 5 risks mentioned across the selected sources. For each risk:
 - Recommended mitigation (practical next step)
 Also include a risk heat level (High/Med/Low).`;
       },
-      preview: ({ enabledSources }) => ({
-        title: "You’ll get: ranked risks + mitigation plan",
-        bullets: [
-          "Top 5 risks ranked by severity",
-          "Evidence snippets with citations",
-          "Mitigation recommendations and owners (if available)",
-          `Scope: ${joinSources(enabledSources)}`,
-        ],
-        citations: ["Boards / Policies / Third-Party (as selected)"],
-      }),
     },
     {
       id: "draft_msg",
@@ -199,16 +190,6 @@ Draft a message to stakeholders summarizing:
 - Next steps and asks
 Make it crisp and non-alarmist. Include a short subject line and a 3-bullet TL;DR.`;
       },
-      preview: ({ enabledSources }) => ({
-        title: "You’ll get: a ready-to-send message",
-        bullets: [
-          "Subject line + TL;DR bullets",
-          "Short context paragraph",
-          "Top 3 items with next steps and owners (if available)",
-          `Scope: ${joinSources(enabledSources)}`,
-        ],
-        citations: ["Boards / Policies / Files (as applicable)"],
-      }),
     },
     {
       id: "compare_docs",
@@ -227,11 +208,6 @@ End with a 5-bullet 'what changed' summary.
 Ask me which two docs to compare if not specified.`;
       },
       requires: ["files"],
-      preview: ({ enabledSources }) => ({
-        title: "You’ll get: diff-style comparison + summary",
-        bullets: ["Side-by-side comparison", "Key differences", "5-bullet what-changed summary"],
-        citations: ["Files (Doc A / Doc B)"],
-      }),
     },
     {
       id: "viz_risk_heatmap",
@@ -246,11 +222,6 @@ Create a visualization-ready specification (no actual chart rendering):
 - Suggested labels and a short legend
 If data is missing, explicitly list the gaps.`;
       },
-      preview: ({ enabledSources }) => ({
-        title: "You’ll get: a heatmap-ready spec + legend",
-        bullets: ["Top risks with severity/likelihood", "3x3 mapping table", "Legend + gaps list"],
-        citations: ["Boards / Policies / Third-Party / Files (as selected)"],
-      }),
     },
   ];
 }
@@ -289,7 +260,9 @@ function detectScopeIssues(text: string): Flag[] {
     },
   ];
 
-  return rules.filter((r) => r.test(t)).map((r) => ({ id: r.id, severity: r.severity, message: r.message, suggestion: r.suggestion }));
+  return rules
+    .filter((r) => r.test(t))
+    .map((r) => ({ id: r.id, severity: r.severity, message: r.message, suggestion: r.suggestion }));
 }
 
 function Button({
@@ -314,7 +287,12 @@ function Button({
       : "bg-transparent text-white/80 border-transparent hover:text-white hover:bg-white/5";
   const dis = disabled ? "opacity-50 cursor-not-allowed" : "";
   return (
-    <button className={`${base} ${styles} ${dis}`} onClick={disabled ? undefined : onClick} title={title} type="button">
+    <button
+      className={`${base} ${styles} ${dis}`}
+      onClick={disabled ? undefined : onClick}
+      title={title}
+      type="button"
+    >
       {children}
     </button>
   );
@@ -352,10 +330,6 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <div className="text-xs uppercase tracking-widest text-white/60 mb-2">{children}</div>;
 }
 
-function Divider() {
-  return <div className="h-px bg-white/10 my-4" />;
-}
-
 function PaperclipIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -369,6 +343,61 @@ function PaperclipIcon({ className = "" }: { className?: string }) {
       aria-hidden="true"
     >
       <path d="M21.44 11.05l-8.49 8.49a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.19 9.19a2 2 0 11-2.83-2.83l8.49-8.49" />
+    </svg>
+  );
+}
+
+function ArrowUpIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 19V5" />
+      <path d="M5 12l7-7 7 7" />
+    </svg>
+  );
+}
+
+function MicIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 14a3 3 0 003-3V6a3 3 0 00-6 0v5a3 3 0 003 3z" />
+      <path d="M19 11a7 7 0 01-14 0" />
+      <path d="M12 18v3" />
+      <path d="M8 21h8" />
+    </svg>
+  );
+}
+
+function StopIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="7" y="7" width="10" height="10" rx="2" />
     </svg>
   );
 }
@@ -388,7 +417,10 @@ export default function PromptBoxExperiment({
 
   const [sources] = useState<Source[]>(DEFAULT_SOURCES);
   const [enabledSourceIds, setEnabledSourceIds] = useState<string[]>(DEFAULT_ENABLED_SOURCE_IDS);
-  const enabledSources = useMemo(() => sources.filter((s) => enabledSourceIds.includes(s.id)), [sources, enabledSourceIds]);
+  const enabledSources = useMemo(
+    () => sources.filter((s) => enabledSourceIds.includes(s.id)),
+    [sources, enabledSourceIds]
+  );
 
   const [hasFile, setHasFile] = useState<boolean>(false);
   const [isReadingFile, setIsReadingFile] = useState<boolean>(false);
@@ -400,20 +432,20 @@ export default function PromptBoxExperiment({
     "report_output",
   ]);
 
-  // Assist mode: false = minimal, true = assist tools open
   const [assistOpen, setAssistOpen] = useState<boolean>(false);
+  const [showAssistPulse, setShowAssistPulse] = useState<boolean>(true);
   const [promptTab, setPromptTab] = useState<"Suggested" | "My Prompts">("Suggested");
 
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(templates[0]?.id ?? "");
-  const selectedTemplate = useMemo(() => templates.find((t) => t.id === selectedTemplateId), [templates, selectedTemplateId]);
-
   const [prompt, setPrompt] = useState<string>("");
   const [isHesitating, setIsHesitating] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<{ prompt: string; ts: number } | null>(null);
 
   const promptRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const [myPrompts, setMyPrompts] = useState<Array<{ id: string; title: string; text: string; createdAt: number; lastUsed: number }>>([]);
+  const [myPrompts, setMyPrompts] = useState<
+    Array<{ id: string; title: string; text: string; sources: string[]; createdAt: number; lastUsed: number }>
+  >([]);
 
   useEffect(() => {
     const storedEnabled = safeJsonParse<string[]>(
@@ -424,6 +456,9 @@ export default function PromptBoxExperiment({
       setEnabledSourceIds(storedEnabled.filter((id) => sources.some((s) => s.id === id)));
     }
 
+    const pulseSeen = window.localStorage.getItem(LS_ASSIST_PULSE_SEEN_KEY) === "1";
+    setShowAssistPulse(!pulseSeen);
+
     const raw = safeJsonParse<any[]>(window.localStorage.getItem(LS_MY_PROMPTS_KEY), []);
     const migrated = (Array.isArray(raw) ? raw : [])
       .map((s) => {
@@ -433,6 +468,7 @@ export default function PromptBoxExperiment({
           id: String(s?.id ?? `my_${createdAt}`),
           title: String(s?.title ?? "My prompt"),
           text: String(s?.text ?? ""),
+          sources: Array.isArray(s?.sources) ? s.sources.map(String) : [],
           createdAt,
           lastUsed,
         };
@@ -441,6 +477,44 @@ export default function PromptBoxExperiment({
       .slice(0, 50);
 
     setMyPrompts(migrated);
+
+    if (migrated.length === 0) {
+      const now = Date.now();
+      const daysAgo = (d: number) => now - d * 24 * 60 * 60 * 1000;
+
+      const seeded = [
+        {
+          id: `seed_${daysAgo(2)}`,
+          title: "Prepare a director profile for the board meeting",
+          text:
+            "Using only Boards + Files, compile a pre-meeting director profile: board memberships, committee roles, tenure, attendance, and any red flags. End with a 5-bullet briefing for the Chair.",
+          sources: ["Boards", "Files"],
+          createdAt: daysAgo(14),
+          lastUsed: daysAgo(2),
+        },
+        {
+          id: `seed_${daysAgo(7)}`,
+          title: "Summarize policy changes since last quarter",
+          text:
+            "Using only Policies, summarize key changes since last quarter. Provide: (1) exec summary (3 bullets) and (2) a changes table: Policy, What changed, Impact, Owner, Effective date.",
+          sources: ["Policies"],
+          createdAt: daysAgo(30),
+          lastUsed: daysAgo(7),
+        },
+        {
+          id: `seed_${daysAgo(1)}`,
+          title: "Top 5 third-party risks with mitigations",
+          text:
+            "Using only Third-Party + Policies, identify top 5 vendor risks. For each: why it matters, evidence, mitigation, and confidence. Close with a short stakeholder update.",
+          sources: ["Third-Party", "Policies"],
+          createdAt: daysAgo(10),
+          lastUsed: daysAgo(1),
+        },
+      ];
+
+      setMyPrompts(seeded);
+      window.localStorage.setItem(LS_MY_PROMPTS_KEY, JSON.stringify(seeded));
+    }
 
     if (variant === "D") {
       setEnabledSourceIds((prev) => (prev.includes("files") ? prev : [...prev, "files"]));
@@ -462,7 +536,6 @@ export default function PromptBoxExperiment({
     return () => window.clearTimeout(t);
   }, [hasFile]);
 
-  // Hesitation nudge: if the user starts typing then pauses, suggest tools without implying "help".
   useEffect(() => {
     if (assistOpen) {
       setIsHesitating(false);
@@ -475,7 +548,6 @@ export default function PromptBoxExperiment({
       return;
     }
 
-    // Only nudge on short, early prompts (keeps it subtle)
     if (trimmed.length >= 40) {
       setIsHesitating(false);
       return;
@@ -493,19 +565,12 @@ export default function PromptBoxExperiment({
 
   function getAssistNudgeText(): string {
     const trimmed = prompt.trim();
-
-    // If user attached a file but hasn't written anything yet, encourage the file workflow.
     if (hasFile && trimmed.length === 0) return "I can help analyze this file";
-
-    // If prompt includes out-of-scope signals, reframe toward known sources/capabilities.
     if (flags.length > 0) return "This works best with known sources";
-
-    // If user has typed a little then paused, offer suggestions.
     if (isHesitating) return "Want suggestions based on your sources?";
-
-    // Default capability discovery message.
     return "Assist tools available";
   }
+
   const canSubmit = normalize(prompt).length > 10 && !flags.some((f) => f.severity === "block");
 
   const suggestedTemplates = useMemo(() => {
@@ -546,7 +611,11 @@ export default function PromptBoxExperiment({
     const now = Date.now();
     const titleLine = prompt.split("\n")[0]?.slice(0, 60) || "My prompt";
     const id = `my_${now}`;
-    const next = [{ id, title: titleLine, text: prompt, createdAt: now, lastUsed: now }, ...myPrompts].slice(0, 50);
+    const sourcesForPrompt = enabledSources.map((s) => s.name);
+    const next = [
+      { id, title: titleLine, text: prompt, sources: sourcesForPrompt, createdAt: now, lastUsed: now },
+      ...myPrompts,
+    ].slice(0, 50);
     setMyPrompts(next);
     window.localStorage.setItem(LS_MY_PROMPTS_KEY, JSON.stringify(next));
     track("add_my_prompt", { id });
@@ -572,7 +641,6 @@ export default function PromptBoxExperiment({
   }
 
   function onSubmit() {
-    // Auto-open Assist on empty/too-short submit (Variant B+)
     if (!assistOpen && prompt.trim().length < 10) {
       setAssistOpen(true);
       track("auto_open_assist_on_empty", { variant });
@@ -590,15 +658,12 @@ export default function PromptBoxExperiment({
         <div className="text-sm text-white/70">{description}</div>
       </div>
 
-
-      {/* Assist mode: sources + prompts + file checklist */}
       {assistOpen && (
         <div className="mt-6 space-y-6">
           <div className="rounded-xl border border-white/10 bg-transparent p-4">
             <SectionTitle>Available sources</SectionTitle>
 
             <div className="mt-3 flex flex-wrap gap-2">
-              {/* Attach chip inline with pills */}
               {variant === "D" && (
                 <Chip
                   selected={hasFile}
@@ -634,7 +699,6 @@ export default function PromptBoxExperiment({
             <div className="mt-3 text-xs text-white/60">This demo can only use selected sources (no web browsing).</div>
           </div>
 
-          {/* What to run only appears after attach */}
           {variant === "D" && hasFile && (
             <div className="rounded-xl border border-white/10 bg-transparent p-4">
               <SectionTitle>What to run</SectionTitle>
@@ -666,7 +730,12 @@ export default function PromptBoxExperiment({
                           key={m.id}
                           className="flex items-start gap-3 rounded-xl border border-white/10 bg-transparent p-3 hover:bg-white/[0.02] cursor-pointer"
                         >
-                          <input type="checkbox" className="mt-1" checked={checked} onChange={() => toggleModule(m.id)} />
+                          <input
+                            type="checkbox"
+                            className="mt-1"
+                            checked={checked}
+                            onChange={() => toggleModule(m.id)}
+                          />
                           <div>
                             <div className="text-sm text-white/90">{m.label}</div>
                             <div className="text-xs text-white/60 mt-1">{m.description}</div>
@@ -722,7 +791,9 @@ export default function PromptBoxExperiment({
                       <div
                         key={t.id}
                         className={`rounded-xl border p-3 transition ${
-                          t.id === selectedTemplateId ? "border-white/30 bg-white/5" : "border-white/10 bg-transparent hover:bg-white/[0.02]"
+                          t.id === selectedTemplateId
+                            ? "border-white/30 bg-white/5"
+                            : "border-white/10 bg-transparent hover:bg-white/[0.02]"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-3">
@@ -754,13 +825,20 @@ export default function PromptBoxExperiment({
               {promptTab === "My Prompts" && (
                 <>
                   <div className="flex gap-2">
-                    <Button variant="secondary" onClick={addMyPrompt} disabled={!prompt.trim()} title="Save the current prompt (stored locally)">
+                    <Button
+                      variant="secondary"
+                      onClick={addMyPrompt}
+                      disabled={!prompt.trim()}
+                      title="Save the current prompt (stored locally)"
+                    >
                       Save current
                     </Button>
                   </div>
 
                   {myPrompts.length === 0 ? (
-                    <div className="text-sm text-white/60">Save a prompt you like and it’ll appear here (local to this browser).</div>
+                    <div className="text-sm text-white/60">
+                      Save a prompt you like and it’ll appear here (local to this browser).
+                    </div>
                   ) : (
                     <div className="space-y-2">
                       {[...myPrompts]
@@ -770,10 +848,30 @@ export default function PromptBoxExperiment({
                             <div className="flex items-start justify-between gap-3">
                               <div>
                                 <div className="text-sm text-white font-medium">{p.title}</div>
-                                <div className="text-xs text-white/60 mt-1">
-                                  Last used: {new Date(p.lastUsed).toLocaleDateString()}
+
+                                <div className="mt-1 flex flex-wrap items-center gap-2">
+                                  <div className="text-xs text-white/60">
+                                    Last used: {new Date(p.lastUsed).toLocaleDateString()} · Created:{" "}
+                                    {new Date(p.createdAt).toLocaleDateString()}
+                                  </div>
+
+                                  {p.sources?.length > 0 && (
+                                    <div className="flex flex-wrap gap-1">
+                                      {p.sources.map((src) => (
+                                        <span
+                                          key={src}
+                                          className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] text-white/70"
+                                        >
+                                          {src}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
-                                <div className="text-xs text-white/60 mt-1 line-clamp-2">{p.text}</div>
+
+                                <div className="text-xs text-white/60 mt-2">
+                                  <span className="text-white/50">Summary:</span> {summarizePrompt(p.text)}
+                                </div>
                               </div>
                               <div className="flex gap-2">
                                 <Button variant="ghost" onClick={() => useMyPrompt(p.id)}>
@@ -792,13 +890,17 @@ export default function PromptBoxExperiment({
               )}
             </div>
 
-            <div className="mt-3 text-xs text-white/60">Suggested prompts reduce blank-canvas. My Prompts are your saved shortcuts.</div>
+            <div className="mt-3 text-xs text-white/60">
+              Suggested prompts reduce blank-canvas. My Prompts are your saved shortcuts.
+            </div>
           </div>
 
           {submitted && (
             <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
               <SectionTitle>Result (mock)</SectionTitle>
-              <div className="text-sm text-white/80">This is intentionally a mock “result” so the experiment focuses on the prompt UX.</div>
+              <div className="text-sm text-white/80">
+                This is intentionally a mock “result” so the experiment focuses on the prompt UX.
+              </div>
               <div className="mt-3 text-xs text-white/60">Submitted at: {new Date(submitted.ts).toLocaleString()}</div>
               <div className="mt-3 text-sm text-white/90 whitespace-pre-wrap">{submitted.prompt}</div>
             </div>
@@ -806,7 +908,6 @@ export default function PromptBoxExperiment({
         </div>
       )}
 
-      {/* Step 1: minimal prompt (always visible) - moved to bottom */}
       <div
         className={
           stickyPrompt
@@ -817,13 +918,14 @@ export default function PromptBoxExperiment({
         <div className="flex flex-wrap gap-2 items-center justify-between">
           <SectionTitle>Prompt</SectionTitle>
 
-          {/* Assist bar (Variant B+): Visible as capability discovery (not "help") */}
           {!assistOpen && (
             <div className="text-xs text-white/60">
               {getAssistNudgeText()} ·{" "}
               <button
                 type="button"
                 onClick={() => {
+                  setShowAssistPulse(false);
+                  window.localStorage.setItem(LS_ASSIST_PULSE_SEEN_KEY, "1");
                   setIsHesitating(false);
                   setAssistOpen(true);
                   track("open_assist", {
@@ -837,28 +939,88 @@ export default function PromptBoxExperiment({
                       : "default",
                   });
                 }}
-                className="underline underline-offset-4 hover:text-white"
+                className="ml-2 inline-flex items-center gap-2 rounded-full border border-pink-400/60 bg-pink-500/10 px-3 py-1 text-xs font-medium text-pink-100 shadow-sm shadow-pink-500/10 hover:bg-pink-500/15 hover:border-pink-300/80"
               >
+                <span className="relative flex h-2 w-2">
+                  {showAssistPulse && (
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-300/60" />
+                  )}
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-200" />
+                </span>
                 Show tools
               </button>
             </div>
           )}
         </div>
 
-        <textarea
-          ref={promptRef}
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          rows={10}
-          className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 p-3 text-sm text-white outline-none focus:border-white/30"
-          placeholder="Ask something…"
-        />
+        <div className="mt-2 w-full">
+  <div className="relative w-full rounded-3xl border border-white/15 bg-white/5">
+    <textarea
+      ref={promptRef}
+      value={prompt}
+      onChange={(e) => setPrompt(e.target.value)}
+      onKeyDown={(e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+          e.preventDefault();
+          onSubmit();
+        }
+      }}
+      rows={stickyPrompt ? 3 : 4}
+      className="w-full resize-none bg-transparent px-4 pt-4 pb-16 text-sm text-white outline-none placeholder:text-white/40"
+      placeholder="Define a challenge you would like to solve"
+    />
 
-        <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
-          <Button variant="primary" onClick={onSubmit} disabled={!canSubmit}>
-            Submit
-          </Button>
-        </div>
+    {/* Bottom action row (ChatGPT-style) */}
+    <div className="absolute bottom-3 left-0 right-0 flex items-center justify-between px-4">
+      <button
+        type="button"
+        disabled
+        className="inline-flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/60 opacity-70"
+        title="Attach (disabled in this demo)"
+        aria-label="Attach file (disabled)"
+      >
+        <PaperclipIcon className="h-4 w-4" />
+      </button>
+
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          disabled
+          className="inline-flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/60 opacity-70"
+          title="Voice (disabled in this demo)"
+          aria-label="Voice (disabled)"
+        >
+          <MicIcon className="h-4 w-4" />
+        </button>
+
+        <button
+          type="button"
+          disabled
+          className="inline-flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/60 opacity-70"
+          title="Stop (disabled in this demo)"
+          aria-label="Stop (disabled)"
+        >
+          <StopIcon className="h-4 w-4" />
+        </button>
+
+        <button
+          type="button"
+          onClick={onSubmit}
+          disabled={!canSubmit}
+          className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition ${
+            canSubmit
+              ? "border-white/15 bg-white/10 text-white hover:bg-white/15"
+              : "cursor-not-allowed border-white/10 bg-white/5 text-white/40"
+          }`}
+          title={canSubmit ? "Submit" : "Enter a longer prompt to submit"}
+          aria-label="Submit"
+        >
+          <ArrowUpIcon className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
         {assistOpen && flags.length > 0 && (
           <div className="mt-3 space-y-2">
