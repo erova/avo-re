@@ -218,6 +218,7 @@ export default function ContextAssistSmartBuilderPage() {
   const [assistPlacement, setAssistPlacement] = useState<AssistPlacement>(
     "panel"
   );
+  const [hasSmartBuilder, setHasSmartBuilder] = useState(false);
   const [showNudge, setShowNudge] = useState(false);
   const [dismissedNudge, setDismissedNudge] = useState(false);
   const [showAssist, setShowAssist] = useState(false);
@@ -260,6 +261,13 @@ export default function ContextAssistSmartBuilderPage() {
     setAssistEntry("nudge");
     setAssistPlacement("panel");
     setShowAssist(true);
+
+    // If not entitled, this is a promo—no agent execution.
+    if (!hasSmartBuilder) {
+      setBuilderState("idle");
+      return;
+    }
+
     if (mode === "agent") {
       setBuilderState("working");
       await sleep(1200);
@@ -270,7 +278,7 @@ export default function ContextAssistSmartBuilderPage() {
   };
 
   const openAssistFromButton = () => {
-    // Intent already expressed — keep this neutral.
+    // Intent expressed — if not entitled, show promo; if entitled, show assist bridge.
     setAssistEntry("button");
     setAssistPlacement("panel");
     setBuilderState("idle");
@@ -288,13 +296,20 @@ export default function ContextAssistSmartBuilderPage() {
                 What you’re about to see
               </div>
               <p className="mt-1 text-sm text-slate-600">
-                A wireframe of the <span className="font-medium">Book editor → Build book</span>{" "}
-                surface. As the admin assembles a book manually, the system notices and nudges
+                A wireframe of the <span className="font-medium">Book editor → Build book</span> surface.
+                As the admin assembles a book manually, the system notices and nudges
                 <span className="font-medium"> Smart Book Builder</span> contextually.
+                {!hasSmartBuilder ? (
+                  <span className="text-slate-600"> In this version, Smart Book Builder is not enabled — the assist becomes a lightweight promotion.</span>
+                ) : null}
               </p>
             </div>
 
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex w-[420px] flex-col items-end gap-3 text-right">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500">Has Smart Book Builder</span>
+                <Switch checked={hasSmartBuilder} onCheckedChange={setHasSmartBuilder} />
+              </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-slate-500">Coach</span>
                 <Switch
@@ -398,6 +413,11 @@ export default function ContextAssistSmartBuilderPage() {
               >
                 <Wand2 className="h-4 w-4 text-slate-500" />
                 Smart Builder
+                {!hasSmartBuilder ? (
+                  <span className="ml-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] text-slate-600">
+                    Not enabled
+                  </span>
+                ) : null}
               </Button>
             </div>
 
@@ -556,10 +576,14 @@ export default function ContextAssistSmartBuilderPage() {
                             <Sparkles className="mt-0.5 h-4 w-4 text-indigo-600" />
                             <div className="min-w-0">
                               <div className="text-xs font-semibold text-indigo-900">
-                                Looks like you’re assembling manually — Smart Book Builder can draft tabs + place materials.
+                                {!hasSmartBuilder
+                                  ? "You’re doing this manually — Smart Book Builder could draft tabs + place materials automatically."
+                                  : "Looks like you’re assembling manually — Smart Book Builder can draft tabs + place materials."}
                               </div>
                               <div className="mt-1 text-xs text-indigo-900/70">
-                                Estimated time saved: ~45–90 mins (and fewer missing sections).
+                                {!hasSmartBuilder
+                                  ? "Typical time saved: ~45–90 mins per book. Ask your admin about enabling it."
+                                  : "Estimated time saved: ~45–90 mins (and fewer missing sections)."}
                               </div>
                             </div>
                           </button>
@@ -622,11 +646,23 @@ export default function ContextAssistSmartBuilderPage() {
               <div className="flex items-start justify-between gap-3 border-b border-slate-200 px-4 py-3">
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-slate-900">
-                    {assistEntry === "button" ? "Smart Book Builder" : mode === "agent" ? (builderState === "done" ? "Smart Book Builder is ready" : builderState === "working" ? "Building your book…" : "Let me assemble this for you") : "Smart Book Builder can help here"}
+                    {!hasSmartBuilder
+                      ? "Smart Book Builder (Not enabled)"
+                      : assistEntry === "button"
+                      ? "Smart Book Builder"
+                      : mode === "agent"
+                      ? builderState === "done"
+                        ? "Smart Book Builder is ready"
+                        : builderState === "working"
+                        ? "Building your book…"
+                        : "Let me assemble this for you"
+                      : "Smart Book Builder can help here"}
                   </div>
                   <div className="mt-1 text-xs text-slate-600">
-                    {assistEntry === "button"
-                      ? "(Placeholder) This is where the builder would open."
+                    {!hasSmartBuilder
+                      ? "You’re doing repeat manual steps. With Smart Book Builder enabled, you can draft structure, place materials, and reduce rework."
+                      : assistEntry === "button"
+                      ? "(Exploration) This is the prefill bridge before opening the builder."
                       : mode === "agent"
                       ? builderState === "done"
                         ? "I prepared a draft structure for review."
@@ -681,9 +717,13 @@ export default function ContextAssistSmartBuilderPage() {
                         <ShieldAlert className="h-3.5 w-3.5 text-slate-600" />
                       </span>
                       <div className="min-w-0">
-                        <div className="text-xs font-semibold text-slate-900">What I noticed</div>
+                        <div className="text-xs font-semibold text-slate-900">
+                          {!hasSmartBuilder ? "What you’re doing manually" : "What I noticed"}
+                        </div>
                         <div className="mt-1 text-xs text-slate-600">
-                          You’ve done several manual steps that Smart Book Builder can automate.
+                          {!hasSmartBuilder
+                            ? "These are the signals that typically indicate Smart Book Builder would save time."
+                            : "You’ve done several manual steps that Smart Book Builder can automate."}
                         </div>
                         <div className="mt-2 flex flex-wrap gap-2">
                           {detectedSignals.map((s) => (
@@ -702,18 +742,60 @@ export default function ContextAssistSmartBuilderPage() {
 
                 {assistEntry === "button" ? (
                   <div className="mt-3">
-                    <Button
-                      className="w-full gap-2"
-                      onClick={() => {
-                        setShowAssist(false);
-                      }}
-                    >
-                      <Wand2 className="h-4 w-4" />
-                      Open builder
-                    </Button>
-                    <div className="mt-2 text-xs text-slate-500">
-                      This path is intentionally neutral (no persuasion after intent).
-                    </div>
+                    {!hasSmartBuilder ? (
+                      <>
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                          <div className="text-xs font-semibold text-slate-900">What you’d get with Smart Book Builder</div>
+                          <ul className="mt-2 space-y-1 text-xs text-slate-600">
+                            <li>• Draft tab structure from your materials</li>
+                            <li>• Place files automatically (fewer manual uploads)</li>
+                            <li>• Flag missing sections before publish</li>
+                            <li>• Optional: suggest agenda links</li>
+                          </ul>
+                          <div className="mt-2 text-xs text-slate-600">
+                            Typical time saved: <span className="font-medium text-slate-700">~45–90 mins per book</span>
+                          </div>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-2 gap-2">
+                          <Button
+                            className="gap-2"
+                            onClick={() => {
+                              setShowAssist(false);
+                            }}
+                          >
+                            Request upgrade
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setShowAssist(false);
+                            }}
+                          >
+                            Learn more
+                          </Button>
+                        </div>
+                        <div className="mt-2 text-xs text-slate-500">
+                          This is a promotion surface (Smart Book Builder isn’t enabled in this tenant).
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          className="w-full gap-2"
+                          onClick={() => {
+                            // In a real product, this would open SBB prefilled.
+                            setShowAssist(false);
+                          }}
+                        >
+                          <Wand2 className="h-4 w-4" />
+                          Open prefilled builder
+                        </Button>
+                        <div className="mt-2 text-xs text-slate-500">
+                          This path stays neutral (no persuasion after intent).
+                        </div>
+                      </>
+                    )}
                   </div>
                 ) : (
                   <div className="mt-3 space-y-2">
@@ -762,7 +844,22 @@ export default function ContextAssistSmartBuilderPage() {
                       </>
                     ) : (
                       <>
-                        {builderState !== "done" ? (
+                        {!hasSmartBuilder ? (
+                          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                            <div className="text-xs font-semibold text-slate-900">Smart Book Builder isn’t enabled</div>
+                            <div className="mt-1 text-xs text-slate-600">
+                              To automate draft assembly, ask your admin to enable Smart Book Builder.
+                            </div>
+                            <div className="mt-2 flex gap-2">
+                              <Button size="sm" className="w-full" onClick={() => setShowAssist(false)}>
+                                Request upgrade
+                              </Button>
+                              <Button size="sm" variant="outline" className="w-full" onClick={() => setShowAssist(false)}>
+                                Dismiss
+                              </Button>
+                            </div>
+                          </div>
+                        ) : builderState !== "done" ? (
                           <div className="flex items-center justify-end gap-2">
                             <Button
                               variant="outline"
