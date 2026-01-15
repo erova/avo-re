@@ -44,8 +44,6 @@ function toneForLevel(level: RiskLevel): "low" | "medium" | "high" {
   return "high";
 }
 
-type TrayTab = "Summary" | "Recommended" | "Draft to agent";
-
 export default function RiskManagerInSituPage() {
   // Table filters (wired to heatmap click)
   const [likelihood, setLikelihood] = useState<RiskLevel | null>(null);
@@ -56,7 +54,6 @@ export default function RiskManagerInSituPage() {
 
   // Right tray state
   const [trayOpen, setTrayOpen] = useState(false);
-  const [trayTab, setTrayTab] = useState<TrayTab>("Summary");
   const [trayContext, setTrayContext] = useState<ClusterContext | null>(null);
 
   // Stage 2: prompt + stubbed output (no backend)
@@ -105,25 +102,25 @@ export default function RiskManagerInSituPage() {
     );
 
     bullets.push(
-      "Next: filter the table to this cluster and identify 1–2 drivers + owners."
+      "Next: filter the table to this cluster, then pick 1–2 drivers + owners."
     );
 
     const suggestedActions = [
       {
-        label: "Escalate summary",
+        label: "Escalate to owner",
         detail: `Draft a short stakeholder note referencing ${cluster}.`,
       },
       {
-        label: "Add context note",
-        detail: "Capture why this is recurring so reviewers interpret it correctly.",
+        label: "Add reviewer note",
+        detail: "Capture context + hypotheses so the next review has continuity.",
       },
       {
         label: "Filter & triage",
         detail: "Filter table to this cluster, select risks, update workflow/owners.",
       },
       {
-        label: "Tune an agent",
-        detail: "Create a watch rule for early signals to avoid High/High.",
+        label: "Tune watch rule",
+        detail: "Create a watch to surface early warnings before High/High.",
       },
     ];
 
@@ -136,7 +133,6 @@ export default function RiskManagerInSituPage() {
 
   const runAgent = async () => {
     if (!trayContext) return;
-    setTrayTab("Draft to agent");
     setAgentRunning(true);
 
     // Simulated latency + deterministic output
@@ -147,7 +143,7 @@ export default function RiskManagerInSituPage() {
   };
 
   const draftPromptFor = (
-    kind: "escalate" | "note" | "triage" | "tune" | "macro"
+    kind: "escalate" | "note" | "triage" | "tune" | "macro" | "sendBoss"
   ) => {
     if (!trayContext) return;
 
@@ -156,6 +152,8 @@ export default function RiskManagerInSituPage() {
     const byKind: Record<typeof kind, string> = {
       escalate:
         "Draft a stakeholder-ready summary (<=120 words): what changed, why it matters, 1–2 drivers, next step.",
+      sendBoss:
+        "Draft a concise message to leadership: what pattern was detected, why it matters, what decision/support is needed.",
       note:
         "Draft an internal reviewer note: why this might be recurring, what to validate, and what context to capture.",
       triage:
@@ -166,7 +164,6 @@ export default function RiskManagerInSituPage() {
         "Recommend 3 macro slices (type, BU, region, owner) and the questions each answers.",
     };
 
-    setTrayTab("Draft to agent");
     setAgentPrompt(`${base}\n\n${byKind[kind]}`);
     setAgentDraftedAt(Date.now());
     setAgentResult(null);
@@ -175,14 +172,20 @@ export default function RiskManagerInSituPage() {
   const openTray = (ctx: ClusterContext) => {
     setTrayContext(ctx);
     setTrayOpen(true);
-    setTrayTab("Summary");
     setAgentRunning(false);
     setAgentResult(null);
 
-    const prompt = `Context: ${ctx.title} (${ctx.likelihood} likelihood / ${ctx.impact} impact, ${ctx.count} risks, Δ ${ctx.delta}).\n\nReview this cluster and propose:\n- top 3 drivers\n- what looks recurring vs newly emerging\n- next best actions (group + individual)\nReturn as a short checklist.`;
+    const prompt = `Context: ${ctx.title} (${ctx.likelihood} likelihood / ${ctx.impact} impact, ${ctx.count} risks, Δ ${ctx.delta}).\n\nReview this cluster and propose:\n- what stands out / why now\n- what looks recurring vs newly emerging\n- next best actions (group + individual)\nReturn as a short checklist.`;
 
     setAgentPrompt(prompt);
     setAgentDraftedAt(Date.now());
+  };
+
+  const closeTray = () => {
+    setTrayOpen(false);
+    setTrayContext(null);
+    setAgentRunning(false);
+    setAgentResult(null);
   };
 
   return (
@@ -219,7 +222,8 @@ export default function RiskManagerInSituPage() {
       </div>
 
       {/* Simulated product canvas (localized styles) */}
-      <div className={`${styles.rmSim} mt-10`}>
+      <div className={`${styles.rmSim} ${trayOpen ? styles.rmSimWithTray : ""} mt-10`}>
+        <div className={`${styles.simContent} ${trayOpen ? styles.simContentDimmed : ""}`}>
         {/* App top bar */}
         <div className={styles.topbar}>
           <div>
@@ -482,7 +486,18 @@ export default function RiskManagerInSituPage() {
           </div>
         </div>
 
-        {/* Right-side action tray */}
+        </div>
+
+        {trayOpen ? (
+          <button
+            type="button"
+            aria-label="Close guidance tray"
+            className={styles.trayBackdrop}
+            onClick={closeTray}
+          />
+        ) : null}
+
+        {/* Right-side guidance tray */}
         <div
           className={`${styles.actionTray} ${trayOpen ? styles.actionTrayOpen : ""}`}
           aria-hidden={!trayOpen}
@@ -495,261 +510,170 @@ export default function RiskManagerInSituPage() {
               <div className={styles.traySub}>
                 {trayContext
                   ? trayContext.subtitle
-                  : "Select a heatmap cell to see guidance."}
+                  : "Select a heatmap cell or platform signal to see guidance."}
               </div>
             </div>
             <button
               type="button"
               className={styles.trayClose}
-              onClick={() => setTrayOpen(false)}
+              onClick={closeTray}
               aria-label="Close panel"
             >
               ×
             </button>
           </div>
 
-          {/* Tabs */}
-          <div className={styles.trayTabs} role="tablist" aria-label="Guidance tabs">
-            {(["Summary", "Recommended", "Draft to agent"] as TrayTab[]).map((t) => (
-              <button
-                key={t}
-                type="button"
-                role="tab"
-                aria-selected={trayTab === t}
-                className={`${styles.trayTab} ${
-                  trayTab === t ? styles.trayTabActive : ""
-                }`}
-                onClick={() => setTrayTab(t)}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-
           <div className={styles.trayBody}>
-            {trayTab === "Summary" ? (
-              <div className={styles.traySection}>
-                <div className={styles.traySectionTitle}>Signals</div>
+            {/* Overview */}
+            <div className={styles.traySection}>
+              <div className={styles.traySectionTitle}>Overview</div>
+              {trayContext?.signals?.length ? (
                 <div className={styles.signalList}>
-                  {(trayContext?.signals?.length
-                    ? trayContext.signals
-                    : ["No signals available."]
-                  ).map((s) => (
+                  {trayContext.signals.map((s) => (
                     <div key={s} className={styles.signalRow}>
                       <span className={styles.signalIcon}>✦</span>
                       <span className={styles.signalText}>{s}</span>
                     </div>
                   ))}
                 </div>
+              ) : (
+                <div className={styles.trayMuted}>No signals available.</div>
+              )}
 
-                <div className={styles.traySectionTitle} style={{ marginTop: 14 }}>
-                  Quick context
-                </div>
-                <div className={styles.trayMuted}>
-                  This is a cluster view. Actions can be applied to the group (triage /
-                  assign / request updates) or to specific risks once filtered in the
-                  table.
-                </div>
+              <div className={styles.traySectionTitle} style={{ marginTop: 14 }}>
+                Quick context
               </div>
-            ) : null}
-
-            {trayTab === "Recommended" ? (
-              <div className={styles.traySection}>
-                <div className={styles.traySectionTitle}>
-                  Suggested next best actions
-                </div>
-
-                <div className={styles.actionList}>
-                  <button
-                    className={styles.actionRow}
-                    type="button"
-                    onClick={() => draftPromptFor("escalate")}
-                  >
-                    <span className={styles.actionIcon}>↗</span>
-                    <span className={styles.actionText}>
-                      Escalate summary to a stakeholder
-                      <span className={styles.actionSub}>
-                        Draft a short note with the key signals.
-                      </span>
-                    </span>
-                  </button>
-
-                  <button
-                    className={styles.actionRow}
-                    type="button"
-                    onClick={() => draftPromptFor("note")}
-                  >
-                    <span className={styles.actionIcon}>✎</span>
-                    <span className={styles.actionText}>
-                      Add notes for reviewers
-                      <span className={styles.actionSub}>
-                        Capture context that explains recurrence.
-                      </span>
-                    </span>
-                  </button>
-
-                  <button
-                    className={styles.actionRow}
-                    type="button"
-                    onClick={() => draftPromptFor("triage")}
-                  >
-                    <span className={styles.actionIcon}>⚡</span>
-                    <span className={styles.actionText}>
-                      Filter & triage
-                      <span className={styles.actionSub}>
-                        Filter the table, select risks, update workflow.
-                      </span>
-                    </span>
-                  </button>
-
-                  <button
-                    className={styles.actionRow}
-                    type="button"
-                    onClick={() => draftPromptFor("tune")}
-                  >
-                    <span className={styles.actionIcon}>⟲</span>
-                    <span className={styles.actionText}>
-                      Tune an agent
-                      <span className={styles.actionSub}>
-                        Reduce recurrence by monitoring drivers.
-                      </span>
-                    </span>
-                  </button>
-
-                  <button
-                    className={styles.actionRow}
-                    type="button"
-                    onClick={() => draftPromptFor("macro")}
-                  >
-                    <span className={styles.actionIcon}>⌂</span>
-                    <span className={styles.actionText}>
-                      See macro view
-                      <span className={styles.actionSub}>
-                        Recommend higher-altitude slices for this cluster.
-                      </span>
-                    </span>
-                  </button>
-                </div>
+              <div className={styles.trayMuted}>
+                This is a cluster/pattern view. Actions can be applied to the group (triage /
+                assign / request updates) or to specific risks once filtered in the table.
               </div>
-            ) : null}
-
-            {trayTab === "Draft to agent" ? (
-              <div className={styles.traySection}>
-                <div className={styles.traySectionTitle}>Agent draft</div>
-
-                {!trayContext ? (
-                  <div className={styles.trayMuted}>Select a heatmap cell first.</div>
-                ) : null}
-
-                {agentRunning ? <div className={styles.trayMuted}>Drafting…</div> : null}
-
-                {agentResult ? (
-                  <div className={styles.agentResultCard}>
-                    <div className={styles.agentResultTitle}>{agentResult.title}</div>
-
-                    <ul className={styles.agentBullets}>
-                      {agentResult.bullets.map((b) => (
-                        <li key={b}>{b}</li>
-                      ))}
-                    </ul>
-
-                    <div className={styles.agentResultSub}>Suggested actions</div>
-                    <div className={styles.agentActions}>
-                      {agentResult.suggestedActions.map((a) => (
-                        <button
-                          key={a.label}
-                          type="button"
-                          className={styles.agentActionChip}
-                          title={a.detail}
-                          onClick={() => {
-                            if (!trayContext) return;
-
-                            if (a.label === "Filter & triage") {
-                              applyCellFilters(trayContext.likelihood, trayContext.impact);
-                              setTrayTab("Recommended");
-                              return;
-                            }
-
-                            setTrayTab("Recommended");
-                          }}
-                        >
-                          {a.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className={styles.trayMuted} style={{ marginTop: 10 }}>
-                      Stage 2 is stubbed: prompt → drafted output → handoff back to actions.
-                    </div>
-                  </div>
-                ) : (
-                  <div className={styles.trayMuted}>
-                    Use the prompt composer below to draft guidance, then send it.
-                  </div>
-                )}
-              </div>
-            ) : null}
-          </div>
-
-          {/* Pinned composer footer (always visible) */}
-          <div className={styles.trayFooter}>
-          <div className={styles.trayFooterLabel}>
-  <span className={styles.traySparkleIcon} aria-hidden>
-    ✨
-  </span>
-  Ask Diligent AI what to do next
-</div>
-            
-
-            <div className={styles.trayComposer}>
-            <textarea
-  className={styles.trayComposerInput}
-  value={agentPrompt}
-  onChange={(e) => {
-    setAgentPrompt(e.target.value);
-    setAgentDraftedAt(Date.now());
-    setAgentResult(null);
-  }}
-  rows={4}
-  style={{ minHeight: 96 }}
-  placeholder={
-    trayContext
-      ? `Ask about ${trayContext.title.toLowerCase()}…`
-      : "Select a heatmap cell to start…"
-  }
-  disabled={!trayContext}
-/>
-
-              <button
-                type="button"
-                className={styles.traySendBtn}
-                onClick={runAgent}
-                disabled={!trayContext || agentRunning || !agentPrompt.trim()}
-                aria-label="Send"
-              >
-                {agentRunning ? "…" : "Send"}
-              </button>
             </div>
 
-            <div className={styles.trayFooterMeta}>
-              {agentDraftedAt ? (
-                <>Prompt updated just now</>
-              ) : (
-                <>Prompt ready</>
-              )}
+            {/* Next best actions */}
+            <div className={styles.traySection}>
+              <div className={styles.traySectionTitle}>Next best actions</div>
+
+              <div className={styles.actionList}>
+                <button
+                  className={styles.actionRow}
+                  type="button"
+                  onClick={() => draftPromptFor("sendBoss")}
+                  disabled={!trayContext}
+                >
+                  <span className={styles.actionIcon}>↗</span>
+                  <span className={styles.actionText}>
+                    Send to decision-maker
+                    <span className={styles.actionSub}>
+                      Draft a concise note to your consistent stakeholder.
+                    </span>
+                  </span>
+                </button>
+
+                <button
+                  className={styles.actionRow}
+                  type="button"
+                  onClick={() => draftPromptFor("triage")}
+                  disabled={!trayContext}
+                >
+                  <span className={styles.actionIcon}>⚡</span>
+                  <span className={styles.actionText}>
+                    Filter & triage
+                    <span className={styles.actionSub}>
+                      Jump to the table and work owners/workflow.
+                    </span>
+                  </span>
+                </button>
+
+                <button
+                  className={styles.actionRow}
+                  type="button"
+                  onClick={() => draftPromptFor("note")}
+                  disabled={!trayContext}
+                >
+                  <span className={styles.actionIcon}>✎</span>
+                  <span className={styles.actionText}>
+                    Add reviewer note
+                    <span className={styles.actionSub}>
+                      Capture context so the next review has continuity.
+                    </span>
+                  </span>
+                </button>
+
+                <button
+                  className={styles.actionRow}
+                  type="button"
+                  onClick={() => draftPromptFor("tune")}
+                  disabled={!trayContext}
+                >
+                  <span className={styles.actionIcon}>⟲</span>
+                  <span className={styles.actionText}>
+                    Tune watch rule
+                    <span className={styles.actionSub}>
+                      Reduce recurrence before it becomes High/High.
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Prompt Diligent AI */}
+            <div className={styles.traySection}>
+              <div className={styles.trayFooterLabel}>
+                <span className={styles.traySparkleIcon} aria-hidden>
+                  ✨
+                </span>
+                Prompt Diligent AI
+              </div>
+
+              <div className={styles.trayComposer}>
+                <textarea
+                  className={styles.trayComposerInput}
+                  value={agentPrompt}
+                  onChange={(e) => {
+                    setAgentPrompt(e.target.value);
+                    setAgentDraftedAt(Date.now());
+                    setAgentResult(null);
+                  }}
+                  rows={6}
+                  style={{ minHeight: 140 }}
+                  placeholder={
+                    trayContext
+                      ? `Ask about ${trayContext.title.toLowerCase()}…`
+                      : "Select a heatmap cell or signal to start…"
+                  }
+                  disabled={!trayContext}
+                />
+
+                <button
+                  type="button"
+                  className={styles.traySendBtn}
+                  onClick={runAgent}
+                  disabled={!trayContext || agentRunning || !agentPrompt.trim()}
+                  aria-label="Send"
+                >
+                  {agentRunning ? "…" : "Send"}
+                </button>
+              </div>
+
+              <div className={styles.trayFooterMeta}>
+                {agentDraftedAt ? <>Prompt updated just now</> : <>Prompt ready</>}
+              </div>
+
+              {agentResult ? (
+                <div className={styles.agentResultCard}>
+                  <div className={styles.agentResultTitle}>{agentResult.title}</div>
+
+                  <ul className={styles.agentBullets}>
+                    {agentResult.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
 
-        {/* Click-to-close backdrop */}
-        {trayOpen ? (
-          <button
-            type="button"
-            className={styles.trayBackdrop}
-            onClick={() => setTrayOpen(false)}
-            aria-label="Close overlay"
-          />
-        ) : null}
       </div>
     </section>
   );
