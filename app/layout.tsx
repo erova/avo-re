@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { AmbientBackground } from "@/components/AmbientBackground";
+import { ContextNav } from "@/components/contextNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,45 +39,47 @@ export default function RootLayout({
         <AmbientBackground />
         <div className="min-h-screen flex flex-col">
           <header className="sticky top-0 z-50 border-b border-neutral-800/60 bg-neutral-950/60 backdrop-blur">
-            <div className="mx-auto max-w-6xl px-6 py-4 grid grid-cols-[auto_1fr] items-center">
-              <a
-                href="/"
-                className="text-sm tracking-tight font-medium hover:opacity-70 transition"
-              >
-                avo.re
-              </a>
+            <ContextNav>
+              <div className="mx-auto max-w-6xl px-6 py-4 grid grid-cols-[auto_1fr] items-center">
+                <a
+                  href="/"
+                  className="text-sm tracking-tight font-medium hover:opacity-70 transition"
+                >
+                  avo.re
+                </a>
 
-              <nav className="flex justify-end gap-6 text-sm text-neutral-400">
-                <a
-                  data-nav
-                  href="/work"
-                  className="hover:text-neutral-100 transition hover:underline underline-offset-4"
-                >
-                  Work
-                </a>
-                <a
-                  data-nav
-                  href="/writing"
-                  className="hover:text-neutral-100 transition hover:underline underline-offset-4"
-                >
-                  Writing
-                </a>
-                <a
-                  data-nav
-                  href="/now"
-                  className="hover:text-neutral-100 transition hover:underline underline-offset-4"
-                >
-                  Now
-                </a>
-                <a
-                  data-nav
-                  href="/about"
-                  className="hover:text-neutral-100 transition hover:underline underline-offset-4"
-                >
-                  About
-                </a>
-              </nav>
-            </div>
+                <nav className="flex justify-end gap-6 text-sm text-neutral-400">
+                  <a
+                    data-nav
+                    href="/work"
+                    className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                  >
+                    Work
+                  </a>
+                  <a
+                    data-nav
+                    href="/writing"
+                    className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                  >
+                    Writing
+                  </a>
+                  <a
+                    data-nav
+                    href="/now"
+                    className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                  >
+                    Now
+                  </a>
+                  <a
+                    data-nav
+                    href="/about"
+                    className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                  >
+                    About
+                  </a>
+                </nav>
+              </div>
+            </ContextNav>
           </header>
 
           <Script id="active-nav" strategy="afterInteractive">
@@ -126,7 +129,7 @@ export default function RootLayout({
                   target="_blank"
                   rel="noreferrer"
                 >
-                 erova.com
+                  erova.com
                 </a>
               </div>
             </div>
