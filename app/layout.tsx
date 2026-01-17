@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { ContextNav } from "@/components/contextNav";
+import { NavLink } from "@/components/NavLink";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,69 +40,84 @@ export default function RootLayout({
         <AmbientBackground />
         <div className="min-h-screen flex flex-col">
           <header className="sticky top-0 z-50 border-b border-neutral-800/60 bg-neutral-950/60 backdrop-blur">
-            <ContextNav>
-              <div className="mx-auto max-w-6xl px-6 py-4 grid grid-cols-[auto_1fr] items-center">
-                <a
-                  href="/"
-                  className="text-sm tracking-tight font-medium hover:opacity-70 transition"
-                >
-                  avo.re
-                </a>
+            <Suspense
+              fallback={
+                <div className="mx-auto max-w-6xl px-6 py-4 grid grid-cols-[auto_1fr] items-center">
+                  <a
+                    href="/"
+                    className="text-sm tracking-tight font-medium hover:opacity-70 transition"
+                  >
+                    avo.re
+                  </a>
 
-                <nav className="flex justify-end gap-6 text-sm text-neutral-400">
+                  <nav className="flex justify-end gap-6 text-sm text-neutral-400">
+                    <NavLink
+                      href="/work"
+                      className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                    >
+                      Work
+                    </NavLink>
+                    <NavLink
+                      href="/writing"
+                      className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                    >
+                      Writing
+                    </NavLink>
+                    <NavLink
+                      href="/now"
+                      className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                    >
+                      Now
+                    </NavLink>
+                    <NavLink
+                      href="/about"
+                      className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                    >
+                      About
+                    </NavLink>
+                  </nav>
+                </div>
+              }
+            >
+              <ContextNav>
+                <div className="mx-auto max-w-6xl px-6 py-4 grid grid-cols-[auto_1fr] items-center">
                   <a
-                    data-nav
-                    href="/work"
-                    className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                    href="/"
+                    className="text-sm tracking-tight font-medium hover:opacity-70 transition"
                   >
-                    Work
+                    avo.re
                   </a>
-                  <a
-                    data-nav
-                    href="/writing"
-                    className="hover:text-neutral-100 transition hover:underline underline-offset-4"
-                  >
-                    Writing
-                  </a>
-                  <a
-                    data-nav
-                    href="/now"
-                    className="hover:text-neutral-100 transition hover:underline underline-offset-4"
-                  >
-                    Now
-                  </a>
-                  <a
-                    data-nav
-                    href="/about"
-                    className="hover:text-neutral-100 transition hover:underline underline-offset-4"
-                  >
-                    About
-                  </a>
-                </nav>
-              </div>
-            </ContextNav>
+
+                  <nav className="flex justify-end gap-6 text-sm text-neutral-400">
+                    <NavLink
+                      href="/work"
+                      className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                    >
+                      Work
+                    </NavLink>
+                    <NavLink
+                      href="/writing"
+                      className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                    >
+                      Writing
+                    </NavLink>
+                    <NavLink
+                      href="/now"
+                      className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                    >
+                      Now
+                    </NavLink>
+                    <NavLink
+                      href="/about"
+                      className="hover:text-neutral-100 transition hover:underline underline-offset-4"
+                    >
+                      About
+                    </NavLink>
+                  </nav>
+                </div>
+              </ContextNav>
+            </Suspense>
           </header>
-
-          <Script id="active-nav" strategy="afterInteractive">
-            {`
-              (function () {
-                try {
-                  var path = window.location.pathname || '/';
-                  var links = document.querySelectorAll('header a[data-nav]');
-                  links.forEach(function (a) {
-                    var href = a.getAttribute('href') || '';
-                    if (!href.startsWith('/')) return;
-                    var isActive = path === href || (href !== '/' && path.startsWith(href + '/'));
-                    if (isActive) {
-                      a.classList.add('text-neutral-100', 'underline');
-                      a.classList.remove('text-neutral-400');
-                      a.setAttribute('aria-current', 'page');
-                    }
-                  });
-                } catch (e) {}
-              })();
-            `}
-          </Script>
 
           <main className="flex-1">{children}</main>
 
