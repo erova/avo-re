@@ -41,6 +41,19 @@ function PrototypeNav() {
             Security Incident
           </a>
           <a
+            href="/now/agentic-hero/security-tambo"
+            className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-medium text-purple-700 hover:bg-purple-100"
+          >
+            Tambo
+          </a>
+          <a
+            href="/now/agentic-hero/security-jsonrender"
+            className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+          >
+            JSON Render
+          </a>
+          <span className="text-slate-300">|</span>
+          <a
             href="/now/agentic-hero/whistleblower?context=diligent"
             className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
           >
