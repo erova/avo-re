@@ -416,6 +416,7 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
             component: renderedComponent,
           },
         ]);
+        setLoading(false);
       } catch (err) {
         console.error("Tambo error:", err);
         setMessages((prev) => [
