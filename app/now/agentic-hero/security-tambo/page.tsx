@@ -188,21 +188,21 @@ const tamboComponents = [
   {
     name: "IncidentCard",
     description:
-      "Displays a security incident with urgency level, details, and progress tracking",
+      "ALWAYS use this component when the user asks about incident status, incident details, or asks to 'show an incident card'. Displays a security incident with ID, title, urgency level (high/medium/low), details, and progress. Required props: id (string like 'INC-2847'), title (string), urgency ('high', 'medium', or 'low'), detail (description string), completedSteps (number), totalSteps (number).",
     component: IncidentCard,
     propsSchema: incidentCardSchema,
   },
   {
     name: "ActionCard",
     description:
-      "A decision card requiring human approval (e.g., escalate to board, notify regulator)",
+      "ALWAYS use this component when the user asks about actions, decisions, approvals, or next steps. Shows a decision card with title, description, and action button. Required props: id (string), title (string), description (string), actionLabel (button text), hint (optional helper text).",
     component: ActionCard,
     propsSchema: actionCardSchema,
   },
   {
     name: "ReceiptStep",
     description:
-      "A single step in the incident response timeline showing status and actor",
+      "ALWAYS use this component when the user asks about timeline, steps, or progress. Shows a single step with status icon, title, detail, timestamp, and actor. Required props: id (string), status ('done', 'pending', or 'in_progress'), title (string), detail (string), time (timestamp string), actor ('Agent' or 'Human').",
     component: ReceiptStep,
     propsSchema: receiptStepSchema,
   },
