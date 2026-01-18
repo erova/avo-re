@@ -1062,10 +1062,14 @@ function SecurityTamboContent({ hasTamboProvider = true }: { hasTamboProvider?: 
 // ============================================================================
 
 export default function SecurityTamboPage() {
+  // Try multiple ways to access the env var
   const apiKey = process.env.NEXT_PUBLIC_TAMBO_API_KEY;
+  const apiKeyDirect = process.env["NEXT_PUBLIC_TAMBO_API_KEY"];
   
-  // Debug: log whether API key is present (not the actual key)
-  console.log("[Tambo] API key present:", !!apiKey, "length:", apiKey?.length);
+  // Debug: log all attempts
+  console.log("[Tambo] Direct access:", !!apiKey, apiKey?.length);
+  console.log("[Tambo] Bracket access:", !!apiKeyDirect, apiKeyDirect?.length);
+  console.log("[Tambo] All NEXT_PUBLIC keys:", Object.keys(process.env).filter(k => k.startsWith("NEXT_PUBLIC")));
   
   // If no API key, render without TamboProvider (demo mode only)
   if (!apiKey) {
