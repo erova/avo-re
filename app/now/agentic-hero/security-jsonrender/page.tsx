@@ -833,6 +833,7 @@ export default function SecurityJsonRenderPage() {
         </div>
       </div>
       </div>
+      </div>
 
       {/* Board Escalation Modal */}
       {showBoardEscalation && (

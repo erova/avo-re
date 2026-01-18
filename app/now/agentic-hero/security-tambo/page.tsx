@@ -844,6 +844,7 @@ function SecurityTamboContent({ hasTamboProvider = true }: { hasTamboProvider?: 
         </div>
       </div>
       </div>
+      </div>
 
       {/* Board Escalation Modal */}
       {showBoardEscalation && (
