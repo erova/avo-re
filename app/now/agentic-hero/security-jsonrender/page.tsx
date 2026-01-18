@@ -695,7 +695,7 @@ export default function SecurityJsonRenderPage() {
       </div>
 
       {/* Wireframe surface container */}
-      <div className="mx-auto mt-6 w-full max-w-[1200px] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm relative px-1">
+      <div className="mx-auto mt-6 w-full max-w-6xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm relative px-1">
         {/* Diligent chrome */}
         <div className="border-b border-slate-200 bg-white">
           <div className="flex items-center justify-between px-6 py-3">

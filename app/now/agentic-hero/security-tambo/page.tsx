@@ -205,14 +205,8 @@ function TamboChatInput() {
   const [demoMode, setDemoMode] = useState(true);
   
   // Tambo hooks for live mode
-  let tamboThreadInput: any = null;
-  let tamboThread: any = null;
-  try {
-    tamboThreadInput = useTamboThreadInput();
-    tamboThread = useTamboThread();
-  } catch (e) {
-    // Tambo not initialized
-  }
+  const tamboThreadInput = useTamboThreadInput();
+  const tamboThread = useTamboThread();
 
   // Demo responses that render actual components
   const getDemoResponse = (query: string): { content: string; component?: React.ReactNode } => {
@@ -339,39 +333,57 @@ function TamboChatInput() {
       }, 800);
     } else {
       // Live mode: use Tambo
-      if (tamboThreadInput?.setInput && tamboThreadInput?.submit) {
-        try {
-          tamboThreadInput.setInput(messageText);
-          await tamboThreadInput.submit();
-          // Check for response in thread
-          const threadMessages = tamboThread?.thread?.messages;
-          if (threadMessages?.length > 0) {
-            const lastMsg = threadMessages[threadMessages.length - 1];
+      try {
+        // Set the input value and submit
+        tamboThreadInput.setValue(messageText);
+        await tamboThreadInput.submit();
+        
+        // Get the latest message from the thread
+        const threadMessages = tamboThread?.thread?.messages;
+        if (threadMessages && threadMessages.length > 0) {
+          const lastMsg = threadMessages[threadMessages.length - 1];
+          if (lastMsg.role === "assistant") {
             setMessages((prev) => [
               ...prev,
               {
                 role: "assistant",
-                content: lastMsg.content || "Response received from Tambo.",
+                content: typeof lastMsg.content === "string" 
+                  ? lastMsg.content 
+                  : "Response received from Tambo.",
                 component: lastMsg.renderedComponent,
               },
             ]);
           }
-        } catch (err) {
-          console.error("Tambo error:", err);
-          setMessages((prev) => [
-            ...prev,
-            {
-              role: "assistant",
-              content: "Error connecting to Tambo. Please check your API key or try demo mode.",
-            },
-          ]);
+        } else {
+          // No messages yet, wait a moment and check again
+          setTimeout(() => {
+            const msgs = tamboThread?.thread?.messages;
+            if (msgs && msgs.length > 0) {
+              const lastMsg = msgs[msgs.length - 1];
+              if (lastMsg.role === "assistant") {
+                setMessages((prev) => [
+                  ...prev,
+                  {
+                    role: "assistant",
+                    content: typeof lastMsg.content === "string" 
+                      ? lastMsg.content 
+                      : "Response received.",
+                    component: lastMsg.renderedComponent,
+                  },
+                ]);
+              }
+            }
+            setLoading(false);
+          }, 2000);
+          return;
         }
-      } else {
+      } catch (err) {
+        console.error("Tambo error:", err);
         setMessages((prev) => [
           ...prev,
           {
             role: "assistant",
-            content: "Tambo is not fully initialized. Try switching to demo mode.",
+            content: `Error connecting to Tambo: ${err instanceof Error ? err.message : "Unknown error"}. Try demo mode.`,
           },
         ]);
       }
@@ -566,7 +578,7 @@ function SecurityTamboContent() {
       </div>
 
       {/* Wireframe surface container */}
-      <div className="mx-auto mt-6 w-full max-w-[1200px] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm relative px-1">
+      <div className="mx-auto mt-6 w-full max-w-6xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm relative px-1">
         {/* Diligent chrome */}
         <div className="border-b border-slate-200 bg-white">
           <div className="flex items-center justify-between px-6 py-3">

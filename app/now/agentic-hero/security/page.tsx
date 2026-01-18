@@ -469,7 +469,7 @@ export default function Page() {
         <PrototypeNav />
       </div>
       {/* Prototype controls (outside the wireframe surface) */}
-      <div className="mx-auto w-full max-w-[1200px] px-1">
+      <div className="mx-auto w-full max-w-6xl px-1">
         <div className="mb-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-slate-700 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="min-w-0">
@@ -515,10 +515,10 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className="mx-auto w-full max-w-[1200px] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm relative">
+      <div className="mx-auto w-full max-w-6xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm relative">
         {/* Top chrome */}
         <div className="border-b border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-3">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-md bg-slate-900" />
@@ -548,7 +548,7 @@ export default function Page() {
 
         {/* Hero area */}
         <div className="bg-gradient-to-b from-slate-50 to-white">
-          <div className="mx-auto max-w-[1200px] px-6 py-10">
+          <div className="mx-auto max-w-6xl px-6 py-10">
             <h1 className="text-center text-4xl font-semibold tracking-tight text-slate-800">
               {headline}
             </h1>
