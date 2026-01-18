@@ -388,17 +388,32 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
           textContent = (content as any).text;
         }
         
-        // Get component from response
-        const component = (response as any)?.component || (response as any)?.renderedComponent;
+        // Get component from response - Tambo returns metadata, not a React element
+        const componentData = (response as any)?.component;
         console.log("[Tambo] Text content:", textContent);
-        console.log("[Tambo] Component:", component);
+        console.log("[Tambo] Component data:", componentData);
+        
+        // Try to render a component if Tambo specified one
+        let renderedComponent: React.ReactNode = null;
+        if (componentData?.componentName && componentData?.props) {
+          // Map component name to our registered components
+          const componentMap: Record<string, React.FC<any>> = {
+            IncidentCard,
+            ActionCard,
+            ReceiptStep,
+          };
+          const Component = componentMap[componentData.componentName];
+          if (Component) {
+            renderedComponent = <Component {...componentData.props} />;
+          }
+        }
         
         setMessages((prev) => [
           ...prev,
           {
             role: "assistant",
             content: textContent || "Tambo responded.",
-            component,
+            component: renderedComponent,
           },
         ]);
       } catch (err) {
