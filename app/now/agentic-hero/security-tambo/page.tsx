@@ -370,7 +370,7 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
         
         // Extract text content from response
         let textContent = "";
-        const content = response?.content;
+        const content = (response as any)?.content;
         
         if (typeof content === "string") {
           textContent = content;
@@ -384,8 +384,8 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
             })
             .filter(Boolean)
             .join("\n");
-        } else if (content?.text) {
-          textContent = content.text;
+        } else if (content && typeof content === "object" && "text" in content) {
+          textContent = (content as any).text;
         }
         
         // Get component from response
