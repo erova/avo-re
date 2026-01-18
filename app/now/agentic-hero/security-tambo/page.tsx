@@ -29,30 +29,30 @@ import { TamboProvider, useTamboThread, useTamboThreadInput } from "@tambo-ai/re
 // ============================================================================
 
 const incidentCardSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  urgency: z.enum(["high", "medium", "low"]),
-  detail: z.string(),
-  timeAgo: z.string(),
-  completedSteps: z.number(),
-  totalSteps: z.number(),
+  id: z.string().optional().default("INC-0000"),
+  title: z.string().optional().default("Incident"),
+  urgency: z.enum(["high", "medium", "low"]).optional().default("medium"),
+  detail: z.string().optional().default(""),
+  timeAgo: z.string().optional().default(""),
+  completedSteps: z.number().optional().default(0),
+  totalSteps: z.number().optional().default(1),
 });
 
 const actionCardSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string(),
-  actionLabel: z.string(),
+  id: z.string().optional().default("action-0"),
+  title: z.string().optional().default("Action"),
+  description: z.string().optional().default(""),
+  actionLabel: z.string().optional().default("Take Action"),
   hint: z.string().optional(),
 });
 
 const receiptStepSchema = z.object({
-  id: z.string(),
-  status: z.enum(["done", "pending", "in_progress"]),
-  title: z.string(),
-  detail: z.string(),
-  time: z.string(),
-  actor: z.enum(["Agent", "Human"]),
+  id: z.string().optional().default("step-0"),
+  status: z.enum(["done", "pending", "in_progress"]).optional().default("pending"),
+  title: z.string().optional().default("Step"),
+  detail: z.string().optional().default(""),
+  time: z.string().optional().default(""),
+  actor: z.enum(["Agent", "Human"]).optional().default("Agent"),
 });
 
 // ============================================================================
@@ -1062,14 +1062,7 @@ function SecurityTamboContent({ hasTamboProvider = true }: { hasTamboProvider?: 
 // ============================================================================
 
 export default function SecurityTamboPage() {
-  // Try multiple ways to access the env var
   const apiKey = process.env.NEXT_PUBLIC_TAMBO_API_KEY;
-  const apiKeyDirect = process.env["NEXT_PUBLIC_TAMBO_API_KEY"];
-  
-  // Debug: log all attempts
-  console.log("[Tambo] Direct access:", !!apiKey, apiKey?.length);
-  console.log("[Tambo] Bracket access:", !!apiKeyDirect, apiKeyDirect?.length);
-  console.log("[Tambo] All NEXT_PUBLIC keys:", Object.keys(process.env).filter(k => k.startsWith("NEXT_PUBLIC")));
   
   // If no API key, render without TamboProvider (demo mode only)
   if (!apiKey) {
