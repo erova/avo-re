@@ -1,0 +1,921 @@
+"use client";
+
+/**
+ * Security Incident — Tambo Variation
+ * 
+ * This version uses the Tambo generative UI SDK (@tambo-ai/react) to power
+ * the security incident use case. Tambo allows you to:
+ * 
+ * 1. Register React components with Zod schemas
+ * 2. Let an LLM dynamically decide which components to render
+ * 3. Stream AI-generated content and props in real-time
+ * 4. Manage message threads and component state
+ * 
+ * Key Tambo concepts used here:
+ * - TamboProvider: Wraps the app with API key and registered components
+ * - useTamboThread: Access message thread state
+ * - useTamboThreadInput: Handle user input and submission
+ * - useTamboComponentState: Manage stateful components
+ * 
+ * @see https://docs.tambo.co for full documentation
+ */
+
+import React, { useState } from "react";
+import { z } from "zod";
+import { TamboProvider, useTamboThread, useTamboThreadInput } from "@tambo-ai/react";
+
+// ============================================================================
+// COMPONENT SCHEMAS (Zod definitions for Tambo registration)
+// ============================================================================
+
+const incidentCardSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  urgency: z.enum(["high", "medium", "low"]),
+  detail: z.string(),
+  timeAgo: z.string(),
+  completedSteps: z.number(),
+  totalSteps: z.number(),
+});
+
+const actionCardSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  actionLabel: z.string(),
+  hint: z.string().optional(),
+});
+
+const receiptStepSchema = z.object({
+  id: z.string(),
+  status: z.enum(["done", "pending", "in_progress"]),
+  title: z.string(),
+  detail: z.string(),
+  time: z.string(),
+  actor: z.enum(["Agent", "Human"]),
+});
+
+// ============================================================================
+// TAMBO-REGISTERED COMPONENTS
+// ============================================================================
+
+function IncidentCard({
+  id,
+  title,
+  urgency,
+  detail,
+  completedSteps,
+  totalSteps,
+}: z.infer<typeof incidentCardSchema>) {
+  const urgencyColors = {
+    high: "bg-red-100 text-red-800 border-red-200",
+    medium: "bg-amber-100 text-amber-800 border-amber-200",
+    low: "bg-slate-100 text-slate-700 border-slate-200",
+  };
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <span className="text-base font-semibold text-slate-900">
+          {id}: {title}
+        </span>
+        <span
+          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs ${urgencyColors[urgency]}`}
+        >
+          <span className="inline-block h-2 w-2 rounded-full bg-current" />
+          {urgency.charAt(0).toUpperCase() + urgency.slice(1)} urgency
+        </span>
+      </div>
+      <p className="mt-2 text-sm text-slate-600">{detail}</p>
+      <div className="mt-4 flex items-center gap-3 text-xs text-slate-500">
+        <span>
+          Progress: {completedSteps} of {totalSteps} steps
+        </span>
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="h-full rounded-full bg-slate-700 transition-all"
+            style={{ width: `${(completedSteps / totalSteps) * 100}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ActionCard({
+  title,
+  description,
+  actionLabel,
+  hint,
+  onClick,
+}: z.infer<typeof actionCardSchema> & { onClick?: () => void }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+      <div className="text-sm font-medium text-slate-800">{title}</div>
+      <p className="mt-1 text-sm text-slate-600">{description}</p>
+      <div className="mt-3 flex items-center gap-2">
+        <button
+          onClick={onClick}
+          className="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800"
+        >
+          {actionLabel}
+        </button>
+        {hint && <span className="text-xs text-slate-500">{hint}</span>}
+      </div>
+    </div>
+  );
+}
+
+function ReceiptStep({
+  status,
+  title,
+  detail,
+  time,
+  actor,
+}: z.infer<typeof receiptStepSchema>) {
+  const statusIcons = {
+    done: "✓",
+    pending: "○",
+    in_progress: "◐",
+  };
+
+  return (
+    <div className="flex gap-3 py-2">
+      <span
+        className={`flex h-6 w-6 items-center justify-center rounded-full text-xs ${
+          status === "done"
+            ? "bg-green-100 text-green-700"
+            : status === "in_progress"
+            ? "bg-blue-100 text-blue-700"
+            : "bg-slate-100 text-slate-500"
+        }`}
+      >
+        {statusIcons[status]}
+      </span>
+      <div className="flex-1">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-slate-800">{title}</span>
+          <span className="text-xs text-slate-500">{time}</span>
+        </div>
+        <p className="mt-0.5 text-xs text-slate-600">{detail}</p>
+        <span className="mt-1 inline-block rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-600">
+          {actor}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// TAMBO COMPONENT REGISTRY
+// ============================================================================
+
+const tamboComponents = [
+  {
+    name: "IncidentCard",
+    description:
+      "Displays a security incident with urgency level, details, and progress tracking",
+    component: IncidentCard,
+    propsSchema: incidentCardSchema,
+  },
+  {
+    name: "ActionCard",
+    description:
+      "A decision card requiring human approval (e.g., escalate to board, notify regulator)",
+    component: ActionCard,
+    propsSchema: actionCardSchema,
+  },
+  {
+    name: "ReceiptStep",
+    description:
+      "A single step in the incident response timeline showing status and actor",
+    component: ReceiptStep,
+    propsSchema: receiptStepSchema,
+  },
+];
+
+// ============================================================================
+// CHAT INPUT COMPONENT (uses Tambo hooks)
+// ============================================================================
+
+function TamboChatInput() {
+  const [localInput, setLocalInput] = useState("");
+  const [messages, setMessages] = useState<Array<{ role: string; content: string; component?: React.ReactNode }>>([]);
+  const [loading, setLoading] = useState(false);
+  const [demoMode, setDemoMode] = useState(true);
+  
+  // Tambo hooks for live mode
+  let tamboThreadInput: any = null;
+  let tamboThread: any = null;
+  try {
+    tamboThreadInput = useTamboThreadInput();
+    tamboThread = useTamboThread();
+  } catch (e) {
+    // Tambo not initialized
+  }
+
+  // Demo responses that render actual components
+  const getDemoResponse = (query: string): { content: string; component?: React.ReactNode } => {
+    const q = query.toLowerCase();
+    
+    if (q.includes("status") || q.includes("incident") || q.includes("details")) {
+      return {
+        content: "Here's the current incident status:",
+        component: (
+          <IncidentCard
+            id="INC-2847"
+            title="Security Incident — CloudStorage Solutions"
+            urgency="high"
+            detail="Unusual access pattern detected across third-party integration. Evidence preserved, Legal and Security notified."
+            timeAgo="3 hours ago"
+            completedSteps={5}
+            totalSteps={8}
+          />
+        ),
+      };
+    }
+    
+    if (q.includes("decision") || q.includes("approval") || q.includes("action") || q.includes("need")) {
+      return {
+        content: "Here are the pending decisions that need your approval:",
+        component: (
+          <div className="space-y-3 mt-2">
+            <ActionCard
+              id="action-1"
+              title="Escalate to Board"
+              description="Prepare a Board-ready summary with recommended next steps."
+              actionLabel="Prepare Escalation"
+              hint="GC will be included"
+            />
+            <ActionCard
+              id="action-2"
+              title="Notify Regulator"
+              description="Draft regulatory notification based on current findings."
+              actionLabel="Review Draft"
+              hint="Nothing sent without approval"
+            />
+          </div>
+        ),
+      };
+    }
+    
+    if (q.includes("timeline") || q.includes("steps") || q.includes("done") || q.includes("completed")) {
+      return {
+        content: "Here's the response timeline so far:",
+        component: (
+          <div className="divide-y divide-slate-100 rounded-lg border border-slate-200 bg-white p-3 mt-2">
+            <ReceiptStep
+              id="step-1"
+              status="done"
+              title="Created incident record"
+              detail="Logged INC-2847 and linked to CloudStorage Solutions."
+              time="09:14 ET"
+              actor="Agent"
+            />
+            <ReceiptStep
+              id="step-2"
+              status="done"
+              title="Preserved evidence"
+              detail="Snapshot logs, audit trail secured."
+              time="09:33 ET"
+              actor="Agent"
+            />
+            <ReceiptStep
+              id="step-3"
+              status="pending"
+              title="Board escalation"
+              detail="Awaiting your approval."
+              time="Pending"
+              actor="Human"
+            />
+          </div>
+        ),
+      };
+    }
+    
+    if (q.includes("owner") || q.includes("assign")) {
+      return {
+        content: "I recommend assigning an incident owner:",
+        component: (
+          <ActionCard
+            id="action-owner"
+            title="Assign Incident Owner"
+            description="Suggested: Priya Shah (Security) based on expertise and availability."
+            actionLabel="Assign Priya"
+            hint="Or choose someone else"
+          />
+        ),
+      };
+    }
+    
+    // Default response
+    return {
+      content: `I understand you're asking about "${query}". Try asking about:\n• "What's the incident status?"\n• "What decisions need approval?"\n• "Show me the timeline"\n• "Who should I assign as owner?"`,
+    };
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const messageText = localInput.trim();
+    if (!messageText || loading) return;
+
+    setMessages((prev) => [...prev, { role: "user", content: messageText }]);
+    setLocalInput("");
+    setLoading(true);
+
+    if (demoMode) {
+      // Demo mode: simulate AI response
+      setTimeout(() => {
+        const response = getDemoResponse(messageText);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: response.content,
+            component: response.component,
+          },
+        ]);
+        setLoading(false);
+      }, 800);
+    } else {
+      // Live mode: use Tambo
+      if (tamboThreadInput?.setInput && tamboThreadInput?.submit) {
+        try {
+          tamboThreadInput.setInput(messageText);
+          await tamboThreadInput.submit();
+          // Check for response in thread
+          const threadMessages = tamboThread?.thread?.messages;
+          if (threadMessages?.length > 0) {
+            const lastMsg = threadMessages[threadMessages.length - 1];
+            setMessages((prev) => [
+              ...prev,
+              {
+                role: "assistant",
+                content: lastMsg.content || "Response received from Tambo.",
+                component: lastMsg.renderedComponent,
+              },
+            ]);
+          }
+        } catch (err) {
+          console.error("Tambo error:", err);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: "Error connecting to Tambo. Please check your API key or try demo mode.",
+            },
+          ]);
+        }
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Tambo is not fully initialized. Try switching to demo mode.",
+          },
+        ]);
+      }
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4">
+      <div className="flex items-center justify-between">
+        <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+          Ask the Diligent Agent
+        </div>
+        <button
+          onClick={() => setDemoMode(!demoMode)}
+          className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-medium transition ${
+            demoMode
+              ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
+              : "bg-green-100 text-green-700 hover:bg-green-200"
+          }`}
+        >
+          <span className={`h-2 w-2 rounded-full ${demoMode ? "bg-purple-500" : "bg-green-500"}`} />
+          {demoMode ? "Demo" : "Live"}
+        </button>
+      </div>
+      
+      {/* Message history */}
+      {messages.length > 0 && (
+        <div className="mt-3 max-h-[50vh] overflow-y-auto space-y-3 border-b border-slate-100 pb-3 mb-3">
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`rounded-lg p-3 text-sm ${
+                msg.role === "user"
+                  ? "bg-slate-100 text-slate-800 ml-8"
+                  : "bg-blue-50 text-blue-900 mr-8"
+              }`}
+            >
+              <div className="text-xs font-medium mb-1 opacity-60">
+                {msg.role === "user" ? "You" : "Diligent Agent"}
+              </div>
+              <div className="whitespace-pre-wrap">{msg.content}</div>
+              {/* Render dynamic component */}
+              {msg.component && (
+                <div className="mt-3">{msg.component}</div>
+              )}
+            </div>
+          ))}
+          {loading && (
+            <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-900 mr-8">
+              <div className="text-xs font-medium mb-1 opacity-60">Diligent Agent</div>
+              <span className="animate-pulse">Thinking...</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex items-center gap-3">
+        <input
+          type="text"
+          value={localInput}
+          onChange={(e) => setLocalInput(e.target.value)}
+          placeholder="Try: What's the incident status?"
+          className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-300"
+          disabled={loading}
+        />
+        <button
+          type="submit"
+          disabled={loading || !localInput.trim()}
+          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? "..." : "Send"}
+        </button>
+      </form>
+      <p className="mt-2 text-xs text-slate-500">
+        {demoMode 
+          ? "Demo mode: simulated responses with dynamic components."
+          : "Live mode: responses from Tambo AI (requires valid API key)."}
+      </p>
+    </div>
+  );
+}
+
+// ============================================================================
+// INNER PAGE CONTENT (wrapped by TamboProvider)
+// ============================================================================
+
+function cn(...classes: Array<string | false | undefined | null>) {
+  return classes.filter(Boolean).join(" ");
+}
+
+function SecurityTamboContent() {
+  // Modal states
+  const [showBoardEscalation, setShowBoardEscalation] = useState(false);
+  const [showNotifyRegulator, setShowNotifyRegulator] = useState(false);
+  const [showAssignOwner, setShowAssignOwner] = useState(false);
+  const [selectedOwner, setSelectedOwner] = useState("Priya Shah (Security)");
+
+  // Sample data for demonstration
+  const sampleIncident = {
+    id: "INC-2847",
+    title: "Security Incident Detected",
+    urgency: "high" as const,
+    detail:
+      "ServiceNow incident logged by CloudStorage Solutions (3rd party provider). Unusual access pattern detected.",
+    timeAgo: "3 hours ago",
+    completedSteps: 5,
+    totalSteps: 8,
+  };
+
+  const sampleActions = [
+    {
+      id: "action-1",
+      title: "Escalate to Board",
+      description:
+        "Prepare a Board-ready summary and recommended next steps.",
+      actionLabel: "Prepare Board Escalation",
+      hint: "GC will be included by default",
+    },
+    {
+      id: "action-2",
+      title: "Notify Regulator",
+      description:
+        "Prepare a draft regulatory notification based on current findings.",
+      actionLabel: "Review Draft Notice",
+      hint: "Nothing submitted without approval",
+    },
+    {
+      id: "action-3",
+      title: "Assign Incident Owner",
+      description:
+        "Designate a primary owner responsible for coordination and follow-up.",
+      actionLabel: "Assign Owner",
+      hint: "Suggested owners included",
+    },
+  ];
+
+  const sampleSteps = [
+    {
+      id: "step-1",
+      status: "done" as const,
+      title: "Created incident record",
+      detail: "Logged INC-2847 and associated it to CloudStorage Solutions.",
+      time: "09:14 ET",
+      actor: "Agent" as const,
+    },
+    {
+      id: "step-2",
+      status: "done" as const,
+      title: "Identified affected subsidiaries",
+      detail: "Mapped impacted entities and likely jurisdictions.",
+      time: "09:22 ET",
+      actor: "Agent" as const,
+    },
+    {
+      id: "step-3",
+      status: "done" as const,
+      title: "Preserved evidence",
+      detail: "Snapshot logs, preserved audit trail, restricted access.",
+      time: "09:33 ET",
+      actor: "Agent" as const,
+    },
+    {
+      id: "step-4",
+      status: "pending" as const,
+      title: "Prepare Board escalation",
+      detail: "Requires your review; GC included by default.",
+      time: "Pending",
+      actor: "Human" as const,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <div className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
+              Prototype
+            </span>
+            <span className="text-sm font-semibold text-slate-900">
+              Security Incident — Tambo
+            </span>
+          </div>
+          <nav className="flex items-center gap-2">
+            <a
+              href="/now/agentic-hero/security"
+              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
+            >
+              Original
+            </a>
+            <a
+              href="/now/agentic-hero/security-tambo"
+              className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900"
+            >
+              Tambo
+            </a>
+            <a
+              href="/now/agentic-hero/security-jsonrender"
+              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
+            >
+              JSON Render
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      {/* Two-column layout */}
+      <div className="mx-auto max-w-7xl px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* LEFT COLUMN - Chat (sticky) */}
+          <div className="lg:col-span-5">
+            <div className="lg:sticky lg:top-6">
+              {/* Info banner - compact */}
+              <div className="rounded-xl border border-green-200 bg-green-50 p-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-green-900">
+                    Tambo Generative UI
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-green-200 px-2 py-0.5 text-xs text-green-800">
+                    ✓ Connected
+                  </span>
+                </div>
+              </div>
+
+              {/* Chat component */}
+              <TamboChatInput />
+
+              {/* Registered components - collapsible */}
+              <details className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <summary className="cursor-pointer text-xs font-medium text-slate-600">
+                  {tamboComponents.length} registered components
+                </summary>
+                <div className="mt-3 space-y-2">
+                  {tamboComponents.map((comp) => (
+                    <div
+                      key={comp.name}
+                      className="rounded-lg border border-slate-200 bg-white p-2"
+                    >
+                      <div className="font-mono text-xs text-slate-900">
+                        {comp.name}
+                      </div>
+                      <p className="mt-0.5 text-[11px] text-slate-500">{comp.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN - Incident context */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Header */}
+            <div>
+              <h1 className="text-2xl font-semibold text-slate-900">
+                Security Incident Review
+              </h1>
+              <p className="mt-1 text-slate-600">
+                Active incident requiring your attention.
+              </p>
+            </div>
+
+            {/* Incident card */}
+            <IncidentCard {...sampleIncident} />
+
+            {/* Actions section */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900">
+                Decisions Needed
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                These actions require your approval before proceeding.
+              </p>
+              <div className="mt-4 space-y-3">
+                <ActionCard
+                  id="action-1"
+                  title="Escalate to Board"
+                  description="Prepare a Board-ready summary and recommended next steps."
+                  actionLabel="Prepare Board Escalation"
+                  hint="GC will be included by default"
+                  onClick={() => setShowBoardEscalation(true)}
+                />
+                <ActionCard
+                  id="action-2"
+                  title="Notify Regulator"
+                  description="Prepare a draft regulatory notification based on current findings."
+                  actionLabel="Review Draft Notice"
+                  hint="Nothing submitted without approval"
+                  onClick={() => setShowNotifyRegulator(true)}
+                />
+                <ActionCard
+                  id="action-3"
+                  title="Assign Incident Owner"
+                  description="Designate a primary owner responsible for coordination and follow-up."
+                  actionLabel="Assign Owner"
+                  hint="Suggested owners included"
+                  onClick={() => setShowAssignOwner(true)}
+                />
+              </div>
+            </div>
+
+            {/* Receipt timeline */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900">
+                Response Timeline
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Steps completed by the agent and pending human decisions.
+              </p>
+              <div className="mt-4 divide-y divide-slate-100">
+                {sampleSteps.map((step) => (
+                  <ReceiptStep key={step.id} {...step} />
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Board Escalation Modal */}
+      {showBoardEscalation && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="border-b border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-between max-w-[900px] mx-auto">
+              <div>
+                <div className="text-xs uppercase tracking-wide text-slate-500">Board Escalation</div>
+                <div className="text-lg font-semibold text-slate-900">Security Incident — INC-2847</div>
+              </div>
+              <button
+                onClick={() => setShowBoardEscalation(false)}
+                className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+              >
+                Exit
+              </button>
+            </div>
+          </div>
+          <div className="mx-auto max-w-[900px] px-6 py-8 space-y-8">
+            <section>
+              <h2 className="text-sm font-semibold text-slate-900">What the Board needs to know</h2>
+              <p className="mt-2 text-sm text-slate-600">
+                This escalation summarizes the incident, potential impact, and immediate actions taken. It is written for non-technical Board members.
+              </p>
+            </section>
+            <section>
+              <h3 className="text-sm font-semibold text-slate-900">Draft Board Message</h3>
+              <div className="mt-3 flex flex-wrap items-center gap-2 rounded-t-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
+                <span className="font-medium text-slate-700">Formatting</span>
+                <span className="text-slate-300">|</span>
+                <button className="rounded-md border border-slate-200 bg-white px-2 py-1 hover:bg-slate-50">B</button>
+                <button className="rounded-md border border-slate-200 bg-white px-2 py-1 hover:bg-slate-50 italic">I</button>
+                <button className="rounded-md border border-slate-200 bg-white px-2 py-1 hover:bg-slate-50">• List</button>
+              </div>
+              <div className="rounded-b-xl border border-t-0 border-slate-200 bg-white p-4 text-sm text-slate-700 space-y-2">
+                <p><strong>Summary:</strong> A security incident involving a third‑party data processor was detected and contained.</p>
+                <p><strong>Status:</strong> Investigation ongoing. No confirmed data exfiltration at this time.</p>
+                <p><strong>Actions taken:</strong> Incident logged, evidence preserved, Legal and Security engaged.</p>
+                <p><strong>Next steps:</strong> Continued monitoring, regulator assessment, follow‑up briefing.</p>
+              </div>
+              <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+                <div className="text-xs font-medium uppercase tracking-wide text-slate-500">Ask the agent to revise</div>
+                <div className="mt-2 flex items-center gap-2">
+                  <input
+                    className="flex-1 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400"
+                    placeholder="e.g., make this shorter, remove jargon, add a clearer next step"
+                  />
+                  <button className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800">Apply</button>
+                </div>
+              </div>
+            </section>
+            <section>
+              <h3 className="text-sm font-semibold text-slate-900">Recipients</h3>
+              <div className="mt-3 space-y-2 text-sm text-slate-700">
+                <div>✔ Board of Directors (18)</div>
+                <div>✔ Executive Assistants (4)</div>
+                <div>✔ General Counsel (included)</div>
+              </div>
+            </section>
+            <section className="flex items-center justify-between border-t border-slate-200 pt-6">
+              <div className="text-xs text-slate-500">Nothing will be sent without your approval.</div>
+              <div className="flex gap-3">
+                <button onClick={() => setShowBoardEscalation(false)} className="rounded-md border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Cancel</button>
+                <button className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Approve & Send</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      )}
+
+      {/* Notify Regulator Modal */}
+      {showNotifyRegulator && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="border-b border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-between max-w-[900px] mx-auto">
+              <div>
+                <div className="text-xs uppercase tracking-wide text-slate-500">Regulatory Notification</div>
+                <div className="text-lg font-semibold text-slate-900">Draft Notice — INC-2847</div>
+              </div>
+              <button
+                onClick={() => setShowNotifyRegulator(false)}
+                className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+              >
+                Exit
+              </button>
+            </div>
+          </div>
+          <div className="mx-auto max-w-[900px] px-6 py-8 space-y-8">
+            <section>
+              <h2 className="text-sm font-semibold text-slate-900">Draft (review required)</h2>
+              <p className="mt-2 text-sm text-slate-600">
+                This draft is based on current findings and is intentionally conservative. You can edit before sending. General Counsel review is recommended.
+              </p>
+            </section>
+            <section>
+              <h3 className="text-sm font-semibold text-slate-900">Draft Notice</h3>
+              <div className="mt-3 flex flex-wrap items-center gap-2 rounded-t-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
+                <span className="font-medium text-slate-700">Formatting</span>
+                <span className="text-slate-300">|</span>
+                <button className="rounded-md border border-slate-200 bg-white px-2 py-1 hover:bg-slate-50">B</button>
+                <button className="rounded-md border border-slate-200 bg-white px-2 py-1 hover:bg-slate-50 italic">I</button>
+                <button className="rounded-md border border-slate-200 bg-white px-2 py-1 hover:bg-slate-50">• List</button>
+              </div>
+              <div className="rounded-b-xl border border-t-0 border-slate-200 bg-white p-4 text-sm text-slate-700 space-y-2">
+                <p><strong>Incident reference:</strong> INC-2847</p>
+                <p><strong>Summary:</strong> A security incident involving a third‑party data processor was detected. Investigation is ongoing.</p>
+                <p><strong>Potential impact:</strong> No confirmed data exfiltration at this time. Scope assessment in progress.</p>
+                <p><strong>Actions taken:</strong> Evidence preserved, internal response activated, Legal and Security engaged.</p>
+                <p><strong>Next update:</strong> We will provide a follow‑up update within 72 hours or sooner as facts are confirmed.</p>
+              </div>
+              <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+                <div className="text-xs font-medium uppercase tracking-wide text-slate-500">Ask the agent to revise</div>
+                <div className="mt-2 flex items-center gap-2">
+                  <input
+                    className="flex-1 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400"
+                    placeholder="e.g., add jurisdictions, tighten language, emphasize unknowns"
+                  />
+                  <button className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800">Apply</button>
+                </div>
+              </div>
+            </section>
+            <section>
+              <h3 className="text-sm font-semibold text-slate-900">Review checklist</h3>
+              <div className="mt-3 space-y-2 text-sm text-slate-700">
+                <div>• Confirm jurisdiction(s) and reporting deadline</div>
+                <div>• Confirm whether personal data is implicated</div>
+                <div>• Confirm approved statement of impact</div>
+                <div>• Confirm counsel review (recommended)</div>
+              </div>
+            </section>
+            <section className="flex items-center justify-between border-t border-slate-200 pt-6">
+              <div className="text-xs text-slate-500">Nothing will be submitted without your approval.</div>
+              <div className="flex gap-3">
+                <button onClick={() => setShowNotifyRegulator(false)} className="rounded-md border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Cancel</button>
+                <button className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Approve & Submit</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Owner Modal */}
+      {showAssignOwner && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="border-b border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-between max-w-[900px] mx-auto">
+              <div>
+                <div className="text-xs uppercase tracking-wide text-slate-500">Assign Incident Owner</div>
+                <div className="text-lg font-semibold text-slate-900">Primary owner — INC-2847</div>
+              </div>
+              <button
+                onClick={() => setShowAssignOwner(false)}
+                className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+              >
+                Exit
+              </button>
+            </div>
+          </div>
+          <div className="mx-auto max-w-[900px] px-6 py-8 space-y-8">
+            <section>
+              <h2 className="text-sm font-semibold text-slate-900">Suggested owners</h2>
+              <p className="mt-2 text-sm text-slate-600">
+                The agent suggests owners based on role, availability, and prior incidents. You can pick one or add someone else.
+              </p>
+            </section>
+            <section className="space-y-3">
+              {["Priya Shah (Security)", "Danielle Kim (Legal)", "Marcus Reed (IT Operations)"].map((name) => (
+                <button
+                  key={name}
+                  onClick={() => setSelectedOwner(name)}
+                  className={cn(
+                    "w-full rounded-xl border p-4 text-left transition",
+                    selectedOwner === name ? "border-slate-400 bg-slate-50" : "border-slate-200 bg-white hover:bg-slate-50"
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm font-medium text-slate-900">{name}</div>
+                    <span className={cn(
+                      "inline-flex h-5 w-5 items-center justify-center rounded-full border",
+                      selectedOwner === name ? "border-slate-900" : "border-slate-300"
+                    )}>
+                      {selectedOwner === name && <span className="h-2.5 w-2.5 rounded-full bg-slate-900" />}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-sm text-slate-600">Primary coordinator for follow-ups, assignments, and stakeholder updates.</div>
+                </button>
+              ))}
+            </section>
+            <section className="rounded-xl border border-slate-200 bg-white p-5">
+              <h3 className="text-sm font-semibold text-slate-900">Add someone else</h3>
+              <div className="mt-3 flex items-center gap-2">
+                <input
+                  className="flex-1 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400"
+                  placeholder="Type a name or role (e.g., 'CISO', 'Security Lead')"
+                />
+                <button className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Add</button>
+              </div>
+            </section>
+            <section className="flex items-center justify-between border-t border-slate-200 pt-6">
+              <div className="text-xs text-slate-500">Assigning an owner records accountability and enables automated follow-ups.</div>
+              <div className="flex gap-3">
+                <button onClick={() => setShowAssignOwner(false)} className="rounded-md border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Cancel</button>
+                <button className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Assign {selectedOwner.split(" ")[0]}</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// MAIN PAGE EXPORT (wrapped in TamboProvider)
+// ============================================================================
+
+export default function SecurityTamboPage() {
+  return (
+    <TamboProvider
+      apiKey={process.env.NEXT_PUBLIC_TAMBO_API_KEY!}
+      components={tamboComponents}
+    >
+      <SecurityTamboContent />
+    </TamboProvider>
+  );
+}

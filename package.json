@@ -9,15 +9,21 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@json-render/core": "^0.2.0",
+    "@json-render/react": "^0.2.0",
+    "@modelcontextprotocol/sdk": "^1.25.2",
+    "@tambo-ai/react": "^0.69.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.562.0",
     "next": "16.0.10",
     "next-mdx-remote": "^5.0.0",
+    "quansync": "^1.0.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.18",
