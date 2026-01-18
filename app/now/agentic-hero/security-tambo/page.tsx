@@ -1064,6 +1064,9 @@ function SecurityTamboContent({ hasTamboProvider = true }: { hasTamboProvider?: 
 export default function SecurityTamboPage() {
   const apiKey = process.env.NEXT_PUBLIC_TAMBO_API_KEY;
   
+  // Debug: log whether API key is present (not the actual key)
+  console.log("[Tambo] API key present:", !!apiKey, "length:", apiKey?.length);
+  
   // If no API key, render without TamboProvider (demo mode only)
   if (!apiKey) {
     return <SecurityTamboContent hasTamboProvider={false} />;
