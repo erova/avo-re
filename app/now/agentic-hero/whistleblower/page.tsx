@@ -456,7 +456,7 @@ function PrototypeNav() {
          <PrototypeNav />
        </div>
        {/* Prototype controls (outside the wireframe surface) */}
-       <div className="mx-auto w-full max-w-6xl px-1">
+       <div className="mx-auto w-full max-w-6xl px-6">
          <div className="mb-3 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-slate-700 shadow-sm">
            <div className="flex flex-wrap items-center justify-between gap-3">
              <div className="min-w-0">

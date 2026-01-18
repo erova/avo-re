@@ -198,15 +198,17 @@ const tamboComponents = [
 // CHAT INPUT COMPONENT (uses Tambo hooks)
 // ============================================================================
 
-function TamboChatInput() {
+// Chat component that uses Tambo hooks (must be inside TamboProvider)
+function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () => void }) {
   const [localInput, setLocalInput] = useState("");
   const [messages, setMessages] = useState<Array<{ role: string; content: string; component?: React.ReactNode }>>([]);
   const [loading, setLoading] = useState(false);
   const [demoMode, setDemoMode] = useState(true);
   
-  // Tambo hooks for live mode
+  // Tambo hooks - these require TamboProvider
   const tamboThreadInput = useTamboThreadInput();
   const tamboThread = useTamboThread();
+  const tamboAvailable = true;
 
   // Demo responses that render actual components
   const getDemoResponse = (query: string): { content: string; component?: React.ReactNode } => {
@@ -333,13 +335,25 @@ function TamboChatInput() {
       }, 800);
     } else {
       // Live mode: use Tambo
+      if (!tamboThreadInput) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Tambo is not available. The API key may not be configured. Please use demo mode.",
+          },
+        ]);
+        setLoading(false);
+        return;
+      }
+      
       try {
         // Set the input value and submit
         tamboThreadInput.setValue(messageText);
         await tamboThreadInput.submit();
         
         // Get the latest message from the thread
-        const threadMessages = tamboThread?.thread?.messages;
+        const threadMessages = tamboThread?.thread?.messages as Array<{ role: string; content: unknown; renderedComponent?: React.ReactNode }> | undefined;
         if (threadMessages && threadMessages.length > 0) {
           const lastMsg = threadMessages[threadMessages.length - 1];
           if (lastMsg.role === "assistant") {
@@ -398,15 +412,19 @@ function TamboChatInput() {
           Ask the Diligent Agent
         </div>
         <button
-          onClick={() => setDemoMode(!demoMode)}
+          onClick={() => tamboAvailable && setDemoMode(!demoMode)}
+          disabled={!tamboAvailable && !demoMode}
           className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-medium transition ${
             demoMode
               ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
-              : "bg-green-100 text-green-700 hover:bg-green-200"
+              : tamboAvailable
+                ? "bg-green-100 text-green-700 hover:bg-green-200"
+                : "bg-amber-100 text-amber-700"
           }`}
+          title={!tamboAvailable ? "Tambo API key not configured" : ""}
         >
-          <span className={`h-2 w-2 rounded-full ${demoMode ? "bg-purple-500" : "bg-green-500"}`} />
-          {demoMode ? "Demo" : "Live"}
+          <span className={`h-2 w-2 rounded-full ${demoMode ? "bg-purple-500" : tamboAvailable ? "bg-green-500" : "bg-amber-500"}`} />
+          {demoMode ? "Demo" : tamboAvailable ? "Live" : "No API Key"}
         </button>
       </div>
       
@@ -467,6 +485,113 @@ function TamboChatInput() {
   );
 }
 
+// Demo-only chat input (when TamboProvider is not available)
+function TamboChatInputDemoOnly() {
+  const [localInput, setLocalInput] = useState("");
+  const [messages, setMessages] = useState<Array<{ role: string; content: string; component?: React.ReactNode }>>([]);
+  const [loading, setLoading] = useState(false);
+  
+  const getDemoResponse = (query: string): { content: string; component?: React.ReactNode } => {
+    const q = query.toLowerCase();
+    if (q.includes("status") || q.includes("incident") || q.includes("details")) {
+      return {
+        content: "Here's the current incident status:",
+        component: (
+          <IncidentCard
+            id="INC-2847"
+            title="Security Incident — CloudStorage Solutions"
+            urgency="high"
+            detail="Unusual access pattern detected across third-party integration. Evidence preserved, Legal and Security notified."
+            timeAgo="3 hours ago"
+            completedSteps={5}
+            totalSteps={8}
+          />
+        ),
+      };
+    }
+    if (q.includes("decision") || q.includes("approval") || q.includes("action") || q.includes("need")) {
+      return {
+        content: "Here are the pending decisions that need your approval:",
+        component: (
+          <div className="space-y-3 mt-2">
+            <ActionCard id="action-1" title="Escalate to Board" description="Prepare a Board-ready summary with recommended next steps." actionLabel="Prepare Escalation" hint="GC will be included" />
+            <ActionCard id="action-2" title="Notify Regulator" description="Draft regulatory notification based on current findings." actionLabel="Review Draft" hint="Nothing sent without approval" />
+          </div>
+        ),
+      };
+    }
+    if (q.includes("timeline") || q.includes("steps") || q.includes("done") || q.includes("completed")) {
+      return {
+        content: "Here's the response timeline so far:",
+        component: (
+          <div className="divide-y divide-slate-100 rounded-lg border border-slate-200 bg-white p-3 mt-2">
+            <ReceiptStep id="step-1" status="done" title="Created incident record" detail="Logged INC-2847 and linked to CloudStorage Solutions." time="09:14 ET" actor="Agent" />
+            <ReceiptStep id="step-2" status="done" title="Preserved evidence" detail="Snapshot logs, audit trail secured." time="09:33 ET" actor="Agent" />
+            <ReceiptStep id="step-3" status="pending" title="Board escalation" detail="Awaiting your approval." time="Pending" actor="Human" />
+          </div>
+        ),
+      };
+    }
+    return { content: `Try asking about: "What's the incident status?", "What decisions need approval?", or "Show me the timeline"` };
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const messageText = localInput.trim();
+    if (!messageText || loading) return;
+    setMessages((prev) => [...prev, { role: "user", content: messageText }]);
+    setLocalInput("");
+    setLoading(true);
+    setTimeout(() => {
+      const response = getDemoResponse(messageText);
+      setMessages((prev) => [...prev, { role: "assistant", content: response.content, component: response.component }]);
+      setLoading(false);
+    }, 800);
+  };
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4">
+      <div className="flex items-center justify-between">
+        <div className="text-xs font-medium uppercase tracking-wide text-slate-500">Ask the Diligent Agent</div>
+        <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700">
+          <span className="h-2 w-2 rounded-full bg-amber-500" />
+          Demo Only (No API Key)
+        </span>
+      </div>
+      {messages.length > 0 && (
+        <div className="mt-3 max-h-[50vh] overflow-y-auto space-y-3 border-b border-slate-100 pb-3 mb-3">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`rounded-lg p-3 text-sm ${msg.role === "user" ? "bg-slate-100 text-slate-800 ml-8" : "bg-blue-50 text-blue-900 mr-8"}`}>
+              <div className="text-xs font-medium mb-1 opacity-60">{msg.role === "user" ? "You" : "Diligent Agent"}</div>
+              <div className="whitespace-pre-wrap">{msg.content}</div>
+              {msg.component && <div className="mt-3">{msg.component}</div>}
+            </div>
+          ))}
+          {loading && (
+            <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-900 mr-8">
+              <div className="text-xs font-medium mb-1 opacity-60">Diligent Agent</div>
+              <span className="animate-pulse">Thinking...</span>
+            </div>
+          )}
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="flex items-center gap-3">
+        <input type="text" value={localInput} onChange={(e) => setLocalInput(e.target.value)} placeholder="Try: What's the incident status?" className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-300" disabled={loading} />
+        <button type="submit" disabled={loading || !localInput.trim()} className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed">{loading ? "..." : "Send"}</button>
+      </form>
+      <p className="mt-2 text-xs text-slate-500">Demo mode: simulated responses. Configure NEXT_PUBLIC_TAMBO_API_KEY for live mode.</p>
+    </div>
+  );
+}
+
+// Wrapper that chooses the right chat component based on context
+function TamboChatInput({ hasTamboProvider }: { hasTamboProvider: boolean }) {
+  if (!hasTamboProvider) {
+    return <TamboChatInputDemoOnly />;
+  }
+  return <TamboChatInputWithHooks />;
+}
+
 // ============================================================================
 // INNER PAGE CONTENT (wrapped by TamboProvider)
 // ============================================================================
@@ -475,7 +600,7 @@ function cn(...classes: Array<string | false | undefined | null>) {
   return classes.filter(Boolean).join(" ");
 }
 
-function SecurityTamboContent() {
+function SecurityTamboContent({ hasTamboProvider = true }: { hasTamboProvider?: boolean }) {
   // Modal states
   const [showBoardEscalation, setShowBoardEscalation] = useState(false);
   const [showNotifyRegulator, setShowNotifyRegulator] = useState(false);
@@ -578,7 +703,8 @@ function SecurityTamboContent() {
       </div>
 
       {/* Wireframe surface container */}
-      <div className="mx-auto mt-6 w-full max-w-6xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm relative px-1">
+      <div className="mx-auto mt-6 w-full max-w-6xl px-6">
+      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm relative">
         {/* Diligent chrome */}
         <div className="border-b border-slate-200 bg-white">
           <div className="flex items-center justify-between px-6 py-3">
@@ -634,7 +760,7 @@ function SecurityTamboContent() {
               </div>
 
               {/* Chat component */}
-              <TamboChatInput />
+              <TamboChatInput hasTamboProvider={hasTamboProvider} />
 
               {/* Registered components - collapsible */}
               <details className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
@@ -935,12 +1061,19 @@ function SecurityTamboContent() {
 // ============================================================================
 
 export default function SecurityTamboPage() {
+  const apiKey = process.env.NEXT_PUBLIC_TAMBO_API_KEY;
+  
+  // If no API key, render without TamboProvider (demo mode only)
+  if (!apiKey) {
+    return <SecurityTamboContent hasTamboProvider={false} />;
+  }
+  
   return (
     <TamboProvider
-      apiKey={process.env.NEXT_PUBLIC_TAMBO_API_KEY!}
+      apiKey={apiKey}
       components={tamboComponents}
     >
-      <SecurityTamboContent />
+      <SecurityTamboContent hasTamboProvider={true} />
     </TamboProvider>
   );
 }
