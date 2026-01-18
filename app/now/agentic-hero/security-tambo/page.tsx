@@ -31,7 +31,7 @@ import { TamboProvider, useTamboThread, useTamboThreadInput } from "@tambo-ai/re
 const incidentCardSchema = z.object({
   id: z.string().optional().default("INC-0000"),
   title: z.string().optional().default("Incident"),
-  urgency: z.enum(["high", "medium", "low"]).optional().default("medium"),
+  urgency: z.string().optional().default("medium"),
   detail: z.string().optional().default(""),
   timeAgo: z.string().optional().default(""),
   completedSteps: z.number().optional().default(0),
@@ -48,11 +48,11 @@ const actionCardSchema = z.object({
 
 const receiptStepSchema = z.object({
   id: z.string().optional().default("step-0"),
-  status: z.enum(["done", "pending", "in_progress"]).optional().default("pending"),
+  status: z.string().optional().default("pending"),
   title: z.string().optional().default("Step"),
   detail: z.string().optional().default(""),
   time: z.string().optional().default(""),
-  actor: z.enum(["Agent", "Human"]).optional().default("Agent"),
+  actor: z.string().optional().default("Agent"),
 });
 
 // ============================================================================
@@ -67,11 +67,16 @@ function IncidentCard({
   completedSteps,
   totalSteps,
 }: z.infer<typeof incidentCardSchema>) {
-  const urgencyColors = {
+  const urgencyColors: Record<string, string> = {
     high: "bg-red-100 text-red-800 border-red-200",
     medium: "bg-amber-100 text-amber-800 border-amber-200",
     low: "bg-slate-100 text-slate-700 border-slate-200",
   };
+  
+  // Normalize urgency to one of our known values
+  const normalizedUrgency = (urgency?.toLowerCase() || "medium");
+  const urgencyKey = ["high", "medium", "low"].includes(normalizedUrgency) ? normalizedUrgency : "medium";
+  const displayUrgency = urgency || "Medium";
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -80,10 +85,10 @@ function IncidentCard({
           {id}: {title}
         </span>
         <span
-          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs ${urgencyColors[urgency]}`}
+          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs ${urgencyColors[urgencyKey]}`}
         >
           <span className="inline-block h-2 w-2 rounded-full bg-current" />
-          {urgency.charAt(0).toUpperCase() + urgency.slice(1)} urgency
+          {displayUrgency.charAt(0).toUpperCase() + displayUrgency.slice(1)} urgency
         </span>
       </div>
       <p className="mt-2 text-sm text-slate-600">{detail}</p>
@@ -94,7 +99,7 @@ function IncidentCard({
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
           <div
             className="h-full rounded-full bg-slate-700 transition-all"
-            style={{ width: `${(completedSteps / totalSteps) * 100}%` }}
+            style={{ width: `${(completedSteps / (totalSteps || 1)) * 100}%` }}
           />
         </div>
       </div>
@@ -133,24 +138,33 @@ function ReceiptStep({
   time,
   actor,
 }: z.infer<typeof receiptStepSchema>) {
-  const statusIcons = {
+  const statusIcons: Record<string, string> = {
     done: "✓",
+    completed: "✓",
     pending: "○",
     in_progress: "◐",
+    "in-progress": "◐",
+    active: "◐",
   };
+  
+  // Normalize status
+  const normalizedStatus = status?.toLowerCase().replace(/[_-]/g, "_") || "pending";
+  const statusIcon = statusIcons[normalizedStatus] || statusIcons[status] || "○";
+  const isDone = ["done", "completed"].includes(normalizedStatus);
+  const isInProgress = ["in_progress", "in-progress", "active"].includes(normalizedStatus);
 
   return (
     <div className="flex gap-3 py-2">
       <span
         className={`flex h-6 w-6 items-center justify-center rounded-full text-xs ${
-          status === "done"
+          isDone
             ? "bg-green-100 text-green-700"
-            : status === "in_progress"
+            : isInProgress
             ? "bg-blue-100 text-blue-700"
             : "bg-slate-100 text-slate-500"
         }`}
       >
-        {statusIcons[status]}
+        {statusIcon}
       </span>
       <div className="flex-1">
         <div className="flex items-center justify-between">
