@@ -352,68 +352,71 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
         tamboThreadInput.setValue(messageText);
         await tamboThreadInput.submit();
         
-        // Get the latest message from the thread
-        const threadMessages = tamboThread?.thread?.messages;
-        console.log("[Tambo] Thread messages:", threadMessages);
-        
-        if (threadMessages && threadMessages.length > 0) {
-          const lastMsg = threadMessages[threadMessages.length - 1] as any;
-          console.log("[Tambo] Last message:", lastMsg);
-          console.log("[Tambo] Last message keys:", Object.keys(lastMsg || {}));
-          
-          if (lastMsg.role === "assistant") {
-            // Try to extract content from various possible formats
-            let textContent = "";
-            if (typeof lastMsg.content === "string") {
-              textContent = lastMsg.content;
-            } else if (Array.isArray(lastMsg.content)) {
-              // Content might be an array of parts
-              textContent = lastMsg.content
-                .map((part: any) => part.text || part.content || "")
-                .filter(Boolean)
-                .join("\n");
-            } else if (lastMsg.content?.text) {
-              textContent = lastMsg.content.text;
-            }
-            
-            setMessages((prev) => [
-              ...prev,
-              {
-                role: "assistant",
-                content: textContent || "Tambo responded.",
-                component: lastMsg.renderedComponent || lastMsg.component,
-              },
-            ]);
+        // Helper to extract text from Tambo message
+        const extractContent = (msg: any): { text: string; component?: React.ReactNode } => {
+          let textContent = "";
+          if (typeof msg.content === "string") {
+            textContent = msg.content;
+          } else if (Array.isArray(msg.content)) {
+            textContent = msg.content
+              .map((part: any) => part.text || part.content || "")
+              .filter(Boolean)
+              .join("\n");
+          } else if (msg.content?.text) {
+            textContent = msg.content.text;
           }
-        } else {
-          // No messages yet, wait a moment and check again
-          setTimeout(() => {
-            const msgs = tamboThread?.thread?.messages as any[];
-            console.log("[Tambo] Delayed check - messages:", msgs);
-            if (msgs && msgs.length > 0) {
-              const lastMsg = msgs[msgs.length - 1];
-              if (lastMsg.role === "assistant") {
-                let textContent = "";
-                if (typeof lastMsg.content === "string") {
-                  textContent = lastMsg.content;
-                } else if (Array.isArray(lastMsg.content)) {
-                  textContent = lastMsg.content
-                    .map((part: any) => part.text || part.content || "")
-                    .filter(Boolean)
-                    .join("\n");
-                }
+          return { 
+            text: textContent, 
+            component: msg.renderedComponent || msg.component 
+          };
+        };
+        
+        // Helper to find and display the latest assistant message
+        const displayLatestAssistantMessage = () => {
+          const threadMessages = tamboThread?.thread?.messages as any[];
+          console.log("[Tambo] Thread messages:", threadMessages);
+          
+          if (threadMessages && threadMessages.length > 0) {
+            // Find the latest assistant message
+            for (let i = threadMessages.length - 1; i >= 0; i--) {
+              const msg = threadMessages[i];
+              console.log("[Tambo] Checking message:", i, msg.role, Object.keys(msg || {}));
+              
+              if (msg.role === "assistant") {
+                const { text, component } = extractContent(msg);
                 setMessages((prev) => [
                   ...prev,
                   {
                     role: "assistant",
-                    content: textContent || "Response received.",
-                    component: lastMsg.renderedComponent || lastMsg.component,
+                    content: text || "Tambo responded.",
+                    component,
                   },
                 ]);
+                setLoading(false);
+                return true;
               }
             }
-            setLoading(false);
-          }, 2000);
+          }
+          return false;
+        };
+        
+        // Try immediately
+        if (!displayLatestAssistantMessage()) {
+          // Not ready yet, wait and try again
+          console.log("[Tambo] No assistant message yet, waiting...");
+          setTimeout(() => {
+            if (!displayLatestAssistantMessage()) {
+              // Still nothing, show a message
+              setMessages((prev) => [
+                ...prev,
+                {
+                  role: "assistant",
+                  content: "Tambo is processing your request. Please try again in a moment.",
+                },
+              ]);
+              setLoading(false);
+            }
+          }, 3000);
           return;
         }
       } catch (err) {
@@ -425,8 +428,8 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
             content: `Error connecting to Tambo: ${err instanceof Error ? err.message : "Unknown error"}. Try demo mode.`,
           },
         ]);
+        setLoading(false);
       }
-      setLoading(false);
     }
   };
 
