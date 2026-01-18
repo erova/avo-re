@@ -363,8 +363,11 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
       
       try {
         // Use sendThreadMessage which returns the response directly
+        // Try to hint Tambo to use components when relevant
         console.log("[Tambo] Sending message:", messageText);
-        const response = await tamboThread.sendThreadMessage(messageText);
+        const response = await tamboThread.sendThreadMessage(messageText, {
+          streamResponse: false,
+        });
         console.log("[Tambo] Response received:", response);
         console.log("[Tambo] Response keys:", Object.keys(response || {}));
         
@@ -405,6 +408,44 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
           const Component = componentMap[componentData.componentName];
           if (Component) {
             renderedComponent = <Component {...componentData.props} />;
+          }
+        }
+        
+        // Fallback: If Tambo didn't render a component but the query/response suggests one,
+        // render it ourselves based on the context
+        if (!renderedComponent) {
+          const queryLower = messageText.toLowerCase();
+          const responseLower = textContent.toLowerCase();
+          
+          // If asking about incident and response mentions incident details
+          if ((queryLower.includes("incident") || queryLower.includes("status")) && 
+              (responseLower.includes("incident") || responseLower.includes("urgency"))) {
+            // Extract incident ID from query or response
+            const idMatch = (messageText + " " + textContent).match(/INC-\d+/i);
+            const incidentId = idMatch ? idMatch[0].toUpperCase() : "INC-2847";
+            
+            // Try to extract urgency from response
+            let urgency = "high";
+            if (responseLower.includes("low")) urgency = "low";
+            else if (responseLower.includes("medium") || responseLower.includes("moderate")) urgency = "medium";
+            else if (responseLower.includes("critical") || responseLower.includes("high")) urgency = "high";
+            
+            // Extract progress if mentioned
+            const progressMatch = textContent.match(/(\d+)\s*(?:of|\/)\s*(\d+)/);
+            const completedSteps = progressMatch ? parseInt(progressMatch[1]) : 3;
+            const totalSteps = progressMatch ? parseInt(progressMatch[2]) : 5;
+            
+            renderedComponent = (
+              <IncidentCard
+                id={incidentId}
+                title="Security Incident"
+                urgency={urgency}
+                detail={textContent.split('\n')[0] || "Active security incident requiring attention."}
+                timeAgo="Recently"
+                completedSteps={completedSteps}
+                totalSteps={totalSteps}
+              />
+            );
           }
         }
         
