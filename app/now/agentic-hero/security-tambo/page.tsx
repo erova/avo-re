@@ -363,11 +363,8 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
       
       try {
         // Use sendThreadMessage which returns the response directly
-        // Try to hint Tambo to use components when relevant
         console.log("[Tambo] Sending message:", messageText);
-        const response = await tamboThread.sendThreadMessage(messageText, {
-          streamResponse: false,
-        });
+        const response = await tamboThread.sendThreadMessage(messageText);
         console.log("[Tambo] Response received:", response);
         console.log("[Tambo] Response keys:", Object.keys(response || {}));
         
