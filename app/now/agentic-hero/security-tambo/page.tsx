@@ -545,43 +545,65 @@ function SecurityTamboContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+    <div className="min-h-screen bg-slate-50 pb-8">
+      {/* Prototype Nav */}
+      <div className="w-full border-b border-slate-200 bg-white">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-              Prototype
-            </span>
-            <span className="text-sm font-semibold text-slate-900">
-              Security Incident — Tambo
-            </span>
+            <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">Prototype</span>
+            <span className="text-sm font-semibold text-slate-900">Agentic Hero</span>
           </div>
-          <nav className="flex items-center gap-2">
-            <a
-              href="/now/agentic-hero/security"
-              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
-            >
-              Original
-            </a>
-            <a
-              href="/now/agentic-hero/security-tambo"
-              className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900"
-            >
-              Tambo
-            </a>
-            <a
-              href="/now/agentic-hero/security-jsonrender"
-              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
-            >
-              JSON Render
-            </a>
+          <nav className="flex flex-wrap items-center gap-2">
+            <a href="/now/agentic-hero/security" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Security Incident</a>
+            <a href="/now/agentic-hero/security-tambo" className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-900">Tambo</a>
+            <a href="/now/agentic-hero/security-jsonrender" className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100">JSON Render</a>
+            <span className="text-slate-300">|</span>
+            <a href="/now/agentic-hero/whistleblower" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Whistleblower</a>
+            <a href="/now/agentic-hero/compliance" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Compliance</a>
+            <a href="/now/agentic-hero" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Steady State</a>
           </nav>
         </div>
       </div>
 
-      {/* Two-column layout */}
-      <div className="mx-auto max-w-7xl px-6 py-6">
+      {/* Wireframe surface container */}
+      <div className="mx-auto mt-6 w-full max-w-[1200px] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm relative px-1">
+        {/* Diligent chrome */}
+        <div className="border-b border-slate-200 bg-white">
+          <div className="flex items-center justify-between px-6 py-3">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-md bg-slate-900" />
+                <span className="text-sm font-semibold text-slate-900">Diligent</span>
+              </div>
+              <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-700">
+                <svg className="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none"><path d="M5 5h6v6H5V5Zm8 0h6v6h-6V5ZM5 13h6v6H5v-6Zm8 0h6v6h-6v-6Z" stroke="currentColor" strokeWidth="1.5"/></svg>
+                <span className="font-medium">Ibotta, Inc.</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-slate-600">
+              <div className="relative">
+                <div className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-slate-900" />
+                <button className="rounded-full border border-slate-200 bg-white p-2 hover:bg-slate-50">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2Z" stroke="currentColor" strokeWidth="1.5"/><path d="M18 16V11a6 6 0 1 0-12 0v5l-2 2h16l-2-2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>
+                </button>
+              </div>
+              <button className="rounded-full border border-slate-200 bg-white p-2 hover:bg-slate-50">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M12 6.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM12 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM12 20.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" fill="currentColor"/></svg>
+              </button>
+              <div className="ml-1 h-8 w-8 rounded-full bg-slate-200" />
+            </div>
+          </div>
+        </div>
+
+        {/* Hero heading */}
+        <div className="px-6 pt-8 pb-2 text-center">
+          <h1 className="text-2xl font-semibold text-slate-900">
+            You have an active Security Review, Sarah.
+          </h1>
+        </div>
+
+        {/* Two-column layout */}
+        <div className="px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* LEFT COLUMN - Chat (sticky) */}
@@ -626,16 +648,6 @@ function SecurityTamboContent() {
 
           {/* RIGHT COLUMN - Incident context */}
           <div className="lg:col-span-7 space-y-6">
-            {/* Header */}
-            <div>
-              <h1 className="text-2xl font-semibold text-slate-900">
-                Security Incident Review
-              </h1>
-              <p className="mt-1 text-slate-600">
-                Active incident requiring your attention.
-              </p>
-            </div>
-
             {/* Incident card */}
             <IncidentCard {...sampleIncident} />
 
@@ -692,6 +704,7 @@ function SecurityTamboContent() {
           </div>
 
         </div>
+      </div>
       </div>
 
       {/* Board Escalation Modal */}
