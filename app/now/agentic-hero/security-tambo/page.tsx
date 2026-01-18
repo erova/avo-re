@@ -353,36 +353,61 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
         await tamboThreadInput.submit();
         
         // Get the latest message from the thread
-        const threadMessages = tamboThread?.thread?.messages as Array<{ role: string; content: unknown; renderedComponent?: React.ReactNode }> | undefined;
+        const threadMessages = tamboThread?.thread?.messages;
+        console.log("[Tambo] Thread messages:", threadMessages);
+        
         if (threadMessages && threadMessages.length > 0) {
-          const lastMsg = threadMessages[threadMessages.length - 1];
+          const lastMsg = threadMessages[threadMessages.length - 1] as any;
+          console.log("[Tambo] Last message:", lastMsg);
+          console.log("[Tambo] Last message keys:", Object.keys(lastMsg || {}));
+          
           if (lastMsg.role === "assistant") {
+            // Try to extract content from various possible formats
+            let textContent = "";
+            if (typeof lastMsg.content === "string") {
+              textContent = lastMsg.content;
+            } else if (Array.isArray(lastMsg.content)) {
+              // Content might be an array of parts
+              textContent = lastMsg.content
+                .map((part: any) => part.text || part.content || "")
+                .filter(Boolean)
+                .join("\n");
+            } else if (lastMsg.content?.text) {
+              textContent = lastMsg.content.text;
+            }
+            
             setMessages((prev) => [
               ...prev,
               {
                 role: "assistant",
-                content: typeof lastMsg.content === "string" 
-                  ? lastMsg.content 
-                  : "Response received from Tambo.",
-                component: lastMsg.renderedComponent,
+                content: textContent || "Tambo responded.",
+                component: lastMsg.renderedComponent || lastMsg.component,
               },
             ]);
           }
         } else {
           // No messages yet, wait a moment and check again
           setTimeout(() => {
-            const msgs = tamboThread?.thread?.messages;
+            const msgs = tamboThread?.thread?.messages as any[];
+            console.log("[Tambo] Delayed check - messages:", msgs);
             if (msgs && msgs.length > 0) {
               const lastMsg = msgs[msgs.length - 1];
               if (lastMsg.role === "assistant") {
+                let textContent = "";
+                if (typeof lastMsg.content === "string") {
+                  textContent = lastMsg.content;
+                } else if (Array.isArray(lastMsg.content)) {
+                  textContent = lastMsg.content
+                    .map((part: any) => part.text || part.content || "")
+                    .filter(Boolean)
+                    .join("\n");
+                }
                 setMessages((prev) => [
                   ...prev,
                   {
                     role: "assistant",
-                    content: typeof lastMsg.content === "string" 
-                      ? lastMsg.content 
-                      : "Response received.",
-                    component: lastMsg.renderedComponent,
+                    content: textContent || "Response received.",
+                    component: lastMsg.renderedComponent || lastMsg.component,
                   },
                 ]);
               }
@@ -411,21 +436,33 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
         <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
           Ask the Diligent Agent
         </div>
-        <button
-          onClick={() => tamboAvailable && setDemoMode(!demoMode)}
-          disabled={!tamboAvailable && !demoMode}
-          className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-medium transition ${
-            demoMode
-              ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
-              : tamboAvailable
-                ? "bg-green-100 text-green-700 hover:bg-green-200"
-                : "bg-amber-100 text-amber-700"
-          }`}
-          title={!tamboAvailable ? "Tambo API key not configured" : ""}
-        >
-          <span className={`h-2 w-2 rounded-full ${demoMode ? "bg-purple-500" : tamboAvailable ? "bg-green-500" : "bg-amber-500"}`} />
-          {demoMode ? "Demo" : tamboAvailable ? "Live" : "No API Key"}
-        </button>
+        {/* Toggle switch between Demo and Live */}
+        <div className="inline-flex rounded-full border border-slate-200 bg-slate-100 p-0.5">
+          <button
+            onClick={() => setDemoMode(true)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+              demoMode
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            Demo
+          </button>
+          <button
+            onClick={() => tamboAvailable && setDemoMode(false)}
+            disabled={!tamboAvailable}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+              !demoMode
+                ? "bg-white text-slate-900 shadow-sm"
+                : tamboAvailable
+                  ? "text-slate-500 hover:text-slate-700"
+                  : "text-slate-300 cursor-not-allowed"
+            }`}
+            title={!tamboAvailable ? "Tambo API key not configured" : ""}
+          >
+            Live {!tamboAvailable && "(no key)"}
+          </button>
+        </div>
       </div>
       
       {/* Message history */}
