@@ -369,19 +369,34 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
         // Helper to extract text from Tambo message
         const extractContent = (msg: any): { text: string; component?: React.ReactNode } => {
           let textContent = "";
-          if (typeof msg.content === "string") {
-            textContent = msg.content;
-          } else if (Array.isArray(msg.content)) {
-            textContent = msg.content
-              .map((part: any) => part.text || part.content || "")
+          const content = msg.content;
+          
+          console.log("[Tambo] Extracting content from:", typeof content, content);
+          
+          if (typeof content === "string") {
+            textContent = content;
+          } else if (Array.isArray(content)) {
+            // Content is array of parts like [{type: "text", text: "..."}]
+            textContent = content
+              .map((part: any) => {
+                if (typeof part === "string") return part;
+                if (part.text) return part.text;
+                if (part.content) return part.content;
+                return "";
+              })
               .filter(Boolean)
               .join("\n");
-          } else if (msg.content?.text) {
-            textContent = msg.content.text;
+          } else if (content?.text) {
+            textContent = content.text;
           }
+          
+          // Get the rendered component - Tambo uses 'component' not 'renderedComponent'
+          const renderedComponent = msg.component || msg.renderedComponent;
+          console.log("[Tambo] Rendered component:", renderedComponent);
+          
           return { 
             text: textContent, 
-            component: msg.renderedComponent || msg.component 
+            component: renderedComponent
           };
         };
         
