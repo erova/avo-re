@@ -362,92 +362,45 @@ function TamboChatInputWithHooks({ onFallbackToDemo }: { onFallbackToDemo?: () =
       }
       
       try {
-        // Set the input value and submit
-        tamboThreadInput.setValue(messageText);
-        await tamboThreadInput.submit();
+        // Use sendThreadMessage which returns the response directly
+        console.log("[Tambo] Sending message:", messageText);
+        const response = await tamboThread.sendThreadMessage(messageText);
+        console.log("[Tambo] Response received:", response);
+        console.log("[Tambo] Response keys:", Object.keys(response || {}));
         
-        // Helper to extract text from Tambo message
-        const extractContent = (msg: any): { text: string; component?: React.ReactNode } => {
-          let textContent = "";
-          const content = msg.content;
-          
-          console.log("[Tambo] Extracting content from:", typeof content, content);
-          
-          if (typeof content === "string") {
-            textContent = content;
-          } else if (Array.isArray(content)) {
-            // Content is array of parts like [{type: "text", text: "..."}]
-            textContent = content
-              .map((part: any) => {
-                if (typeof part === "string") return part;
-                if (part.text) return part.text;
-                if (part.content) return part.content;
-                return "";
-              })
-              .filter(Boolean)
-              .join("\n");
-          } else if (content?.text) {
-            textContent = content.text;
-          }
-          
-          // Get the rendered component - Tambo uses 'component' not 'renderedComponent'
-          const renderedComponent = msg.component || msg.renderedComponent;
-          console.log("[Tambo] Rendered component:", renderedComponent);
-          
-          return { 
-            text: textContent, 
-            component: renderedComponent
-          };
-        };
+        // Extract text content from response
+        let textContent = "";
+        const content = response?.content;
         
-        // Helper to find and display the latest assistant message
-        const displayLatestAssistantMessage = () => {
-          const threadMessages = tamboThread?.thread?.messages as any[];
-          console.log("[Tambo] Thread messages:", threadMessages);
-          
-          if (threadMessages && threadMessages.length > 0) {
-            // Find the latest assistant message
-            for (let i = threadMessages.length - 1; i >= 0; i--) {
-              const msg = threadMessages[i];
-              console.log("[Tambo] Checking message:", i, msg.role, Object.keys(msg || {}));
-              
-              if (msg.role === "assistant") {
-                const { text, component } = extractContent(msg);
-                setMessages((prev) => [
-                  ...prev,
-                  {
-                    role: "assistant",
-                    content: text || "Tambo responded.",
-                    component,
-                  },
-                ]);
-                setLoading(false);
-                return true;
-              }
-            }
-          }
-          return false;
-        };
-        
-        // Try immediately
-        if (!displayLatestAssistantMessage()) {
-          // Not ready yet, wait and try again
-          console.log("[Tambo] No assistant message yet, waiting...");
-          setTimeout(() => {
-            if (!displayLatestAssistantMessage()) {
-              // Still nothing, show a message
-              setMessages((prev) => [
-                ...prev,
-                {
-                  role: "assistant",
-                  content: "Tambo is processing your request. Please try again in a moment.",
-                },
-              ]);
-              setLoading(false);
-            }
-          }, 3000);
-          return;
+        if (typeof content === "string") {
+          textContent = content;
+        } else if (Array.isArray(content)) {
+          textContent = content
+            .map((part: any) => {
+              if (typeof part === "string") return part;
+              if (part.text) return part.text;
+              if (part.content) return part.content;
+              return "";
+            })
+            .filter(Boolean)
+            .join("\n");
+        } else if (content?.text) {
+          textContent = content.text;
         }
+        
+        // Get component from response
+        const component = (response as any)?.component || (response as any)?.renderedComponent;
+        console.log("[Tambo] Text content:", textContent);
+        console.log("[Tambo] Component:", component);
+        
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: textContent || "Tambo responded.",
+            component,
+          },
+        ]);
       } catch (err) {
         console.error("Tambo error:", err);
         setMessages((prev) => [
