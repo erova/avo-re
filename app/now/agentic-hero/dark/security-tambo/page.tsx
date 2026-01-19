@@ -115,7 +115,7 @@ function TamboChatInputWithHooks() {
   const getDemoResponse = (query: string): { content: string; component?: React.ReactNode } => {
     const q = query.toLowerCase();
     if (q.includes("status") || q.includes("incident") || q.includes("details")) {
-      return { content: "Here's the current incident status:", component: <IncidentCard id="INC-2847" title="Security Incident — CloudStorage Solutions" urgency="high" detail="Unusual access pattern detected across third-party integration." completedSteps={5} totalSteps={8} /> };
+      return { content: "Here's the current incident status:", component: <IncidentCard id="INC-2847" title="Security Incident — CloudStorage Solutions" urgency="high" detail="Unusual access pattern detected across third-party integration." timeAgo="3 hours ago" completedSteps={5} totalSteps={8} /> };
     }
     if (q.includes("decision") || q.includes("approval") || q.includes("action") || q.includes("need")) {
       return { content: "Here are the pending decisions:", component: <div className="space-y-3 mt-2"><ActionCard id="action-1" title="Escalate to Board" description="Prepare a Board-ready summary with recommended next steps." actionLabel="Prepare Escalation" hint="GC will be included" /><ActionCard id="action-2" title="Notify Regulator" description="Draft regulatory notification based on current findings." actionLabel="Review Draft" hint="Nothing sent without approval" /></div> };
@@ -186,7 +186,7 @@ function TamboChatInputDemoOnly() {
 
   const getDemoResponse = (query: string): { content: string; component?: React.ReactNode } => {
     const q = query.toLowerCase();
-    if (q.includes("status") || q.includes("incident")) return { content: "Here's the current incident status:", component: <IncidentCard id="INC-2847" title="Security Incident — CloudStorage Solutions" urgency="high" detail="Unusual access pattern detected." completedSteps={5} totalSteps={8} /> };
+    if (q.includes("status") || q.includes("incident")) return { content: "Here's the current incident status:", component: <IncidentCard id="INC-2847" title="Security Incident — CloudStorage Solutions" urgency="high" detail="Unusual access pattern detected." timeAgo="3 hours ago" completedSteps={5} totalSteps={8} /> };
     if (q.includes("decision") || q.includes("action")) return { content: "Here are the pending decisions:", component: <div className="space-y-3 mt-2"><ActionCard id="action-1" title="Escalate to Board" description="Prepare a Board-ready summary." actionLabel="Prepare Escalation" hint="GC will be included" /></div> };
     if (q.includes("timeline") || q.includes("steps")) return { content: "Here's the response timeline:", component: <div className="divide-y divide-[#30363d] rounded-lg border border-[#30363d] bg-[#161b22] p-3 mt-2"><ReceiptStep id="step-1" status="done" title="Created incident record" detail="Logged INC-2847" time="09:14 ET" actor="Agent" /></div> };
     return { content: `Try asking about: "What's the incident status?", "What decisions need approval?", or "Show me the timeline"` };
