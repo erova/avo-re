@@ -767,13 +767,13 @@ function SecurityTamboContent({ hasTamboProvider = true }: { hasTamboProvider?: 
             <span className="text-sm font-semibold text-slate-900">Agentic Hero</span>
           </div>
           <nav className="flex flex-wrap items-center gap-2">
-            <a href="/now/agentic-hero/security" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Security Incident</a>
-            <a href="/now/agentic-hero/security-tambo" className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-900">Tambo</a>
-            <a href="/now/agentic-hero/security-jsonrender" className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100">JSON Render</a>
+            <a href="/now/agentic-hero/bw/security" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Security Incident</a>
+            <a href="/now/agentic-hero/bw/security-jsonrender" className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100">JSON Render</a>
+            <a href="/now/agentic-hero/bw/security-tambo" className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-900">Tambo</a>
             <span className="text-slate-300">|</span>
-            <a href="/now/agentic-hero/whistleblower" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Whistleblower</a>
-            <a href="/now/agentic-hero/compliance" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Compliance</a>
-            <a href="/now/agentic-hero" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Steady State</a>
+            <a href="/now/agentic-hero/bw/whistleblower" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Whistleblower</a>
+            <a href="/now/agentic-hero/bw/compliance" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Compliance</a>
+            <a href="/now/agentic-hero/bw" className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">Steady State</a>
           </nav>
         </div>
       </div>

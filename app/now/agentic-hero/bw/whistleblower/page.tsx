@@ -35,25 +35,25 @@ function PrototypeNav() {
         </div>
         <nav className="flex flex-wrap items-center gap-2">
           <a
-            href="/now/agentic-hero/security?context=diligent"
+            href="/now/agentic-hero/bw/security?context=diligent"
             className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
           >
             Security Incident
           </a>
           <a
-            href="/now/agentic-hero/whistleblower?context=diligent"
+            href="/now/agentic-hero/bw/whistleblower?context=diligent"
             className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-50"
           >
             Whistleblower
           </a>
           <a
-            href="/now/agentic-hero/compliance?context=diligent"
+            href="/now/agentic-hero/bw/compliance?context=diligent"
             className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
           >
             Global Compliance
           </a>
           <a
-            href="/now/agentic-hero?context=diligent"
+            href="/now/agentic-hero/bw?context=diligent"
             className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
           >
             Steady State

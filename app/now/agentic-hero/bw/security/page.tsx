@@ -35,38 +35,38 @@ function PrototypeNav() {
         </div>
         <nav className="flex flex-wrap items-center gap-2">
           <a
-            href="/now/agentic-hero/security?context=diligent"
+            href="/now/agentic-hero/bw/security?context=diligent"
             className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-50"
           >
             Security Incident
           </a>
           <a
-            href="/now/agentic-hero/security-tambo"
+            href="/now/agentic-hero/bw/security-tambo"
             className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-medium text-purple-700 hover:bg-purple-100"
           >
             Tambo
           </a>
           <a
-            href="/now/agentic-hero/security-jsonrender"
+            href="/now/agentic-hero/bw/security-jsonrender"
             className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
           >
             JSON Render
           </a>
           <span className="text-slate-300">|</span>
           <a
-            href="/now/agentic-hero/whistleblower?context=diligent"
+            href="/now/agentic-hero/bw/whistleblower?context=diligent"
             className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
           >
             Whistleblower
           </a>
           <a
-            href="/now/agentic-hero/compliance?context=diligent"
+            href="/now/agentic-hero/bw/compliance?context=diligent"
             className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
           >
             Global Compliance
           </a>
           <a
-            href="/now/agentic-hero?context=diligent"
+            href="/now/agentic-hero/bw?context=diligent"
             className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
           >
             Steady State
