@@ -36,7 +36,7 @@ const incidentCardSchema = z.object({ id: z.string().optional().default("INC-000
 const actionCardSchema = z.object({ id: z.string().optional().default("action-0"), title: z.string().optional().default("Action"), description: z.string().optional().default(""), actionLabel: z.string().optional().default("Take Action"), hint: z.string().optional() });
 const receiptStepSchema = z.object({ id: z.string().optional().default("step-0"), status: z.string().optional().default("pending"), title: z.string().optional().default("Step"), detail: z.string().optional().default(""), time: z.string().optional().default(""), actor: z.string().optional().default("Agent") });
 
-function IncidentCard({ id, title, urgency, detail, completedSteps, totalSteps }: z.infer<typeof incidentCardSchema>) {
+function IncidentCard({ id, title, urgency, detail, timeAgo, completedSteps, totalSteps }: z.infer<typeof incidentCardSchema>) {
   const urgencyColors: Record<string, string> = {
     high: "bg-[#da3633]/20 text-[#da3633] border-[#da3633]/40",
     medium: "bg-[#d29922]/20 text-[#d29922] border-[#d29922]/40",
@@ -240,7 +240,7 @@ function SecurityTamboContent({ hasTamboProvider = true }: { hasTamboProvider?: 
   const [showAssignOwner, setShowAssignOwner] = useState(false);
   const [selectedOwner, setSelectedOwner] = useState("Priya Shah (Security)");
 
-  const sampleIncident = { id: "INC-2847", title: "Security Incident Detected", urgency: "high" as const, detail: "ServiceNow incident logged by CloudStorage Solutions (3rd party provider). Unusual access pattern detected.", completedSteps: 5, totalSteps: 8 };
+  const sampleIncident = { id: "INC-2847", title: "Security Incident Detected", urgency: "high" as const, detail: "ServiceNow incident logged by CloudStorage Solutions (3rd party provider). Unusual access pattern detected.", timeAgo: "3 hours ago", completedSteps: 5, totalSteps: 8 };
   const sampleSteps = [
     { id: "step-1", status: "done" as const, title: "Created incident record", detail: "Logged INC-2847 and associated it to CloudStorage Solutions.", time: "09:14 ET", actor: "Agent" as const },
     { id: "step-2", status: "done" as const, title: "Identified affected subsidiaries", detail: "Mapped impacted entities and likely jurisdictions.", time: "09:22 ET", actor: "Agent" as const },
