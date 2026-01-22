@@ -158,10 +158,12 @@ function toneForLevel(level: RiskLevel): "low" | "medium" | "high" {
 function HeatMap3x3({
   onCellClick,
   onCellHover,
+  onCellLeave,
   activeCell,
 }: {
   onCellClick: (l: RiskLevel, i: RiskLevel) => void;
   onCellHover: (ctx: ClusterContext | null, rect: DOMRect | null) => void;
+  onCellLeave: () => void;
   activeCell: string | null;
 }) {
   const likelihoodLevels: RiskLevel[] = ["High", "Medium", "Low"];
@@ -198,7 +200,7 @@ function HeatMap3x3({
                   title: `${l} likelihood · ${i} impact`,
                   subtitle: `${count} risks (${delta === 0 ? "0" : delta > 0 ? `+${delta}` : delta} vs last period)`,
                 }, rect);
-              }, 200);
+              }, 160);
             };
 
             return (
@@ -209,6 +211,7 @@ function HeatMap3x3({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={() => {
                   if (holdTimer.current) window.clearTimeout(holdTimer.current);
+                  onCellLeave();
                 }}
                 style={{
                   height: 72, borderRadius: 10, border: "1px solid rgba(15,23,42,0.1)",
@@ -250,6 +253,7 @@ function HeatMap5x5({
   showComparison = false,
   onCellClick,
   onCellHover,
+  onCellLeave,
   activeCell,
 }: {
   data: Record<string, number>;
@@ -257,6 +261,7 @@ function HeatMap5x5({
   showComparison?: boolean;
   onCellClick?: (l: RiskLevel5, i: RiskLevel5) => void;
   onCellHover?: (ctx: ClusterContext | null, rect: DOMRect | null) => void;
+  onCellLeave?: () => void;
   activeCell?: string | null;
 }) {
   const likelihoodLevels: RiskLevel5[] = ["Very High", "High", "Medium", "Low", "Very Low"];
@@ -293,7 +298,7 @@ function HeatMap5x5({
                   title: `${l} likelihood · ${i} impact`,
                   subtitle: `${count} risks`,
                 }, rect);
-              }, 200);
+              }, 160);
             };
 
             return (
@@ -302,7 +307,7 @@ function HeatMap5x5({
                 type="button"
                 onClick={() => onCellClick?.(l, i)}
                 onMouseEnter={handleMouseEnter}
-                onMouseLeave={() => { if (holdTimer.current) window.clearTimeout(holdTimer.current); }}
+                onMouseLeave={() => { if (holdTimer.current) window.clearTimeout(holdTimer.current); onCellLeave?.(); }}
                 style={{
                   height: 56, borderRadius: 8, border: "1px solid rgba(15,23,42,0.1)",
                   background: `linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%), ${bg}`,
@@ -339,10 +344,12 @@ function HeatMap5x5({
 function GaussianChart({
   onBinClick,
   onBinHover,
+  onBinLeave,
   activeBin,
 }: {
   onBinClick: (range: string, count: number) => void;
   onBinHover: (ctx: ClusterContext | null, rect: DOMRect | null) => void;
+  onBinLeave: () => void;
   activeBin: string | null;
 }) {
   const maxCount = Math.max(...GAUSSIAN_BINS.map((b) => b.count));
@@ -376,7 +383,7 @@ function GaussianChart({
                 title: `Risk Score ${bin.range}`,
                 subtitle: `${bin.count} risks in this range`,
               }, rect);
-            }, 200);
+            }, 160);
           };
 
           return (
@@ -385,7 +392,7 @@ function GaussianChart({
               type="button"
               onClick={() => onBinClick(bin.range, bin.count)}
               onMouseEnter={handleMouseEnter}
-              onMouseLeave={() => { if (holdTimer.current) window.clearTimeout(holdTimer.current); }}
+              onMouseLeave={() => { if (holdTimer.current) window.clearTimeout(holdTimer.current); onBinLeave(); }}
               style={{
                 flex: 1, maxWidth: 28, height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end",
                 background: "transparent", border: "none", cursor: "pointer", padding: 0,
@@ -422,10 +429,12 @@ function GaussianChart({
 function CostNotionChart({
   onCellClick,
   onCellHover,
+  onCellLeave,
   activeCell,
 }: {
   onCellClick: (notion: string, costBucket: string) => void;
   onCellHover: (ctx: ClusterContext | null, rect: DOMRect | null) => void;
+  onCellLeave: () => void;
   activeCell: string | null;
 }) {
   const notionLevels = ["Very Large", "Large", "Medium", "Small"] as const;
@@ -464,7 +473,7 @@ function CostNotionChart({
                   title: `${notion} · ${bucket.label}`,
                   subtitle: `${count} risks`,
                 }, rect);
-              }, 200);
+              }, 160);
             };
 
             return (
@@ -473,7 +482,7 @@ function CostNotionChart({
                 type="button"
                 onClick={() => onCellClick(notion, bucket.label)}
                 onMouseEnter={handleMouseEnter}
-                onMouseLeave={() => { if (holdTimer.current) window.clearTimeout(holdTimer.current); }}
+                onMouseLeave={() => { if (holdTimer.current) window.clearTimeout(holdTimer.current); onCellLeave(); }}
                 style={{
                   height: 60, borderRadius: 10, border: "1px solid rgba(15,23,42,0.12)",
                   background: `linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%), ${bg}`,
@@ -512,16 +521,18 @@ function PopoverPanel({
   rect,
   onOpenTray,
   onFilter,
-  onClose,
+  onMouseEnter,
+  onMouseLeave,
 }: {
   ctx: ClusterContext;
   rect: DOMRect;
   onOpenTray: () => void;
   onFilter: () => void;
-  onClose: () => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }) {
   const width = 320;
-  const height = 240;
+  const height = 280;
   const padding = 12;
   const preferRight = rect.right + padding + width < window.innerWidth;
   const left = preferRight ? rect.right + padding : rect.left - padding - width;
@@ -532,40 +543,55 @@ function PopoverPanel({
     <div
       style={{
         position: "fixed", left, top, width, zIndex: 100,
-        borderRadius: 14, border: "1px solid rgba(15,23,42,0.2)", background: "#FFFFFF",
-        boxShadow: "0 18px 44px rgba(15,23,42,0.2)", padding: 14,
+        borderRadius: 14, border: "1px solid rgba(15,23,42,0.22)", background: "#FFFFFF",
+        boxShadow: "0 18px 44px rgba(15,23,42,0.18)", padding: 14,
       }}
-      onMouseLeave={onClose}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
-      <div style={{ fontSize: 15, fontWeight: 900, color: "#111827" }}>{ctx.title}</div>
-      <div style={{ marginTop: 4, fontSize: 13, color: "#4B5563" }}>{ctx.subtitle}</div>
+      <div style={{ fontSize: 16, fontWeight: 950, color: "#111827" }}>{ctx.title}</div>
+      <div style={{ marginTop: 6, fontSize: 13, color: "#374151" }}>
+        <strong>{ctx.count}</strong> risks
+        {ctx.delta !== 0 && (
+          <span style={{ fontWeight: 900, color: ctx.delta > 0 ? "#D91C1C" : "#15803D", marginLeft: 6 }}>
+            {ctx.delta > 0 ? `+${ctx.delta}` : ctx.delta}
+          </span>
+        )}
+        <span style={{ color: "#6B7280" }}> vs last period</span>
+      </div>
 
       {ctx.signals.length > 0 && (
-        <div style={{ marginTop: 10 }}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "#374151", marginBottom: 6 }}>Signals</div>
-          {ctx.signals.slice(0, 3).map((s) => (
-            <div key={s} style={{ fontSize: 12, color: "#4B5563", padding: "6px 8px", background: "#F9FAFB", borderRadius: 8, marginBottom: 4, border: "1px solid #E5E7EB" }}>
-              {s}
-            </div>
-          ))}
+        <div style={{ marginTop: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 950, color: "#111827", marginBottom: 6 }}>Signals</div>
+          <div style={{ display: "grid", gap: 6 }}>
+            {ctx.signals.slice(0, 3).map((s) => (
+              <div key={s} style={{ fontSize: 12, color: "#374151", padding: "8px 10px", background: "#F9FAFB", borderRadius: 10, border: "1px solid rgba(15,23,42,0.1)" }}>
+                {s}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      <div style={{ marginTop: 12, display: "grid", gap: 8 }}>
+      <div style={{ marginTop: 14, display: "grid", gap: 8 }}>
         <button
           type="button"
           onClick={onOpenTray}
-          style={{ height: 36, borderRadius: 10, border: "1px solid rgba(15,23,42,0.14)", background: "#111827", color: "#FFFFFF", fontSize: 13, fontWeight: 900, cursor: "pointer" }}
+          style={{ height: 36, borderRadius: 10, border: "1px solid rgba(15,23,42,0.14)", background: "#111827", color: "#FFFFFF", fontSize: 13, fontWeight: 950, cursor: "pointer" }}
         >
           ➜ Open guidance & actions
         </button>
         <button
           type="button"
           onClick={onFilter}
-          style={{ height: 34, borderRadius: 10, border: "1px solid rgba(15,23,42,0.12)", background: "#FFFFFF", color: "#111827", fontSize: 12, fontWeight: 800, cursor: "pointer" }}
+          style={{ height: 34, borderRadius: 10, border: "1px solid rgba(15,23,42,0.12)", background: "#FFFFFF", color: "#111827", fontSize: 12, fontWeight: 900, cursor: "pointer" }}
         >
           🧲 Filter table
         </button>
+      </div>
+
+      <div style={{ marginTop: 10, fontSize: 12, color: "#9CA3AF" }}>
+        Updated 7 days ago
       </div>
     </div>
   );
@@ -586,6 +612,8 @@ export default function RiskManagerExperimentsPage() {
 
   const [popoverCtx, setPopoverCtx] = useState<ClusterContext | null>(null);
   const [popoverRect, setPopoverRect] = useState<DOMRect | null>(null);
+  const popoverHoveredRef = useRef(false);
+  const closeTimerRef = useRef<number | null>(null);
 
   const [agentPrompt, setAgentPrompt] = useState("");
   const [agentRunning, setAgentRunning] = useState(false);
@@ -603,9 +631,37 @@ export default function RiskManagerExperimentsPage() {
 
   const activeFiltersCount = (likelihood ? 1 : 0) + (impact ? 1 : 0);
 
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const scheduleClose = () => {
+    clearCloseTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      if (!popoverHoveredRef.current) {
+        setPopoverCtx(null);
+        setPopoverRect(null);
+      }
+    }, 150);
+  };
+
   const handleCellHover = (ctx: ClusterContext | null, rect: DOMRect | null) => {
+    clearCloseTimer();
     setPopoverCtx(ctx);
     setPopoverRect(rect);
+  };
+
+  const handlePopoverEnter = () => {
+    popoverHoveredRef.current = true;
+    clearCloseTimer();
+  };
+
+  const handlePopoverLeave = () => {
+    popoverHoveredRef.current = false;
+    scheduleClose();
   };
 
   const handleFilter = (l: string, i: string) => {
@@ -732,6 +788,7 @@ export default function RiskManagerExperimentsPage() {
                 <HeatMap3x3
                   onCellClick={(l, i) => handleFilter(l, i)}
                   onCellHover={handleCellHover}
+                  onCellLeave={scheduleClose}
                   activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
                 />
               )}
@@ -741,6 +798,7 @@ export default function RiskManagerExperimentsPage() {
                   data={HEATMAP_5X5_CURRENT}
                   onCellClick={(l, i) => handleFilter(l, i)}
                   onCellHover={handleCellHover}
+                  onCellLeave={scheduleClose}
                   activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
                 />
               )}
@@ -749,7 +807,7 @@ export default function RiskManagerExperimentsPage() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>Today (94 risks)</div>
-                    <HeatMap5x5 data={HEATMAP_5X5_CURRENT} onCellClick={(l, i) => handleFilter(l, i)} onCellHover={handleCellHover} />
+                    <HeatMap5x5 data={HEATMAP_5X5_CURRENT} onCellClick={(l, i) => handleFilter(l, i)} onCellHover={handleCellHover} onCellLeave={scheduleClose} />
                   </div>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>1 Year Ago (99 risks)</div>
@@ -768,6 +826,7 @@ export default function RiskManagerExperimentsPage() {
                     setTableVersion((v) => v + 1);
                   }}
                   onBinHover={handleCellHover}
+                  onBinLeave={scheduleClose}
                   activeBin={null}
                 />
               )}
@@ -781,6 +840,7 @@ export default function RiskManagerExperimentsPage() {
                     setTableVersion((v) => v + 1);
                   }}
                   onCellHover={handleCellHover}
+                  onCellLeave={scheduleClose}
                   activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
                 />
               )}
@@ -856,7 +916,8 @@ export default function RiskManagerExperimentsPage() {
             rect={popoverRect}
             onOpenTray={() => openTray(popoverCtx)}
             onFilter={() => handleFilter(popoverCtx.likelihood, popoverCtx.impact)}
-            onClose={() => { setPopoverCtx(null); setPopoverRect(null); }}
+            onMouseEnter={handlePopoverEnter}
+            onMouseLeave={handlePopoverLeave}
           />
         )}
 
