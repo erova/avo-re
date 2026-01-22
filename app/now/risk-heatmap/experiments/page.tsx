@@ -321,107 +321,101 @@ function ComparisonView() {
 // ============================================================================
 
 function GaussianView() {
-  // Generate gaussian-distributed risk scores
-  const risks = useMemo(() => {
-    const items: { id: string; score: number; name: string; type: string }[] = [];
-    const names = [
-      "Vendor access control",
-      "Regulatory change tracking",
-      "Incident response readiness",
-      "Policy acknowledgement drift",
-      "Audit evidence delays",
-      "BCP coverage gaps",
-      "Third-party reassessment",
-      "Data retention compliance",
-      "Access provisioning delays",
-      "Training completion variance",
-    ];
-    const types = ["Cyber", "Compliance", "Operational", "Governance", "Third-party"];
+  // Deterministic gaussian-like distribution with clear bell curve shape
+  // Counts per 5-point bin from 0-100 (21 bins total)
+  const binCounts = [
+    1, 2, 3, 5, 7,      // 0-24: tail
+    10, 14, 18, 22, 25, // 25-49: rising
+    28,                  // 50-54: peak
+    24, 21, 17, 13, 9,  // 55-79: falling
+    6, 4, 3, 2, 1       // 80-100: tail
+  ];
 
-    // Generate ~80 risks with normal distribution (mean=50, std=18)
-    for (let i = 0; i < 80; i++) {
-      // Box-Muller transform for normal distribution
-      const u1 = Math.random();
-      const u2 = Math.random();
-      const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-      const score = clamp(Math.round(50 + z * 18), 0, 100);
+  const bins = binCounts.map((count, idx) => {
+    const start = idx * 5;
+    const end = start + 4;
+    return {
+      range: `${start}`,
+      fullRange: `${start}-${end}`,
+      count,
+      start,
+      end,
+    };
+  });
 
-      items.push({
-        id: `R-${10500 + i}`,
-        score,
-        name: names[i % names.length],
-        type: types[i % types.length],
-      });
-    }
-    return items.sort((a, b) => a.score - b.score);
-  }, []);
-
-  // Group into bins for histogram
-  const bins = useMemo(() => {
-    const binSize = 10;
-    const result: { range: string; count: number; risks: typeof risks }[] = [];
-    for (let i = 0; i <= 90; i += binSize) {
-      const inBin = risks.filter((r) => r.score >= i && r.score < i + binSize);
-      result.push({
-        range: `${i}-${i + binSize - 1}`,
-        count: inBin.length,
-        risks: inBin,
-      });
-    }
-    return result;
-  }, [risks]);
-
+  const totalRisks = bins.reduce((sum, b) => sum + b.count, 0);
   const maxCount = Math.max(...bins.map((b) => b.count));
+
+  // Calculate zone totals
+  const lowCount = bins.filter(b => b.start < 30).reduce((sum, b) => sum + b.count, 0);
+  const medCount = bins.filter(b => b.start >= 30 && b.start < 70).reduce((sum, b) => sum + b.count, 0);
+  const highCount = bins.filter(b => b.start >= 70).reduce((sum, b) => sum + b.count, 0);
 
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
         <h3 style={{ fontSize: 16, fontWeight: 700, color: "#111827" }}>Gaussian Risk Distribution</h3>
         <p style={{ fontSize: 13, color: "#6B7280", marginTop: 4 }}>
-          Risk scores distributed along a normal curve. Most risks cluster around medium severity.
+          Risk scores distributed along a normal curve. Most risks cluster around medium severity (50-60).
         </p>
       </div>
 
       {/* Bell curve visualization */}
-      <div style={{ position: "relative", height: 200, marginBottom: 24 }}>
+      <div style={{ position: "relative", height: 280, marginBottom: 16 }}>
+        {/* Y-axis */}
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 40, width: 40, display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", paddingRight: 8 }}>
+          <span style={{ fontSize: 10, color: "#9CA3AF" }}>{maxCount}</span>
+          <span style={{ fontSize: 10, color: "#9CA3AF" }}>{Math.round(maxCount / 2)}</span>
+          <span style={{ fontSize: 10, color: "#9CA3AF" }}>0</span>
+        </div>
+
+        {/* Chart area */}
         <div
           style={{
+            marginLeft: 44,
             display: "flex",
             alignItems: "flex-end",
-            justifyContent: "space-between",
-            height: "100%",
-            gap: 4,
-            padding: "0 20px",
+            justifyContent: "center",
+            height: "calc(100% - 40px)",
+            gap: 3,
+            paddingRight: 8,
           }}
         >
           {bins.map((bin, idx) => {
-            const heightPct = maxCount > 0 ? (bin.count / maxCount) * 100 : 0;
-            const isLow = idx < 3;
-            const isMed = idx >= 3 && idx < 7;
-            const isHigh = idx >= 7;
+            // Use sqrt scale to exaggerate differences
+            const heightPct = maxCount > 0 ? Math.pow(bin.count / maxCount, 0.7) * 100 : 0;
+            
+            // Color zones
+            const isLow = bin.start < 30;
+            const isMed = bin.start >= 30 && bin.start < 70;
             const bg = isLow ? "#22C55E" : isMed ? "#F59E0B" : "#EF4444";
+            const bgLight = isLow ? "#86EFAC" : isMed ? "#FCD34D" : "#FCA5A5";
 
             return (
               <div
                 key={bin.range}
                 style={{
                   flex: 1,
+                  maxWidth: 36,
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                   gap: 4,
+                  height: "100%",
+                  justifyContent: "flex-end",
                 }}
               >
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#374151" }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#374151" }}>
                   {bin.count}
                 </div>
                 <div
                   style={{
                     width: "100%",
                     height: `${heightPct}%`,
-                    minHeight: bin.count > 0 ? 8 : 2,
-                    background: `linear-gradient(to top, ${bg}, ${bg}dd)`,
+                    minHeight: bin.count > 0 ? 6 : 2,
+                    background: `linear-gradient(to top, ${bg}, ${bgLight})`,
                     borderRadius: "4px 4px 0 0",
+                    boxShadow: `0 2px 8px ${bg}40`,
                     transition: "height 300ms ease",
                   }}
                 />
@@ -433,19 +427,41 @@ function GaussianView() {
         {/* X-axis labels */}
         <div
           style={{
+            marginLeft: 44,
             display: "flex",
-            justifyContent: "space-between",
-            padding: "8px 20px 0",
-            fontSize: 10,
-            color: "#6B7280",
+            justifyContent: "center",
+            paddingTop: 8,
+            gap: 3,
           }}
         >
-          {bins.map((bin) => (
-            <div key={bin.range} style={{ flex: 1, textAlign: "center" }}>
-              {bin.range}
+          {bins.map((bin, idx) => (
+            <div 
+              key={bin.range} 
+              style={{ 
+                flex: 1, 
+                maxWidth: 36,
+                textAlign: "center", 
+                fontSize: 9, 
+                color: "#9CA3AF",
+                fontWeight: idx % 2 === 0 ? 600 : 400,
+              }}
+            >
+              {idx % 2 === 0 ? bin.range : ""}
             </div>
           ))}
         </div>
+
+        {/* X-axis title */}
+        <div style={{ marginLeft: 44, textAlign: "center", fontSize: 11, fontWeight: 600, color: "#6B7280", marginTop: 4 }}>
+          Risk Score →
+        </div>
+      </div>
+
+      {/* Zone indicators */}
+      <div style={{ marginLeft: 44, display: "flex", gap: 2, marginBottom: 20 }}>
+        <div style={{ flex: 6, height: 4, background: "#22C55E", borderRadius: 2, opacity: 0.6 }} />
+        <div style={{ flex: 8, height: 4, background: "#F59E0B", borderRadius: 2, opacity: 0.6 }} />
+        <div style={{ flex: 7, height: 4, background: "#EF4444", borderRadius: 2, opacity: 0.6 }} />
       </div>
 
       {/* Stats summary */}
@@ -454,27 +470,29 @@ function GaussianView() {
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
           gap: 12,
-          marginTop: 16,
         }}
       >
         {[
-          { label: "Total Risks", value: risks.length, color: "#111827" },
-          { label: "Low (0-29)", value: risks.filter((r) => r.score < 30).length, color: "#22C55E" },
-          { label: "Medium (30-69)", value: risks.filter((r) => r.score >= 30 && r.score < 70).length, color: "#F59E0B" },
-          { label: "High (70-100)", value: risks.filter((r) => r.score >= 70).length, color: "#EF4444" },
+          { label: "Total Risks", value: totalRisks, color: "#111827", bg: "#F9FAFB", border: "#E5E7EB" },
+          { label: "Low (0-29)", value: lowCount, color: "#15803D", bg: "#F0FDF4", border: "#BBF7D0" },
+          { label: "Medium (30-69)", value: medCount, color: "#B45309", bg: "#FFFBEB", border: "#FDE68A" },
+          { label: "High (70-100)", value: highCount, color: "#DC2626", bg: "#FEF2F2", border: "#FECACA" },
         ].map((stat) => (
           <div
             key={stat.label}
             style={{
-              padding: 12,
-              borderRadius: 10,
-              background: "#F9FAFB",
-              border: "1px solid #E5E7EB",
+              padding: 14,
+              borderRadius: 12,
+              background: stat.bg,
+              border: `1px solid ${stat.border}`,
             }}
           >
             <div style={{ fontSize: 11, color: "#6B7280", fontWeight: 600 }}>{stat.label}</div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: stat.color, marginTop: 4 }}>
+            <div style={{ fontSize: 28, fontWeight: 800, color: stat.color, marginTop: 4 }}>
               {stat.value}
+            </div>
+            <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>
+              {Math.round((stat.value / totalRisks) * 100)}% of total
             </div>
           </div>
         ))}
