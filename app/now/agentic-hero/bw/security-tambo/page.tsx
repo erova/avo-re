@@ -787,7 +787,7 @@ function SecurityTamboContent({ hasTamboProvider = true }: { hasTamboProvider?: 
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-md bg-slate-900" />
-                <span className="text-sm font-semibold text-slate-900">Diligent</span>
+                <span className="text-sm font-semibold text-slate-900">GRC Command Center</span>
               </div>
               <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-700">
                 <svg className="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none"><path d="M5 5h6v6H5V5Zm8 0h6v6h-6V5ZM5 13h6v6H5v-6Zm8 0h6v6h-6v-6Z" stroke="currentColor" strokeWidth="1.5"/></svg>

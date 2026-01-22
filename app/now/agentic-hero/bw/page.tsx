@@ -220,7 +220,7 @@ function TopNav({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-slate-900" />
-            <span className="text-sm font-semibold text-slate-900">Diligent</span>
+            <span className="text-sm font-semibold text-slate-900">GRC Command Center</span>
           </div>
 
           <button className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">
@@ -379,7 +379,7 @@ export default function Page() {
             >
               <div className="flex items-center gap-3">
                 <span className="shrink-0 text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
-                  Active agents
+                GRC Workforce Agents
                 </span>
                 <div className="relative flex-1 overflow-hidden">
                   <div className="ticker-track flex w-max items-center gap-6">

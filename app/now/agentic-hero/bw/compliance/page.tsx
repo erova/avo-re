@@ -509,7 +509,7 @@ function PrototypeNav() {
              <div className="flex items-center gap-3">
                <div className="flex items-center gap-2">
                  <div className="h-8 w-8 rounded-md bg-slate-900" />
-                 <span className="text-sm font-semibold text-slate-900">Diligent</span>
+                 <span className="text-sm font-semibold text-slate-900">GRC Command Center</span>
                </div>
  
                <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-700">
