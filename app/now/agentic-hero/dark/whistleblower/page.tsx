@@ -410,33 +410,66 @@ function RecentAppRow({ icon, label, detail }: { icon: string; label: string; de
 }
 
 function PromptComposer({ placeholder, contextLabel, dock }: { placeholder: string; contextLabel?: string; dock: "main" | "rail" }) {
+  const [inputValue, setInputValue] = React.useState("");
   return (
-    <div className="rounded-2xl border border-[#30363d] bg-[#161b22] shadow-sm">
-      {contextLabel && (
-        <div className="flex items-center justify-between border-b border-[#30363d] px-4 py-2">
-          <div className="text-xs font-medium uppercase tracking-wide text-[#6e7681]">Prompting in context</div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs text-[#8b949e]"><span className="font-medium">{contextLabel}</span></div>
+    <div>
+      {/* Prompt box with gradient top border */}
+      <div className="overflow-hidden rounded-2xl shadow-sm" style={{ background: "linear-gradient(to right, #f472b6, #a78bfa, #60a5fa, #2dd4bf)" }}>
+        <div className="mt-[2px] rounded-b-2xl bg-[#161b22] p-5">
+          <textarea
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            className="min-h-[48px] w-full resize-none bg-transparent text-sm text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
+            placeholder={placeholder}
+          />
+          <div className="mt-2 flex items-center justify-between">
+            <button className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#30363d] text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <div className="flex items-center gap-2">
+              <button className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#30363d] text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 14a3 3 0 0 0 3-3V7a3 3 0 1 0-6 0v4a3 3 0 0 0 3 3Z" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M7 11a5 5 0 0 0 10 0M12 16v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              </button>
+              <button 
+                className={cn(
+                  "inline-flex h-9 w-9 items-center justify-center rounded-full border transition-all",
+                  inputValue.trim() 
+                    ? "border-[#58a6ff] bg-[#58a6ff] text-[#0d1117] hover:bg-[#79b8ff]" 
+                    : "border-[#30363d] text-[#6e7681]"
+                )}
+                disabled={!inputValue.trim()}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {dock === "main" && (
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+          {[
+            { icon: "🔍", label: "Open investigation" },
+            { icon: "📋", label: "Search policies" },
+            { icon: "📊", label: "Draft board-ready summary" },
+            { icon: "🔔", label: "Show agents needing attention" },
+          ].map((item) => (
+            <button
+              key={item.label}
+              className="inline-flex items-center gap-2 rounded-full border border-[#30363d] bg-[#21262d] px-4 py-2 text-sm text-[#8b949e] shadow-sm hover:bg-[#30363d] hover:text-[#f0f6fc]"
+            >
+              <span>{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
         </div>
       )}
-      <div className="p-4">
-        <div className="flex items-center gap-3">
-          <button className="flex h-10 w-10 items-center justify-center rounded-full border border-[#30363d] bg-[#161b22] text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]"><Icon name="paperclip" className="h-5 w-5" /></button>
-          <div className="flex-1"><div className="text-sm text-[#6e7681]">{placeholder}</div><div className="mt-1 h-5 w-full rounded bg-[#21262d]" /></div>
-          <button className="flex h-10 w-10 items-center justify-center rounded-full border border-[#30363d] bg-[#161b22] text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]"><Icon name="mic" className="h-5 w-5" /></button>
-          <button className="flex h-10 w-10 items-center justify-center rounded-full border border-[#58a6ff] bg-[#58a6ff] text-[#0d1117] hover:bg-[#79b8ff]"><Icon name="send" className="h-5 w-5" /></button>
-        </div>
-        {dock === "main" ? (
-          <>
-            <div className="mt-4 flex flex-wrap justify-center gap-3">
-              <PillButton icon={<span className="text-base">＋</span>} label="Open investigation" />
-              <PillButton icon={<Icon name="search" className="h-4 w-4" />} label="Search policies" />
-              <PillButton icon={<Icon name="shield" className="h-4 w-4" />} label="Draft board-ready summary" />
-              <PillButton icon={<Icon name="spark" className="h-4 w-4" />} label="Show agents needing attention" />
-            </div>
-            <div className="mt-4 text-center text-xs text-[#6e7681]">AI-generated content may have inaccuracies. <span className="underline decoration-[#6e7681]/50 underline-offset-2">Learn more</span></div>
-          </>
-        ) : (<div className="mt-3 text-xs text-[#6e7681]">Ask follow-up questions about this report without leaving the review panel.</div>)}
-      </div>
     </div>
   );
 }
