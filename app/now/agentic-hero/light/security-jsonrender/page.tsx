@@ -734,11 +734,7 @@ export default function SecurityJsonRenderPage() {
                 <DiligentLogo className="h-7 w-auto" />
                 <span className="text-sm font-semibold text-gray-900">GRC Command Center</span>
               </div>
-              <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-700">
-                <svg className="h-4 w-4 text-gray-500" viewBox="0 0 24 24" fill="none"><path d="M5 5h6v6H5V5Zm8 0h6v6h-6V5ZM5 13h6v6H5v-6Zm8 0h6v6h-6v-6Z" stroke="currentColor" strokeWidth="1.5"/></svg>
-                <span className="font-medium">Ibotta, Inc.</span>
               </div>
-            </div>
             <div className="flex items-center gap-2 text-gray-600">
               <div className="relative">
                 <div className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#EE312E]" />

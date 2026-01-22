@@ -507,11 +507,7 @@ function PrototypeNav() {
                  <span className="text-sm font-semibold text-gray-900">GRC Command Center</span>
                </div>
 
-               <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-700">
-                 <Icon name="grid" className="h-4 w-4 text-gray-500" />
-                 <span className="font-medium">Ibotta, Inc.</span>
                </div>
-             </div>
  
              <div className="flex items-center gap-2 text-gray-600">
                <div className="relative">

@@ -265,11 +265,7 @@ function SecurityTamboContent({ hasTamboProvider = true }: { hasTamboProvider?: 
                   <DiligentLogo className="h-7 w-auto" />
                   <span className="text-sm font-semibold text-[#f0f6fc]">GRC Command Center</span>
                 </div>
-                <div className="flex items-center gap-2 rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1.5 text-sm text-[#8b949e]">
-                  <svg className="h-4 w-4 text-[#6e7681]" viewBox="0 0 24 24" fill="none"><path d="M5 5h6v6H5V5Zm8 0h6v6h-6V5ZM5 13h6v6H5v-6Zm8 0h6v6h-6v-6Z" stroke="currentColor" strokeWidth="1.5"/></svg>
-                  <span className="font-medium">Ibotta, Inc.</span>
                 </div>
-              </div>
               <div className="flex items-center gap-2 text-[#8b949e]">
                 <div className="relative">
                   <div className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#da3633] ring-2 ring-[#0d1117]" />
