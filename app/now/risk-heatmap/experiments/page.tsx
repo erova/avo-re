@@ -321,14 +321,14 @@ function ComparisonView() {
 // ============================================================================
 
 function GaussianView() {
-  // Deterministic gaussian-like distribution with clear bell curve shape
+  // Extreme bell curve - very dramatic difference between tails and peak
   // Counts per 5-point bin from 0-100 (21 bins total)
   const binCounts = [
-    1, 2, 3, 5, 7,      // 0-24: tail
-    10, 14, 18, 22, 25, // 25-49: rising
-    28,                  // 50-54: peak
-    24, 21, 17, 13, 9,  // 55-79: falling
-    6, 4, 3, 2, 1       // 80-100: tail
+    0, 1, 1, 2, 4,       // 0-24: tiny tail
+    8, 15, 28, 42, 58,   // 25-49: steep rise
+    72,                   // 50-54: tall peak
+    55, 38, 24, 12, 6,   // 55-79: steep fall
+    3, 2, 1, 0, 0        // 80-100: tiny tail
   ];
 
   const bins = binCounts.map((count, idx) => {
@@ -360,63 +360,68 @@ function GaussianView() {
         </p>
       </div>
 
-      {/* Bell curve visualization */}
-      <div style={{ position: "relative", height: 280, marginBottom: 16 }}>
+      {/* Bell curve visualization - taller for more drama */}
+      <div style={{ position: "relative", height: 340, marginBottom: 16 }}>
         {/* Y-axis */}
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 40, width: 40, display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", paddingRight: 8 }}>
-          <span style={{ fontSize: 10, color: "#9CA3AF" }}>{maxCount}</span>
-          <span style={{ fontSize: 10, color: "#9CA3AF" }}>{Math.round(maxCount / 2)}</span>
-          <span style={{ fontSize: 10, color: "#9CA3AF" }}>0</span>
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 50, width: 40, display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", paddingRight: 8 }}>
+          <span style={{ fontSize: 10, color: "#6B7280", fontWeight: 600 }}>{maxCount}</span>
+          <span style={{ fontSize: 10, color: "#9CA3AF" }}>{Math.round(maxCount * 0.75)}</span>
+          <span style={{ fontSize: 10, color: "#9CA3AF" }}>{Math.round(maxCount * 0.5)}</span>
+          <span style={{ fontSize: 10, color: "#9CA3AF" }}>{Math.round(maxCount * 0.25)}</span>
+          <span style={{ fontSize: 10, color: "#6B7280", fontWeight: 600 }}>0</span>
         </div>
 
         {/* Chart area */}
         <div
           style={{
-            marginLeft: 44,
+            marginLeft: 48,
             display: "flex",
             alignItems: "flex-end",
             justifyContent: "center",
-            height: "calc(100% - 40px)",
-            gap: 3,
-            paddingRight: 8,
+            height: "calc(100% - 50px)",
+            gap: 4,
+            paddingRight: 12,
+            borderBottom: "2px solid #E5E7EB",
+            borderLeft: "2px solid #E5E7EB",
           }}
         >
           {bins.map((bin, idx) => {
-            // Use sqrt scale to exaggerate differences
-            const heightPct = maxCount > 0 ? Math.pow(bin.count / maxCount, 0.7) * 100 : 0;
+            // Linear scale - the data itself has the dramatic differences
+            const heightPct = maxCount > 0 ? (bin.count / maxCount) * 100 : 0;
             
             // Color zones
             const isLow = bin.start < 30;
             const isMed = bin.start >= 30 && bin.start < 70;
             const bg = isLow ? "#22C55E" : isMed ? "#F59E0B" : "#EF4444";
-            const bgLight = isLow ? "#86EFAC" : isMed ? "#FCD34D" : "#FCA5A5";
+            const bgLight = isLow ? "#4ADE80" : isMed ? "#FBBF24" : "#F87171";
 
             return (
               <div
                 key={bin.range}
                 style={{
                   flex: 1,
-                  maxWidth: 36,
+                  maxWidth: 32,
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-                  gap: 4,
+                  gap: 2,
                   height: "100%",
                   justifyContent: "flex-end",
                 }}
               >
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#374151" }}>
-                  {bin.count}
-                </div>
+                {bin.count > 0 && (
+                  <div style={{ fontSize: 9, fontWeight: 700, color: "#374151" }}>
+                    {bin.count}
+                  </div>
+                )}
                 <div
                   style={{
                     width: "100%",
                     height: `${heightPct}%`,
-                    minHeight: bin.count > 0 ? 6 : 2,
+                    minHeight: bin.count > 0 ? 4 : 0,
                     background: `linear-gradient(to top, ${bg}, ${bgLight})`,
-                    borderRadius: "4px 4px 0 0",
-                    boxShadow: `0 2px 8px ${bg}40`,
-                    transition: "height 300ms ease",
+                    borderRadius: "3px 3px 0 0",
+                    boxShadow: bin.count > 10 ? `0 -4px 16px ${bg}50` : "none",
                   }}
                 />
               </div>
@@ -427,11 +432,11 @@ function GaussianView() {
         {/* X-axis labels */}
         <div
           style={{
-            marginLeft: 44,
+            marginLeft: 48,
             display: "flex",
             justifyContent: "center",
-            paddingTop: 8,
-            gap: 3,
+            paddingTop: 6,
+            gap: 4,
           }}
         >
           {bins.map((bin, idx) => (
@@ -439,29 +444,38 @@ function GaussianView() {
               key={bin.range} 
               style={{ 
                 flex: 1, 
-                maxWidth: 36,
+                maxWidth: 32,
                 textAlign: "center", 
                 fontSize: 9, 
-                color: "#9CA3AF",
-                fontWeight: idx % 2 === 0 ? 600 : 400,
+                color: "#6B7280",
+                fontWeight: idx % 4 === 0 ? 700 : 400,
               }}
             >
-              {idx % 2 === 0 ? bin.range : ""}
+              {idx % 4 === 0 ? bin.range : ""}
             </div>
           ))}
         </div>
 
         {/* X-axis title */}
-        <div style={{ marginLeft: 44, textAlign: "center", fontSize: 11, fontWeight: 600, color: "#6B7280", marginTop: 4 }}>
+        <div style={{ marginLeft: 48, textAlign: "center", fontSize: 12, fontWeight: 700, color: "#374151", marginTop: 8 }}>
           Risk Score →
         </div>
       </div>
 
-      {/* Zone indicators */}
-      <div style={{ marginLeft: 44, display: "flex", gap: 2, marginBottom: 20 }}>
-        <div style={{ flex: 6, height: 4, background: "#22C55E", borderRadius: 2, opacity: 0.6 }} />
-        <div style={{ flex: 8, height: 4, background: "#F59E0B", borderRadius: 2, opacity: 0.6 }} />
-        <div style={{ flex: 7, height: 4, background: "#EF4444", borderRadius: 2, opacity: 0.6 }} />
+      {/* Zone legend */}
+      <div style={{ marginLeft: 48, display: "flex", gap: 16, marginBottom: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 12, height: 12, borderRadius: 3, background: "#22C55E" }} />
+          <span style={{ fontSize: 12, color: "#374151" }}>Low Risk (0-29)</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 12, height: 12, borderRadius: 3, background: "#F59E0B" }} />
+          <span style={{ fontSize: 12, color: "#374151" }}>Medium Risk (30-69)</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 12, height: 12, borderRadius: 3, background: "#EF4444" }} />
+          <span style={{ fontSize: 12, color: "#374151" }}>High Risk (70-100)</span>
+        </div>
       </div>
 
       {/* Stats summary */}
