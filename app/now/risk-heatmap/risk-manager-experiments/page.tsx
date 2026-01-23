@@ -577,15 +577,11 @@ function PopoverPanel({
   rect,
   onOpenTray,
   onFilter,
-  onMouseEnter,
-  onMouseLeave,
 }: {
   ctx: ClusterContext;
   rect: DOMRect;
   onOpenTray: () => void;
   onFilter: () => void;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
 }) {
   const width = 320;
   const height = 280;
@@ -602,8 +598,6 @@ function PopoverPanel({
         borderRadius: 14, border: "1px solid rgba(15,23,42,0.22)", background: "#FFFFFF",
         boxShadow: "0 18px 44px rgba(15,23,42,0.18)", padding: 14,
       }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
     >
       <div style={{ fontSize: 16, fontWeight: 950, color: "#111827" }}>{ctx.title}</div>
       <div style={{ marginTop: 6, fontSize: 13, color: "#374151" }}>
@@ -668,8 +662,6 @@ export default function RiskManagerExperimentsPage() {
 
   const [popoverCtx, setPopoverCtx] = useState<ClusterContext | null>(null);
   const [popoverRect, setPopoverRect] = useState<DOMRect | null>(null);
-  const [isHoveringPopover, setIsHoveringPopover] = useState(false);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [agentPrompt, setAgentPrompt] = useState("");
   const [agentRunning, setAgentRunning] = useState(false);
@@ -687,57 +679,17 @@ export default function RiskManagerExperimentsPage() {
 
   const activeFiltersCount = (likelihood ? 1 : 0) + (impact ? 1 : 0);
 
-  // Clear any pending close timer
-  const clearCloseTimer = () => {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-  };
-
-  // Close the popover
+  // Close the popover (called when mouse leaves the entire viz container)
   const closePopover = () => {
     setPopoverCtx(null);
     setPopoverRect(null);
   };
 
-  // Schedule a delayed close (gives user time to move to popover)
-  const scheduleClose = () => {
-    clearCloseTimer();
-    closeTimerRef.current = setTimeout(() => {
-      // Only close if not currently hovering the popover
-      setPopoverCtx((current) => {
-        // This runs in the timeout, check state at execution time
-        return current; // Keep current - we'll close via container leave
-      });
-    }, 300);
-  };
-
-  // When a cell is hovered, show the popover
+  // When a cell is hovered long enough, show the popover
   const handleCellHover = (ctx: ClusterContext | null, rect: DOMRect | null) => {
-    clearCloseTimer();
     if (ctx && rect) {
       setPopoverCtx(ctx);
       setPopoverRect(rect);
-    }
-  };
-
-  // When mouse enters the popover panel
-  const handlePopoverEnter = () => {
-    clearCloseTimer();
-    setIsHoveringPopover(true);
-  };
-
-  // When mouse leaves the popover panel
-  const handlePopoverLeave = () => {
-    setIsHoveringPopover(false);
-    closePopover();
-  };
-
-  // When mouse leaves the entire visualization container
-  const handleContainerLeave = () => {
-    if (!isHoveringPopover) {
-      closePopover();
     }
   };
 
@@ -848,7 +800,7 @@ export default function RiskManagerExperimentsPage() {
           {/* Visualization card - wrapped in hover container */}
           <div 
             style={{ margin: "0 14px", position: "relative" }}
-            onMouseLeave={handleContainerLeave}
+            onMouseLeave={closePopover}
           >
             <div className={styles.card}>
               <div className={styles.cardHeader}>
@@ -928,15 +880,13 @@ export default function RiskManagerExperimentsPage() {
             </div>
             </div>
 
-            {/* Popover - rendered inside the hover container */}
+            {/* Popover - rendered inside the hover container so hovering it doesn't trigger container's onMouseLeave */}
             {popoverCtx && popoverRect && (
               <PopoverPanel
                 ctx={popoverCtx}
                 rect={popoverRect}
                 onOpenTray={() => openTray(popoverCtx)}
                 onFilter={() => handleFilter(popoverCtx.likelihood, popoverCtx.impact)}
-                onMouseEnter={handlePopoverEnter}
-                onMouseLeave={handlePopoverLeave}
               />
             )}
           </div>
