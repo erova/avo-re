@@ -14,7 +14,7 @@ import {
 // Types
 // ============================================================================
 
-type ViewMode = "3x3" | "5x5" | "compare" | "gaussian" | "cost";
+type ViewMode = "3x3" | "5x5" | "compare" | "gaussian" | "cost" | "trend" | "bubble";
 type RiskLevel5 = "Very Low" | "Low" | "Medium" | "High" | "Very High";
 
 type ClusterContext = {
@@ -90,6 +90,41 @@ const COST_RISKS = [
   { id: "R-13", name: "Evidence collection delays", cost: 95, notion: "Medium" as const },
   { id: "R-14", name: "Region-specific process variance", cost: 150, notion: "Medium" as const },
   { id: "R-15", name: "Documentation hygiene", cost: 25, notion: "Small" as const },
+];
+
+// Trend data - monthly risk counts over 12 months
+const TREND_DATA = [
+  { month: "Feb 25", total: 72, high: 12, medium: 38, low: 22, opened: 8, closed: 5 },
+  { month: "Mar 25", total: 75, high: 14, medium: 39, low: 22, opened: 9, closed: 6 },
+  { month: "Apr 25", total: 78, high: 13, medium: 41, low: 24, opened: 7, closed: 4 },
+  { month: "May 25", total: 82, high: 15, medium: 42, low: 25, opened: 10, closed: 6 },
+  { month: "Jun 25", total: 79, high: 14, medium: 40, low: 25, opened: 5, closed: 8 },
+  { month: "Jul 25", total: 81, high: 13, medium: 43, low: 25, opened: 7, closed: 5 },
+  { month: "Aug 25", total: 85, high: 15, medium: 44, low: 26, opened: 9, closed: 5 },
+  { month: "Sep 25", total: 88, high: 16, medium: 45, low: 27, opened: 8, closed: 5 },
+  { month: "Oct 25", total: 84, high: 14, medium: 44, low: 26, opened: 4, closed: 8 },
+  { month: "Nov 25", total: 86, high: 15, medium: 45, low: 26, opened: 6, closed: 4 },
+  { month: "Dec 25", total: 82, high: 14, medium: 43, low: 25, opened: 3, closed: 7 },
+  { month: "Jan 26", total: 82, high: 14, medium: 47, low: 21, opened: 5, closed: 5 },
+];
+
+// Bubble chart data - individual risks with likelihood, impact, and size (cost/age)
+const BUBBLE_RISKS = [
+  { id: "R-1", name: "Unpatched dependency exposure", likelihood: 4.2, impact: 4.8, cost: 680, age: 145, type: "Cyber" },
+  { id: "R-2", name: "Incident response readiness", likelihood: 3.8, impact: 4.5, cost: 450, age: 92, type: "Cyber" },
+  { id: "R-3", name: "SOX control mapping drift", likelihood: 3.5, impact: 4.2, cost: 520, age: 178, type: "Compliance" },
+  { id: "R-4", name: "Vendor access controls", likelihood: 4.0, impact: 3.8, cost: 250, age: 67, type: "Third-party" },
+  { id: "R-5", name: "BCP coverage gaps", likelihood: 2.8, impact: 4.0, cost: 380, age: 234, type: "Resilience" },
+  { id: "R-6", name: "Third-party reassessment", likelihood: 3.2, impact: 3.5, cost: 290, age: 112, type: "Third-party" },
+  { id: "R-7", name: "Regulatory change tracking", likelihood: 3.0, impact: 3.8, cost: 180, age: 45, type: "Compliance" },
+  { id: "R-8", name: "Region-specific variance", likelihood: 2.5, impact: 3.2, cost: 150, age: 89, type: "Operational" },
+  { id: "R-9", name: "Audit evidence delays", likelihood: 2.8, impact: 3.0, cost: 120, age: 56, type: "Audit" },
+  { id: "R-10", name: "Evidence collection delays", likelihood: 2.2, impact: 2.8, cost: 95, age: 34, type: "Audit" },
+  { id: "R-11", name: "Data retention compliance", likelihood: 1.8, impact: 2.5, cost: 85, age: 78, type: "Compliance" },
+  { id: "R-12", name: "Access provisioning delays", likelihood: 2.0, impact: 2.2, cost: 65, age: 23, type: "Operational" },
+  { id: "R-13", name: "Policy acknowledgement drift", likelihood: 1.5, impact: 2.0, cost: 45, age: 156, type: "Governance" },
+  { id: "R-14", name: "Training completion variance", likelihood: 1.2, impact: 1.8, cost: 35, age: 45, type: "Governance" },
+  { id: "R-15", name: "Documentation hygiene", likelihood: 1.0, impact: 1.5, cost: 25, age: 12, type: "Governance" },
 ];
 
 // ============================================================================
@@ -585,6 +620,500 @@ function CostNotionChart({
 }
 
 // ============================================================================
+// Trend Line Chart
+// ============================================================================
+
+function TrendChart({
+  onPointHover,
+  onPointLeave,
+  activeMonth,
+}: {
+  onPointHover: (ctx: ClusterContext | null, rect: DOMRect | null) => void;
+  onPointLeave: () => void;
+  activeMonth: string | null;
+}) {
+  const [trendMode, setTrendMode] = useState<"total" | "severity" | "velocity">("total");
+  const maxTotal = Math.max(...TREND_DATA.map(d => d.total));
+  const maxVelocity = Math.max(...TREND_DATA.map(d => Math.max(d.opened, d.closed)));
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingHover = useRef<{ ctx: ClusterContext; rect: DOMRect } | null>(null);
+
+  const clearHold = () => {
+    if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
+    pendingHover.current = null;
+  };
+
+  const startHold = (ctx: ClusterContext, el: HTMLElement) => {
+    clearHold();
+    const rect = el.getBoundingClientRect();
+    pendingHover.current = { ctx, rect };
+    holdTimer.current = setTimeout(() => {
+      if (pendingHover.current) onPointHover(pendingHover.current.ctx, pendingHover.current.rect);
+    }, 150);
+  };
+
+  // Calculate trend line (simple linear regression for total)
+  const n = TREND_DATA.length;
+  const sumX = TREND_DATA.reduce((s, _, i) => s + i, 0);
+  const sumY = TREND_DATA.reduce((s, d) => s + d.total, 0);
+  const sumXY = TREND_DATA.reduce((s, d, i) => s + i * d.total, 0);
+  const sumX2 = TREND_DATA.reduce((s, _, i) => s + i * i, 0);
+  const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+  const intercept = (sumY - slope * sumX) / n;
+  const trendDirection = slope > 0.5 ? "Rising" : slope < -0.5 ? "Declining" : "Stable";
+
+  return (
+    <div>
+      {/* Mode toggles */}
+      <div style={{ marginBottom: 16, display: "flex", gap: 8 }}>
+        {[
+          { id: "total" as const, label: "Total Risks" },
+          { id: "severity" as const, label: "By Severity" },
+          { id: "velocity" as const, label: "Velocity" },
+        ].map(m => (
+          <button
+            key={m.id}
+            type="button"
+            onClick={() => setTrendMode(m.id)}
+            style={{
+              padding: "6px 12px", borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: "pointer",
+              border: trendMode === m.id ? "1px solid #111827" : "1px solid rgba(15,23,42,0.14)",
+              background: trendMode === m.id ? "#111827" : "#fff",
+              color: trendMode === m.id ? "#fff" : "#374151",
+            }}
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Chart */}
+      <div style={{ position: "relative", height: 260 }}>
+        {/* Y-axis */}
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 40, width: 36, display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", paddingRight: 6, fontSize: 10, color: "#9CA3AF" }}>
+          <span>{trendMode === "velocity" ? maxVelocity : maxTotal}</span>
+          <span>{trendMode === "velocity" ? Math.round(maxVelocity / 2) : Math.round(maxTotal / 2)}</span>
+          <span>0</span>
+        </div>
+
+        {/* Chart area */}
+        <div style={{ marginLeft: 44, height: "calc(100% - 40px)", position: "relative", borderBottom: "2px solid #E5E7EB", borderLeft: "2px solid #E5E7EB" }}>
+          {/* Trend line for total mode */}
+          {trendMode === "total" && (
+            <svg style={{ position: "absolute", inset: 0, overflow: "visible" }} preserveAspectRatio="none">
+              <line
+                x1="0%"
+                y1={`${100 - ((intercept / maxTotal) * 100)}%`}
+                x2="100%"
+                y2={`${100 - (((slope * (n - 1) + intercept) / maxTotal) * 100)}%`}
+                stroke="#9CA3AF"
+                strokeWidth="2"
+                strokeDasharray="6 4"
+              />
+            </svg>
+          )}
+
+          {/* Data points */}
+          <div style={{ display: "flex", height: "100%", alignItems: "flex-end", gap: 2 }}>
+            {TREND_DATA.map((d, idx) => {
+              const isActive = activeMonth === d.month;
+              const ctx: ClusterContext = {
+                likelihood: "Medium", impact: d.month, count: d.total, delta: idx > 0 ? d.total - TREND_DATA[idx - 1].total : 0,
+                signals: [
+                  `High: ${d.high} · Medium: ${d.medium} · Low: ${d.low}`,
+                  `Opened: ${d.opened} · Closed: ${d.closed}`,
+                  idx > 0 ? `Change: ${d.total - TREND_DATA[idx - 1].total > 0 ? "+" : ""}${d.total - TREND_DATA[idx - 1].total} from last month` : "First month in range",
+                ],
+                title: d.month,
+                subtitle: `${d.total} total risks`,
+              };
+
+              if (trendMode === "velocity") {
+                return (
+                  <div key={d.month} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end", gap: 2 }}>
+                    <div style={{ display: "flex", gap: 2, alignItems: "flex-end" }}>
+                      <div
+                        onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
+                        onMouseLeave={() => { clearHold(); onPointLeave(); }}
+                        style={{
+                          width: 14, height: `${(d.opened / maxVelocity) * 180}px`, minHeight: 4,
+                          background: "linear-gradient(to top, #EF4444, #F87171)", borderRadius: "3px 3px 0 0",
+                          cursor: "pointer",
+                        }}
+                        title={`Opened: ${d.opened}`}
+                      />
+                      <div
+                        onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
+                        onMouseLeave={() => { clearHold(); onPointLeave(); }}
+                        style={{
+                          width: 14, height: `${(d.closed / maxVelocity) * 180}px`, minHeight: 4,
+                          background: "linear-gradient(to top, #22C55E, #4ADE80)", borderRadius: "3px 3px 0 0",
+                          cursor: "pointer",
+                        }}
+                        title={`Closed: ${d.closed}`}
+                      />
+                    </div>
+                  </div>
+                );
+              }
+
+              if (trendMode === "severity") {
+                const totalH = (d.high / maxTotal) * 180;
+                const totalM = (d.medium / maxTotal) * 180;
+                const totalL = (d.low / maxTotal) * 180;
+                return (
+                  <div
+                    key={d.month}
+                    onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
+                    onMouseLeave={() => { clearHold(); onPointLeave(); }}
+                    style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end", cursor: "pointer" }}
+                  >
+                    <div style={{ width: "80%", maxWidth: 28, display: "flex", flexDirection: "column" }}>
+                      <div style={{ height: totalH, background: "#EF4444", borderRadius: "3px 3px 0 0" }} />
+                      <div style={{ height: totalM, background: "#F59E0B" }} />
+                      <div style={{ height: totalL, background: "#22C55E", borderRadius: "0 0 3px 3px" }} />
+                    </div>
+                  </div>
+                );
+              }
+
+              // Total mode - line chart with points
+              const heightPct = (d.total / maxTotal) * 100;
+              return (
+                <div key={d.month} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end", position: "relative" }}>
+                  <div
+                    onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
+                    onMouseLeave={() => { clearHold(); onPointLeave(); }}
+                    style={{
+                      position: "absolute",
+                      bottom: `${heightPct}%`,
+                      width: 12, height: 12, borderRadius: "50%",
+                      background: isActive ? "#111827" : "#3B82F6",
+                      border: "2px solid #fff",
+                      boxShadow: isActive ? "0 0 0 3px #111827" : "0 2px 8px rgba(59,130,246,0.4)",
+                      cursor: "pointer",
+                      zIndex: 2,
+                    }}
+                  />
+                  {idx > 0 && (
+                    <svg style={{ position: "absolute", inset: 0, overflow: "visible", pointerEvents: "none" }}>
+                      <line
+                        x1="-50%"
+                        y1={`${100 - (TREND_DATA[idx - 1].total / maxTotal) * 100}%`}
+                        x2="50%"
+                        y2={`${100 - heightPct}%`}
+                        stroke="#3B82F6"
+                        strokeWidth="2"
+                      />
+                    </svg>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* X-axis labels */}
+        <div style={{ marginLeft: 44, display: "flex", paddingTop: 6 }}>
+          {TREND_DATA.map((d, idx) => (
+            <div key={d.month} style={{ flex: 1, textAlign: "center", fontSize: 9, color: "#6B7280", fontWeight: idx === TREND_DATA.length - 1 ? 700 : 400 }}>
+              {d.month.split(" ")[0]}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Summary stats */}
+      <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+        <div style={{ padding: 12, borderRadius: 10, background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+          <div style={{ fontSize: 10, color: "#6B7280", fontWeight: 600 }}>Current</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: "#111827" }}>{TREND_DATA[TREND_DATA.length - 1].total}</div>
+        </div>
+        <div style={{ padding: 12, borderRadius: 10, background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+          <div style={{ fontSize: 10, color: "#6B7280", fontWeight: 600 }}>12-mo Change</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: TREND_DATA[TREND_DATA.length - 1].total > TREND_DATA[0].total ? "#D91C1C" : "#15803D" }}>
+            {TREND_DATA[TREND_DATA.length - 1].total - TREND_DATA[0].total > 0 ? "+" : ""}{TREND_DATA[TREND_DATA.length - 1].total - TREND_DATA[0].total}
+          </div>
+        </div>
+        <div style={{ padding: 12, borderRadius: 10, background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+          <div style={{ fontSize: 10, color: "#6B7280", fontWeight: 600 }}>Avg/Month</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: "#111827" }}>{Math.round(sumY / n)}</div>
+        </div>
+        <div style={{ padding: 12, borderRadius: 10, background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+          <div style={{ fontSize: 10, color: "#6B7280", fontWeight: 600 }}>Trend</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: trendDirection === "Rising" ? "#D91C1C" : trendDirection === "Declining" ? "#15803D" : "#6B7280" }}>
+            {trendDirection === "Rising" ? "↑" : trendDirection === "Declining" ? "↓" : "→"}
+          </div>
+        </div>
+      </div>
+
+      {/* Velocity legend */}
+      {trendMode === "velocity" && (
+        <div style={{ marginTop: 12, display: "flex", gap: 16, justifyContent: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 12, height: 12, borderRadius: 3, background: "#EF4444" }} />
+            <span style={{ fontSize: 12, color: "#374151" }}>Opened</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 12, height: 12, borderRadius: 3, background: "#22C55E" }} />
+            <span style={{ fontSize: 12, color: "#374151" }}>Closed</span>
+          </div>
+        </div>
+      )}
+
+      {/* Severity legend */}
+      {trendMode === "severity" && (
+        <div style={{ marginTop: 12, display: "flex", gap: 16, justifyContent: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 12, height: 12, borderRadius: 3, background: "#EF4444" }} />
+            <span style={{ fontSize: 12, color: "#374151" }}>High</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 12, height: 12, borderRadius: 3, background: "#F59E0B" }} />
+            <span style={{ fontSize: 12, color: "#374151" }}>Medium</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 12, height: 12, borderRadius: 3, background: "#22C55E" }} />
+            <span style={{ fontSize: 12, color: "#374151" }}>Low</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// Bubble Chart
+// ============================================================================
+
+function BubbleChart({
+  onBubbleClick,
+  onBubbleHover,
+  onBubbleLeave,
+  activeBubble,
+}: {
+  onBubbleClick: (risk: typeof BUBBLE_RISKS[0]) => void;
+  onBubbleHover: (ctx: ClusterContext | null, rect: DOMRect | null) => void;
+  onBubbleLeave: () => void;
+  activeBubble: string | null;
+}) {
+  const [sizeMode, setSizeMode] = useState<"cost" | "age">("cost");
+  const [filterType, setFilterType] = useState<string | null>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingHover = useRef<{ ctx: ClusterContext; rect: DOMRect } | null>(null);
+
+  const clearHold = () => {
+    if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
+    pendingHover.current = null;
+  };
+
+  const startHold = (ctx: ClusterContext, el: HTMLElement) => {
+    clearHold();
+    const rect = el.getBoundingClientRect();
+    pendingHover.current = { ctx, rect };
+    holdTimer.current = setTimeout(() => {
+      if (pendingHover.current) onBubbleHover(pendingHover.current.ctx, pendingHover.current.rect);
+    }, 150);
+  };
+
+  const types = [...new Set(BUBBLE_RISKS.map(r => r.type))];
+  const filteredRisks = filterType ? BUBBLE_RISKS.filter(r => r.type === filterType) : BUBBLE_RISKS;
+  
+  const maxSize = sizeMode === "cost" 
+    ? Math.max(...BUBBLE_RISKS.map(r => r.cost))
+    : Math.max(...BUBBLE_RISKS.map(r => r.age));
+
+  const typeColors: Record<string, string> = {
+    "Cyber": "#EF4444",
+    "Compliance": "#8B5CF6",
+    "Third-party": "#F59E0B",
+    "Resilience": "#3B82F6",
+    "Operational": "#6B7280",
+    "Audit": "#10B981",
+    "Governance": "#EC4899",
+  };
+
+  return (
+    <div>
+      {/* Controls */}
+      <div style={{ marginBottom: 16, display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 8 }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: "#6B7280", alignSelf: "center" }}>Size by:</span>
+          {[
+            { id: "cost" as const, label: "Cost ($K)" },
+            { id: "age" as const, label: "Age (days)" },
+          ].map(m => (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => setSizeMode(m.id)}
+              style={{
+                padding: "5px 10px", borderRadius: 999, fontSize: 11, fontWeight: 700, cursor: "pointer",
+                border: sizeMode === m.id ? "1px solid #111827" : "1px solid rgba(15,23,42,0.14)",
+                background: sizeMode === m.id ? "#111827" : "#fff",
+                color: sizeMode === m.id ? "#fff" : "#374151",
+              }}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          <button
+            type="button"
+            onClick={() => setFilterType(null)}
+            style={{
+              padding: "4px 8px", borderRadius: 999, fontSize: 10, fontWeight: 700, cursor: "pointer",
+              border: filterType === null ? "1px solid #111827" : "1px solid rgba(15,23,42,0.14)",
+              background: filterType === null ? "#111827" : "#fff",
+              color: filterType === null ? "#fff" : "#374151",
+            }}
+          >
+            All
+          </button>
+          {types.map(t => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setFilterType(t)}
+              style={{
+                padding: "4px 8px", borderRadius: 999, fontSize: 10, fontWeight: 700, cursor: "pointer",
+                border: filterType === t ? `1px solid ${typeColors[t]}` : "1px solid rgba(15,23,42,0.14)",
+                background: filterType === t ? typeColors[t] : "#fff",
+                color: filterType === t ? "#fff" : "#374151",
+              }}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Chart */}
+      <div style={{ position: "relative", height: 320, border: "1px solid #E5E7EB", borderRadius: 12, background: "#FAFAFA", overflow: "hidden" }}>
+        {/* Grid lines */}
+        <svg style={{ position: "absolute", inset: 0 }}>
+          {[1, 2, 3, 4].map(i => (
+            <line key={`h${i}`} x1="0" y1={`${i * 20}%`} x2="100%" y2={`${i * 20}%`} stroke="#E5E7EB" strokeWidth="1" />
+          ))}
+          {[1, 2, 3, 4].map(i => (
+            <line key={`v${i}`} x1={`${i * 20}%`} y1="0" x2={`${i * 20}%`} y2="100%" stroke="#E5E7EB" strokeWidth="1" />
+          ))}
+        </svg>
+
+        {/* Quadrant labels */}
+        <div style={{ position: "absolute", top: 8, right: 12, fontSize: 10, color: "#DC2626", fontWeight: 700 }}>High L + High I</div>
+        <div style={{ position: "absolute", bottom: 8, left: 12, fontSize: 10, color: "#15803D", fontWeight: 700 }}>Low L + Low I</div>
+
+        {/* Bubbles */}
+        {filteredRisks.map((risk) => {
+          const x = ((risk.likelihood - 0.5) / 5) * 100; // 0.5-5.5 -> 0-100%
+          const y = 100 - ((risk.impact - 0.5) / 5) * 100; // Invert Y
+          const sizeValue = sizeMode === "cost" ? risk.cost : risk.age;
+          const size = 16 + (sizeValue / maxSize) * 40; // 16-56px
+          const isActive = activeBubble === risk.id;
+
+          const ctx: ClusterContext = {
+            likelihood: risk.likelihood.toFixed(1),
+            impact: risk.impact.toFixed(1),
+            count: 1,
+            delta: 0,
+            signals: [
+              `Remediation cost: $${risk.cost}K`,
+              `Age: ${risk.age} days`,
+              `Type: ${risk.type}`,
+            ],
+            title: risk.name,
+            subtitle: `L: ${risk.likelihood.toFixed(1)} · I: ${risk.impact.toFixed(1)}`,
+          };
+
+          return (
+            <button
+              key={risk.id}
+              type="button"
+              onClick={() => onBubbleClick(risk)}
+              onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
+              onMouseLeave={() => { clearHold(); onBubbleLeave(); }}
+              style={{
+                position: "absolute",
+                left: `${x}%`,
+                top: `${y}%`,
+                transform: "translate(-50%, -50%)",
+                width: size,
+                height: size,
+                borderRadius: "50%",
+                background: `radial-gradient(circle at 30% 30%, ${typeColors[risk.type]}AA, ${typeColors[risk.type]})`,
+                border: isActive ? "3px solid #111827" : "2px solid rgba(255,255,255,0.8)",
+                boxShadow: isActive 
+                  ? `0 0 0 4px ${typeColors[risk.type]}40, 0 8px 24px rgba(0,0,0,0.2)`
+                  : `0 4px 12px ${typeColors[risk.type]}30`,
+                cursor: "pointer",
+                transition: "all 150ms ease",
+                zIndex: isActive ? 10 : 1,
+              }}
+              title={risk.name}
+            />
+          );
+        })}
+
+        {/* Axis labels */}
+        <div style={{ position: "absolute", bottom: 4, left: "50%", transform: "translateX(-50%)", fontSize: 11, fontWeight: 700, color: "#374151" }}>
+          Likelihood →
+        </div>
+        <div style={{ position: "absolute", left: 4, top: "50%", transform: "rotate(-90deg) translateX(-50%)", transformOrigin: "left center", fontSize: 11, fontWeight: 700, color: "#374151" }}>
+          Impact →
+        </div>
+      </div>
+
+      {/* Legend & Stats */}
+      <div style={{ marginTop: 16, display: "flex", gap: 24, flexWrap: "wrap" }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8 }}>Risk Types</div>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            {types.map(t => {
+              const count = BUBBLE_RISKS.filter(r => r.type === t).length;
+              return (
+                <div key={t} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: typeColors[t] }} />
+                  <span style={{ fontSize: 11, color: "#6B7280" }}>{t} ({count})</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8 }}>Size Legend ({sizeMode === "cost" ? "$K" : "days"})</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#9CA3AF" }} />
+            <span style={{ fontSize: 10, color: "#6B7280" }}>Small</span>
+            <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#9CA3AF" }} />
+            <span style={{ fontSize: 10, color: "#6B7280" }}>Medium</span>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#9CA3AF" }} />
+            <span style={{ fontSize: 10, color: "#6B7280" }}>Large</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Top risks callout */}
+      <div style={{ marginTop: 16, padding: 12, borderRadius: 10, background: "#FEF2F2", border: "1px solid #FECACA" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#991B1B", marginBottom: 6 }}>Top 3 Highest Exposure</div>
+        <div style={{ display: "grid", gap: 4 }}>
+          {[...BUBBLE_RISKS].sort((a, b) => (b.likelihood * b.impact) - (a.likelihood * a.impact)).slice(0, 3).map((r, i) => (
+            <div key={r.id} style={{ fontSize: 11, color: "#7F1D1D", display: "flex", gap: 8 }}>
+              <span style={{ fontWeight: 700 }}>{i + 1}.</span>
+              <span>{r.name}</span>
+              <span style={{ marginLeft: "auto", fontWeight: 600 }}>L:{r.likelihood} × I:{r.impact}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // Popover Panel
 // ============================================================================
 
@@ -837,6 +1366,8 @@ export default function RiskManagerExperimentsPage() {
     { id: "compare" as ViewMode, label: "Year Compare" },
     { id: "gaussian" as ViewMode, label: "Gaussian" },
     { id: "cost" as ViewMode, label: "Cost × Notion" },
+    { id: "trend" as ViewMode, label: "Trend Line" },
+    { id: "bubble" as ViewMode, label: "Bubble Chart" },
   ];
 
   return (
@@ -906,6 +1437,8 @@ export default function RiskManagerExperimentsPage() {
                     {viewMode === "compare" && "Year-over-Year Comparison"}
                     {viewMode === "gaussian" && "Risk Score Distribution"}
                     {viewMode === "cost" && "Cost × Notion Matrix"}
+                    {viewMode === "trend" && "Risk Trend Over Time"}
+                    {viewMode === "bubble" && "Risk Exposure Bubble Chart"}
                   </div>
                   <div className={styles.cardMeta}>Hover-hold to preview · Click to filter or open actions</div>
                 </div>
@@ -1005,10 +1538,32 @@ export default function RiskManagerExperimentsPage() {
                     }}
                     onCellHover={handleCellHover}
                     onCellLeave={() => {}}
-                  activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
-                />
-              )}
-            </div>
+                    activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
+                  />
+                )}
+
+                {viewMode === "trend" && (
+                  <TrendChart
+                    onPointHover={handleCellHover}
+                    onPointLeave={() => {}}
+                    activeMonth={popoverCtx?.impact ?? null}
+                  />
+                )}
+
+                {viewMode === "bubble" && (
+                  <BubbleChart
+                    onBubbleClick={(risk) => {
+                      // Could open detail view or filter
+                      setLikelihood(risk.likelihood >= 3 ? "High" : risk.likelihood >= 2 ? "Medium" : "Low");
+                      setImpact(risk.impact >= 3 ? "High" : risk.impact >= 2 ? "Medium" : "Low");
+                      setTableVersion((v) => v + 1);
+                    }}
+                    onBubbleHover={handleCellHover}
+                    onBubbleLeave={() => {}}
+                    activeBubble={null}
+                  />
+                )}
+              </div>
             </div>
 
             {/* Popover - rendered inside the hover container so hovering it doesn't trigger container's onMouseLeave */}
