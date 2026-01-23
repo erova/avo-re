@@ -198,7 +198,7 @@ export default function GovernanceDashboardPage() {
   };
 
   return (
-    <div style={{ height: "100vh", background: "#0D0D0F", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+    <div style={{ height: "calc(100vh - 56px)", background: "#0D0D0F", display: "flex", flexDirection: "column", overflow: "hidden" }}>
       
       {/* ================================================================ */}
       {/* PROTOTYPE CONTEXT BANNER (above app UI) */}
