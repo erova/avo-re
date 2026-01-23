@@ -12,97 +12,11 @@ type TimeRange = "quarter" | "year" | "all";
 // Sample Data
 // ============================================================================
 
-const TOPIC_TIME_ALLOCATION = [
-  { topic: "Strategy", thisQ: 35, lastQ: 32, benchmark: 28, trend: "up" },
-  { topic: "Financial", thisQ: 28, lastQ: 30, benchmark: 25, trend: "down" },
-  { topic: "Risk & Compliance", thisQ: 18, lastQ: 22, benchmark: 24, trend: "down" },
-  { topic: "Cybersecurity", thisQ: 8, lastQ: 12, benchmark: 15, trend: "down" },
-  { topic: "Talent & Succession", thisQ: 6, lastQ: 8, benchmark: 12, trend: "down" },
-  { topic: "ESG", thisQ: 5, lastQ: 6, benchmark: 8, trend: "down" },
-];
-
-const SENTIMENT_SIGNALS = [
-  { type: "positive", text: "Best GRR in company history", source: "CEO Update, Q3", date: "Oct 2025" },
-  { type: "positive", text: "AI product launch ahead of schedule", source: "CEO Update, Q3", date: "Oct 2025" },
-  { type: "caution", text: "New sales 68% to budget - not prominently addressed", source: "Financial Review, Q3", date: "Oct 2025" },
-  { type: "caution", text: "Regulatory timeline concerns raised but no follow-up scheduled", source: "Risk Committee, Q2", date: "Jul 2025" },
-  { type: "negative", text: "Third consecutive quarter succession planning deferred", source: "Talent Review", date: "Oct 2025" },
-];
-
-const ACTION_METRICS = {
-  raised: 47,
-  closed: 31,
-  open: 12,
-  overdue: 4,
-  avgDaysToClose: 34,
-  avgDaysToCloseLastQ: 28,
-};
-
-const PROMISES_VS_DELIVERY = [
-  { promise: "Vendor concentration mitigation plan", promisedQ: "Q2", status: "overdue", daysLate: 45 },
-  { promise: "AI regulatory go/no-go criteria", promisedQ: "Q2", status: "overdue", daysLate: 30 },
-  { promise: "Cyber insurance coverage review", promisedQ: "Q3", status: "in-progress", daysLate: 0 },
-  { promise: "European expansion risk assessment", promisedQ: "Q3", status: "delivered", daysLate: 0 },
-  { promise: "Updated succession plan for C-suite", promisedQ: "Q1", status: "overdue", daysLate: 180 },
-];
-
-const PEER_BENCHMARK = [
-  { metric: "Risk topic coverage", company: 18, peerAvg: 24, peerTop: 32, status: "below" },
-  { metric: "Action completion rate", company: 66, peerAvg: 72, peerTop: 89, status: "below" },
-  { metric: "Avg days to close actions", company: 34, peerAvg: 28, peerTop: 18, status: "below" },
-  { metric: "Cybersecurity deep-dives/year", company: 2, peerAvg: 4, peerTop: 6, status: "below" },
-  { metric: "Board meeting frequency", company: 6, peerAvg: 6, peerTop: 8, status: "on-par" },
-];
-
-const DOGS_NOT_BARKING = [
-  { 
-    topic: "Supply Chain Concentration", 
-    lastDiscussed: "Q4 2024", 
-    externalSignal: "3 peer companies reported supply chain disruptions in Q3",
-    riskLevel: "high"
-  },
-  { 
-    topic: "Interest Rate Hedging Strategy", 
-    lastDiscussed: "Q1 2025", 
-    externalSignal: "Fed signaling rate changes; peer boards discussing quarterly",
-    riskLevel: "medium"
-  },
-  { 
-    topic: "AI Ethics & Bias", 
-    lastDiscussed: "Never", 
-    externalSignal: "EU AI Act requires documented bias testing; 4 peers added to agenda",
-    riskLevel: "high"
-  },
-  { 
-    topic: "Climate Risk Disclosure", 
-    lastDiscussed: "Q2 2024", 
-    externalSignal: "SEC climate rules effective 2026; peer boards averaging 2 sessions/year",
-    riskLevel: "medium"
-  },
-];
-
-const PEER_EARNINGS_MENTIONS = [
-  { company: "Competitor A", topic: "AI Governance", context: "CEO addressed board-level AI oversight committee formation", source: "Q3 Earnings Call", date: "Oct 15, 2025" },
-  { company: "Competitor B", topic: "Cybersecurity", context: "Disclosed $2.3M investment in board cyber training program", source: "Press Release", date: "Oct 8, 2025" },
-  { company: "Competitor A", topic: "Regulatory Risk", context: "CFO detailed EU AI Act compliance roadmap to analysts", source: "Q3 Earnings Call", date: "Oct 15, 2025" },
-  { company: "Competitor C", topic: "Succession Planning", context: "Announced CEO succession timeline and board search committee", source: "8-K Filing", date: "Sep 22, 2025" },
-  { company: "Competitor B", topic: "Climate Risk", context: "Board approved science-based emissions targets", source: "Press Release", date: "Sep 15, 2025" },
-];
-
-const DIRECTOR_EDUCATION = [
-  { name: "Sarah Chen", role: "Audit Committee Chair", creditsCompleted: 18, creditsRequired: 20, topics: ["Cybersecurity", "AI Governance"], status: "on-track" },
-  { name: "Michael Torres", role: "Board Chair", creditsCompleted: 20, creditsRequired: 20, topics: ["ESG", "Risk Management"], status: "complete" },
-  { name: "Jennifer Walsh", role: "Compensation Chair", creditsCompleted: 8, creditsRequired: 20, topics: ["Executive Comp"], status: "behind" },
-  { name: "Robert Kim", role: "Director", creditsCompleted: 4, creditsRequired: 20, topics: [], status: "at-risk" },
-  { name: "Patricia Moore", role: "Risk Committee Chair", creditsCompleted: 22, creditsRequired: 20, topics: ["Cyber", "Regulatory", "AI"], status: "complete" },
-  { name: "David Thompson", role: "Director", creditsCompleted: 12, creditsRequired: 20, topics: ["Financial Reporting"], status: "on-track" },
-];
-
-const GOVERNANCE_MATURITY_TREND = [
-  { meeting: "Q4 2024", overall: 62, riskOversight: 58, actionExecution: 65, boardEngagement: 64, peerAlignment: 61 },
-  { meeting: "Q1 2025", overall: 65, riskOversight: 62, actionExecution: 68, boardEngagement: 66, peerAlignment: 64 },
-  { meeting: "Q2 2025", overall: 71, riskOversight: 68, actionExecution: 72, boardEngagement: 73, peerAlignment: 71 },
-  { meeting: "Q3 2025", overall: 68, riskOversight: 64, actionExecution: 66, boardEngagement: 72, peerAlignment: 70 },
+const URGENT_ITEMS = [
+  { id: 1, type: "overdue", title: "Vendor concentration mitigation plan", owner: "CPO", daysLate: 45, source: "Q2 Board Meeting" },
+  { id: 2, type: "overdue", title: "AI regulatory go/no-go criteria", owner: "CLO", daysLate: 30, source: "Q2 Board Meeting" },
+  { id: 3, type: "overdue", title: "C-suite succession plan update", owner: "CHRO", daysLate: 180, source: "Q1 Board Meeting" },
+  { id: 4, type: "blind-spot", title: "AI Ethics & Bias - never discussed", riskLevel: "high", externalSignal: "EU AI Act requires documented bias testing" },
 ];
 
 const COUNTDOWN_ACTIONS = [
@@ -116,52 +30,135 @@ const COUNTDOWN_ACTIONS = [
   { weeksOut: 1, action: "Prepare real-time action tracking template", owner: "Corp Sec", status: "upcoming", dueDate: "Oct 28" },
 ];
 
+const DOGS_NOT_BARKING = [
+  { topic: "Supply Chain Concentration", lastDiscussed: "Q4 2024", externalSignal: "3 peers reported disruptions in Q3", riskLevel: "high" },
+  { topic: "AI Ethics & Bias", lastDiscussed: "Never", externalSignal: "EU AI Act requires bias testing; 4 peers added to agenda", riskLevel: "high" },
+  { topic: "Interest Rate Hedging", lastDiscussed: "Q1 2025", externalSignal: "Fed signaling changes; peers discussing quarterly", riskLevel: "medium" },
+  { topic: "Climate Risk Disclosure", lastDiscussed: "Q2 2024", externalSignal: "SEC rules effective 2026; peers avg 2 sessions/year", riskLevel: "medium" },
+];
+
+const PEER_SIGNALS = [
+  { company: "Competitor A", topic: "AI Governance", context: "Board-level AI oversight committee formed", source: "Q3 Earnings", date: "Oct 15" },
+  { company: "Competitor B", topic: "Cyber Training", context: "$2.3M board cyber training investment", source: "Press Release", date: "Oct 8" },
+  { company: "Competitor C", topic: "Succession", context: "CEO succession timeline announced", source: "8-K Filing", date: "Sep 22" },
+];
+
+const TOPIC_ALLOCATION = [
+  { topic: "Strategy", pct: 35, benchmark: 28, status: "above" },
+  { topic: "Financial", pct: 28, benchmark: 25, status: "above" },
+  { topic: "Risk & Compliance", pct: 18, benchmark: 24, status: "below" },
+  { topic: "Cybersecurity", pct: 8, benchmark: 15, status: "below" },
+  { topic: "Talent", pct: 6, benchmark: 12, status: "below" },
+];
+
+const PROMISES_VS_DELIVERY = [
+  { promise: "Vendor mitigation plan", promisedQ: "Q2", status: "overdue", days: 45 },
+  { promise: "AI go/no-go criteria", promisedQ: "Q2", status: "overdue", days: 30 },
+  { promise: "Cyber insurance review", promisedQ: "Q3", status: "in-progress", days: 0 },
+  { promise: "EU expansion risk assessment", promisedQ: "Q3", status: "delivered", days: 0 },
+];
+
+const MATURITY_COMPONENTS = [
+  { id: "risk", name: "Risk Oversight", weight: 25, scores: [58, 62, 68, 64], description: "Coverage of key risk topics, frequency of deep-dives" },
+  { id: "action", name: "Action Execution", weight: 25, scores: [65, 68, 72, 66], description: "Promises kept, items closed on time, follow-through" },
+  { id: "engagement", name: "Board Engagement", weight: 20, scores: [64, 66, 73, 72], description: "Director participation, quality of discussion, prep" },
+  { id: "peer", name: "Peer Alignment", weight: 15, scores: [61, 64, 71, 70], description: "How you compare to industry peers on key metrics" },
+  { id: "compliance", name: "Compliance Posture", weight: 15, scores: [60, 65, 70, 68], description: "Regulatory readiness, disclosure quality, audit findings" },
+];
+
+const MATURITY_QUARTERS = ["Q4'24", "Q1'25", "Q2'25", "Q3'25"];
+
+const DIRECTOR_EDUCATION = [
+  { name: "Michael Torres", role: "Board Chair", credits: 20, required: 20, status: "complete", topics: ["ESG", "Risk Mgmt"] },
+  { name: "Patricia Moore", role: "Risk Committee Chair", credits: 22, required: 20, status: "complete", topics: ["Cyber", "AI", "Regulatory"] },
+  { name: "Sarah Chen", role: "Audit Committee Chair", credits: 18, required: 20, status: "on-track", topics: ["Cybersecurity", "AI Governance"] },
+  { name: "David Thompson", role: "Director", credits: 12, required: 20, status: "on-track", topics: ["Financial Reporting"] },
+  { name: "Angela Martinez", role: "Nom/Gov Chair", credits: 15, required: 20, status: "on-track", topics: ["Board Composition"] },
+  { name: "James Wilson", role: "Director", credits: 10, required: 20, status: "on-track", topics: ["M&A", "Strategy"] },
+  { name: "Jennifer Walsh", role: "Compensation Chair", credits: 8, required: 20, status: "behind", topics: ["Executive Comp"] },
+  { name: "William Chang", role: "Director", credits: 6, required: 20, status: "behind", topics: [] },
+  { name: "Robert Kim", role: "Director", credits: 4, required: 20, status: "at-risk", topics: [] },
+  { name: "Elizabeth Brown", role: "Director", credits: 2, required: 20, status: "at-risk", topics: [] },
+  { name: "Thomas Anderson", role: "Director", credits: 0, required: 20, status: "at-risk", topics: [] },
+];
+
 // ============================================================================
-// Components
+// Diligent Logo Component
 // ============================================================================
 
-function MetricCard({ 
-  title, 
-  value, 
-  subtitle, 
-  trend, 
-  trendLabel,
-  color = "#111827" 
-}: { 
-  title: string; 
-  value: string | number; 
-  subtitle?: string;
-  trend?: "up" | "down" | "neutral";
-  trendLabel?: string;
-  color?: string;
-}) {
+function DiligentLogo({ height = 28 }: { height?: number }) {
+  const aspectRatio = 200 / 222; // width/height from original viewBox crop
+  const width = height * aspectRatio;
   return (
-    <div style={{ 
-      padding: 20, background: "#fff", borderRadius: 12, 
-      border: "1px solid #E5E7EB", height: "100%"
-    }}>
-      <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 8, fontWeight: 500 }}>{title}</div>
-      <div style={{ fontSize: 32, fontWeight: 800, color, marginBottom: 4 }}>{value}</div>
-      {subtitle && <div style={{ fontSize: 12, color: "#9CA3AF" }}>{subtitle}</div>}
-      {trend && trendLabel && (
-        <div style={{ 
-          marginTop: 8, fontSize: 11, fontWeight: 600,
-          color: trend === "up" ? "#059669" : trend === "down" ? "#DC2626" : "#6B7280",
-          display: "flex", alignItems: "center", gap: 4
-        }}>
-          <span>{trend === "up" ? "↑" : trend === "down" ? "↓" : "→"}</span>
-          {trendLabel}
-        </div>
-      )}
-    </div>
+    <svg width={width} height={height} viewBox="0 0 200 222" fill="none">
+      <path fill="#EE312E" d="M200.87,110.85c0,33.96-12.19,61.94-33.03,81.28c-0.24,0.21-0.42,0.43-0.66,0.64c-15.5,14.13-35.71,23.52-59.24,27.11l-1.59-1.62l35.07-201.75l1.32-3.69C178.64,30.36,200.87,65.37,200.87,110.85z"/>
+      <path fill="#AF292E" d="M142.75,12.83l-0.99,1.47L0.74,119.34L0,118.65c0,0,0-0.03,0-0.06V0.45h85.63c5.91,0,11.64,0.34,17.19,1.01h0.21c14.02,1.66,26.93,5.31,38.48,10.78C141.97,12.46,142.75,12.83,142.75,12.83z"/>
+      <path fill="#D3222A" d="M142.75,12.83L0,118.65v99.27v3.62h85.96c7.61,0,14.94-0.58,21.99-1.66C107.95,219.89,142.75,12.83,142.75,12.83z"/>
+    </svg>
   );
 }
 
-function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+// ============================================================================
+// Action Button Component
+// ============================================================================
+
+function ActionButton({ 
+  onAction 
+}: { 
+  onAction: (type: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  
   return (
-    <div style={{ marginBottom: 16 }}>
-      <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 4 }}>{title}</h2>
-      {subtitle && <p style={{ fontSize: 13, color: "#6B7280" }}>{subtitle}</p>}
+    <div style={{ position: "relative" }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          padding: "4px 8px", background: "none", border: "1px solid #E5E7EB",
+          borderRadius: 4, fontSize: 11, color: "#6B7280", cursor: "pointer",
+          display: "flex", alignItems: "center", gap: 4
+        }}
+      >
+        <span>⚡</span> Action
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", top: "100%", right: 0, marginTop: 4,
+          background: "#fff", borderRadius: 8, boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+          border: "1px solid #E5E7EB", overflow: "hidden", zIndex: 100, minWidth: 200
+        }}>
+          <button 
+            onClick={() => { onAction("agent"); setOpen(false); }}
+            style={{ width: "100%", padding: "10px 12px", background: "none", border: "none", textAlign: "left", cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid #F3F4F6" }}
+          >
+            <span style={{ fontSize: 14 }}>🤖</span>
+            <div>
+              <div style={{ fontWeight: 500, color: "#111827" }}>Create Agent Task</div>
+              <div style={{ fontSize: 10, color: "#6B7280" }}>AI will work on this</div>
+            </div>
+          </button>
+          <button 
+            onClick={() => { onAction("assign"); setOpen(false); }}
+            style={{ width: "100%", padding: "10px 12px", background: "none", border: "none", textAlign: "left", cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid #F3F4F6" }}
+          >
+            <span style={{ fontSize: 14 }}>👤</span>
+            <div>
+              <div style={{ fontWeight: 500, color: "#111827" }}>Assign for Review</div>
+              <div style={{ fontSize: 10, color: "#6B7280" }}>Send to someone</div>
+            </div>
+          </button>
+          <button 
+            onClick={() => { onAction("delegate"); setOpen(false); }}
+            style={{ width: "100%", padding: "10px 12px", background: "none", border: "none", textAlign: "left", cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", gap: 8 }}
+          >
+            <span style={{ fontSize: 14 }}>↗️</span>
+            <div>
+              <div style={{ fontWeight: 500, color: "#111827" }}>Delegate</div>
+              <div style={{ fontSize: 10, color: "#6B7280" }}>Make it someone else's problem</div>
+            </div>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -172,540 +169,731 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }
 
 export default function GovernanceDashboardPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("quarter");
+  const [promptValue, setPromptValue] = useState("");
+  const [showAgentModal, setShowAgentModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [expandedCountdownWeek, setExpandedCountdownWeek] = useState<number | null>(2); // Current week
+  const [showAllDirectors, setShowAllDirectors] = useState(false);
+
+  const handleAction = (type: string, item?: string) => {
+    setSelectedItem(item || null);
+    if (type === "agent") {
+      setShowAgentModal(true);
+    }
+  };
+
+  // Calculate overall maturity scores
+  const overallScores = MATURITY_QUARTERS.map((_, qIdx) => {
+    return Math.round(
+      MATURITY_COMPONENTS.reduce((sum, comp) => sum + (comp.scores[qIdx] * comp.weight / 100), 0)
+    );
+  });
+
+  // Director education summary
+  const directorSummary = {
+    complete: DIRECTOR_EDUCATION.filter(d => d.status === "complete").length,
+    onTrack: DIRECTOR_EDUCATION.filter(d => d.status === "on-track").length,
+    behind: DIRECTOR_EDUCATION.filter(d => d.status === "behind").length,
+    atRisk: DIRECTOR_EDUCATION.filter(d => d.status === "at-risk").length,
+  };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0D0D0F", display: "flex", flexDirection: "column" }}>
-      {/* Header */}
-      <div style={{ 
-        padding: "16px 0",
-        maxWidth: 1400,
-        width: "100%",
-        margin: "0 auto",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <span style={{ 
-            fontSize: 11, color: "#6B7280", fontWeight: 600, textTransform: "uppercase", 
-            letterSpacing: "1.5px" 
-          }}>
-            Prototype
-          </span>
-          <span style={{ fontSize: 15, color: "#F9FAFB", fontWeight: 500 }}>GovernAI Dashboard</span>
-        </div>
-        
-        {/* Time Range Toggle */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {[
-            { id: "quarter" as const, label: "This Quarter" },
-            { id: "year" as const, label: "This Year" },
-            { id: "all" as const, label: "All Time" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTimeRange(t.id)}
-              style={{ 
-                padding: "6px 14px", borderRadius: 16, fontSize: 12, fontWeight: 500, cursor: "pointer",
-                background: timeRange === t.id ? "transparent" : "transparent",
-                border: timeRange === t.id ? "1px solid #6B7280" : "1px solid transparent",
-                color: timeRange === t.id ? "#F9FAFB" : "#6B7280",
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Explainer */}
-      <div style={{ 
-        padding: "12px 0", 
-        maxWidth: 1400,
-        width: "100%",
-        margin: "0 auto",
-        borderTop: "1px solid rgba(255,255,255,0.1)",
-        borderBottom: "1px solid rgba(255,255,255,0.1)",
-        fontSize: 12, color: "#9CA3AF"
-      }}>
-        <strong style={{ color: "#D1D5DB" }}>What you're seeing:</strong> A governance effectiveness dashboard for the Corporate Secretary or General Counsel — 
-        tracking board attention, management execution, and emerging oversight gaps.
-      </div>
+    <div style={{ minHeight: "100vh", background: "#F3F4F6", display: "flex", flexDirection: "column" }}>
       
-      {/* Spacer */}
-      <div style={{ height: 16 }} />
-
-      {/* Main Content */}
-      <div style={{ flex: 1, overflowY: "auto" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", paddingBottom: 32 }}>
+      {/* ================================================================ */}
+      {/* APP SHELL HEADER */}
+      {/* ================================================================ */}
+      
+      <header style={{ 
+        background: "#1E3A5F", 
+        borderBottom: "1px solid rgba(255,255,255,0.1)",
+        position: "sticky",
+        top: 0,
+        zIndex: 50
+      }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <DiligentLogo height={32} />
+            <div style={{ borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: 12, marginLeft: 4 }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: "#fff", letterSpacing: "-0.3px" }}>
+                GovernAI
+              </div>
+              <div style={{ fontSize: 9, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "1px" }}>
+                Effective Intelligence
+              </div>
+            </div>
+          </div>
           
-          {/* Row 1: Key Metrics */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 32 }}>
-            <MetricCard 
-              title="Governance Health Score" 
-              value="68" 
-              subtitle="out of 100"
-              trend="down"
-              trendLabel="from 74 last quarter"
-              color="#D97706"
-            />
-            <MetricCard 
-              title="Actions Closed" 
-              value={`${ACTION_METRICS.closed}/${ACTION_METRICS.raised}`}
-              subtitle={`${Math.round((ACTION_METRICS.closed / ACTION_METRICS.raised) * 100)}% completion rate`}
-              trend="down"
-              trendLabel="from 78% last quarter"
-              color="#3B82F6"
-            />
-            <MetricCard 
-              title="Overdue Items" 
-              value={ACTION_METRICS.overdue}
-              subtitle="requiring escalation"
-              color="#DC2626"
-            />
-            <MetricCard 
-              title="Dogs Not Barking" 
-              value={DOGS_NOT_BARKING.filter(d => d.riskLevel === "high").length}
-              subtitle="high-priority blind spots"
-              color="#DC2626"
-            />
-          </div>
-
-          {/* Row 2: Topic Allocation + Sentiment */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
-            {/* Topic Time Allocation */}
-            <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: 24 }}>
-              <SectionHeader 
-                title="Board Attention Allocation" 
-                subtitle="% of meeting time by topic vs. peer benchmark"
-              />
-              <div style={{ display: "grid", gap: 12 }}>
-                {TOPIC_TIME_ALLOCATION.map((t) => (
-                  <div key={t.topic}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                      <span style={{ fontSize: 13, fontWeight: 500, color: "#111827" }}>{t.topic}</span>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{t.thisQ}%</span>
-                        <span style={{ 
-                          fontSize: 10, color: t.thisQ >= t.benchmark ? "#059669" : "#DC2626"
-                        }}>
-                          {t.thisQ >= t.benchmark ? "↑" : "↓"} vs {t.benchmark}% peer avg
-                        </span>
-                      </div>
-                    </div>
-                    <div style={{ position: "relative", height: 8, background: "#F3F4F6", borderRadius: 4 }}>
-                      <div style={{ 
-                        position: "absolute", left: 0, top: 0, height: "100%", 
-                        width: `${t.thisQ}%`, 
-                        background: t.thisQ >= t.benchmark ? "#3B82F6" : "#F59E0B",
-                        borderRadius: 4 
-                      }} />
-                      <div style={{ 
-                        position: "absolute", left: `${t.benchmark}%`, top: -2, 
-                        width: 2, height: 12, background: "#6B7280"
-                      }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Sentiment Signals */}
-            <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: 24 }}>
-              <SectionHeader 
-                title="Sentiment Signals" 
-                subtitle="Key language patterns from meeting materials"
-              />
-              <div style={{ display: "grid", gap: 10 }}>
-                {SENTIMENT_SIGNALS.map((s, i) => (
-                  <div 
-                    key={i} 
-                    style={{ 
-                      padding: 12, borderRadius: 8,
-                      background: s.type === "positive" ? "#ECFDF5" : s.type === "caution" ? "#FEF3C7" : "#FEF2F2",
-                      border: `1px solid ${s.type === "positive" ? "#A7F3D0" : s.type === "caution" ? "#FDE68A" : "#FECACA"}`
-                    }}
-                  >
-                    <div style={{ 
-                      fontSize: 12, fontWeight: 500, marginBottom: 4,
-                      color: s.type === "positive" ? "#047857" : s.type === "caution" ? "#92400E" : "#991B1B"
-                    }}>
-                      {s.type === "positive" ? "✓" : s.type === "caution" ? "⚠" : "✗"} {s.text}
-                    </div>
-                    <div style={{ fontSize: 10, color: "#6B7280" }}>
-                      {s.source} · {s.date}
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <nav style={{ display: "flex", alignItems: "center", gap: 24 }}>
+            <a href="#" style={{ fontSize: 13, color: "#fff", textDecoration: "none", fontWeight: 500 }}>Dashboard</a>
+            <a href="#" style={{ fontSize: 13, color: "#94A3B8", textDecoration: "none" }}>Actions</a>
+            <a href="#" style={{ fontSize: 13, color: "#94A3B8", textDecoration: "none" }}>Reports</a>
+          </nav>
+          
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <button style={{ background: "none", border: "none", color: "#94A3B8", cursor: "pointer", fontSize: 18 }}>🔔</button>
+            <div style={{ 
+              width: 32, height: 32, borderRadius: "50%", 
+              background: "linear-gradient(135deg, #7C3AED, #4F46E5)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 12, fontWeight: 600, color: "#fff"
+            }}>
+              JD
             </div>
           </div>
+        </div>
+      </header>
 
-          {/* Row 3: Promises vs Delivery + Peer Benchmark */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
-            {/* Promises vs Delivery */}
-            <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: 24 }}>
-              <SectionHeader 
-                title="Management Execution" 
-                subtitle="Promises vs. Delivery tracking"
-              />
-              <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid #E5E7EB" }}>
-                    <th style={{ textAlign: "left", padding: "8px 0", color: "#6B7280", fontWeight: 600 }}>Commitment</th>
-                    <th style={{ textAlign: "center", padding: "8px 0", color: "#6B7280", fontWeight: 600, width: 80 }}>Promised</th>
-                    <th style={{ textAlign: "center", padding: "8px 0", color: "#6B7280", fontWeight: 600, width: 100 }}>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {PROMISES_VS_DELIVERY.map((p, i) => (
-                    <tr key={i} style={{ borderBottom: "1px solid #F3F4F6" }}>
-                      <td style={{ padding: "10px 0", color: "#111827" }}>{p.promise}</td>
-                      <td style={{ padding: "10px 0", textAlign: "center", color: "#6B7280" }}>{p.promisedQ}</td>
-                      <td style={{ padding: "10px 0", textAlign: "center" }}>
-                        <span style={{
-                          padding: "3px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600,
-                          background: p.status === "delivered" ? "#ECFDF5" : p.status === "in-progress" ? "#FEF3C7" : "#FEF2F2",
-                          color: p.status === "delivered" ? "#047857" : p.status === "in-progress" ? "#B45309" : "#DC2626"
-                        }}>
-                          {p.status === "delivered" ? "Delivered" : p.status === "in-progress" ? "In Progress" : `${p.daysLate}d overdue`}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Peer Benchmark */}
-            <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: 24 }}>
-              <SectionHeader 
-                title="Peer Benchmark" 
-                subtitle="Governance effectiveness vs. industry peers"
-              />
-              <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid #E5E7EB" }}>
-                    <th style={{ textAlign: "left", padding: "8px 0", color: "#6B7280", fontWeight: 600 }}>Metric</th>
-                    <th style={{ textAlign: "center", padding: "8px 0", color: "#6B7280", fontWeight: 600, width: 60 }}>You</th>
-                    <th style={{ textAlign: "center", padding: "8px 0", color: "#6B7280", fontWeight: 600, width: 60 }}>Avg</th>
-                    <th style={{ textAlign: "center", padding: "8px 0", color: "#6B7280", fontWeight: 600, width: 60 }}>Top</th>
-                    <th style={{ textAlign: "center", padding: "8px 0", color: "#6B7280", fontWeight: 600, width: 60 }}></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {PEER_BENCHMARK.map((p, i) => (
-                    <tr key={i} style={{ borderBottom: "1px solid #F3F4F6" }}>
-                      <td style={{ padding: "10px 0", color: "#111827" }}>{p.metric}</td>
-                      <td style={{ 
-                        padding: "10px 0", textAlign: "center", fontWeight: 600,
-                        color: p.status === "below" ? "#DC2626" : "#111827"
-                      }}>
-                        {p.company}{p.metric.includes("%") || p.metric.includes("rate") ? "%" : ""}
-                      </td>
-                      <td style={{ padding: "10px 0", textAlign: "center", color: "#6B7280" }}>
-                        {p.peerAvg}{p.metric.includes("%") || p.metric.includes("rate") ? "%" : ""}
-                      </td>
-                      <td style={{ padding: "10px 0", textAlign: "center", color: "#059669", fontWeight: 500 }}>
-                        {p.peerTop}{p.metric.includes("%") || p.metric.includes("rate") ? "%" : ""}
-                      </td>
-                      <td style={{ padding: "10px 0", textAlign: "center" }}>
-                        {p.status === "below" && (
-                          <span style={{ fontSize: 10, color: "#DC2626" }}>↓ Below</span>
-                        )}
-                        {p.status === "on-par" && (
-                          <span style={{ fontSize: 10, color: "#6B7280" }}>→ On par</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+      {/* ================================================================ */}
+      {/* SUB-HEADER WITH CONTEXT */}
+      {/* ================================================================ */}
+      
+      <div style={{ background: "#fff", borderBottom: "1px solid #E5E7EB" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <span style={{ fontSize: 11, color: "#7C3AED", fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px", background: "#F3E8FF", padding: "4px 8px", borderRadius: 4 }}>
+              Prototype
+            </span>
+            <h1 style={{ fontSize: 18, fontWeight: 600, color: "#111827", margin: 0 }}>Governance Dashboard</h1>
           </div>
+          
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {[
+              { id: "quarter" as const, label: "This Quarter" },
+              { id: "year" as const, label: "This Year" },
+              { id: "all" as const, label: "All Time" },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTimeRange(t.id)}
+                style={{ 
+                  padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer",
+                  background: timeRange === t.id ? "#1E3A5F" : "#fff",
+                  border: timeRange === t.id ? "1px solid #1E3A5F" : "1px solid #E5E7EB",
+                  color: timeRange === t.id ? "#fff" : "#6B7280",
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-          {/* Row 4: Dogs Not Barking */}
-          <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: 24 }}>
-            <SectionHeader 
-              title="🐕 Dogs Not Barking Index" 
-              subtitle="Topics with declining attention that external signals suggest should be discussed"
-            />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
-              {DOGS_NOT_BARKING.map((d, i) => (
+      {/* ================================================================ */}
+      {/* MAIN CONTENT */}
+      {/* ================================================================ */}
+      
+      <main style={{ flex: 1, overflowY: "auto", paddingBottom: 120 }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "24px" }}>
+          
+          {/* ============================================================ */}
+          {/* TIER 1: URGENT - What needs attention RIGHT NOW */}
+          {/* ============================================================ */}
+          
+          <section style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <span style={{ fontSize: 16 }}>🚨</span>
+              <h2 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Needs Attention Now</h2>
+              <span style={{ fontSize: 11, color: "#DC2626", fontWeight: 600, background: "#FEF2F2", padding: "2px 8px", borderRadius: 6 }}>
+                {URGENT_ITEMS.length} items
+              </span>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
+              {URGENT_ITEMS.map((item) => (
                 <div 
-                  key={i}
+                  key={item.id}
                   style={{ 
-                    padding: 16, borderRadius: 10,
-                    background: d.riskLevel === "high" ? "#FEF2F2" : "#FEF3C7",
-                    border: `1px solid ${d.riskLevel === "high" ? "#FECACA" : "#FDE68A"}`
+                    padding: 16, borderRadius: 10, background: "#fff",
+                    border: "2px solid #FCA5A5",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                    <div style={{ 
-                      fontSize: 14, fontWeight: 600, 
-                      color: d.riskLevel === "high" ? "#991B1B" : "#92400E"
+                    <span style={{ 
+                      fontSize: 10, padding: "2px 6px", borderRadius: 4, fontWeight: 600,
+                      background: item.type === "overdue" ? "#FEE2E2" : "#FEF3C7",
+                      color: item.type === "overdue" ? "#DC2626" : "#B45309"
                     }}>
-                      {d.topic}
-                    </div>
-                    <span style={{
-                      fontSize: 9, padding: "2px 6px", borderRadius: 4, fontWeight: 600,
-                      background: d.riskLevel === "high" ? "#FEE2E2" : "#FEF3C7",
-                      color: d.riskLevel === "high" ? "#DC2626" : "#B45309"
-                    }}>
-                      {d.riskLevel === "high" ? "HIGH PRIORITY" : "MONITOR"}
+                      {item.type === "overdue" ? `${item.daysLate}d OVERDUE` : "BLIND SPOT"}
                     </span>
+                    <ActionButton onAction={(type) => handleAction(type, item.title)} />
                   </div>
-                  <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 8 }}>
-                    Last discussed: <strong>{d.lastDiscussed}</strong>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "#111827", marginBottom: 4 }}>
+                    {item.title}
                   </div>
-                  <div style={{ 
-                    fontSize: 12, padding: 10, background: "#fff", borderRadius: 6,
-                    color: d.riskLevel === "high" ? "#991B1B" : "#92400E",
-                    lineHeight: 1.5
-                  }}>
-                    <strong>External signal:</strong> {d.externalSignal}
+                  <div style={{ fontSize: 11, color: "#6B7280" }}>
+                    {item.type === "overdue" ? `Owner: ${item.owner} · ${item.source}` : item.externalSignal}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Row 5: Peer Earnings Mentions + Director Education */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginTop: 32, marginBottom: 32 }}>
-            {/* Peer Earnings/Press Mentions */}
-            <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: 24 }}>
-              <SectionHeader 
-                title="📡 Peer Governance Signals" 
-                subtitle="GRC topics mentioned in peer earnings calls & press releases"
-              />
-              <div style={{ display: "grid", gap: 10 }}>
-                {PEER_EARNINGS_MENTIONS.map((p, i) => (
-                  <div 
-                    key={i}
-                    style={{ 
-                      padding: 12, borderRadius: 8, background: "#F9FAFB",
-                      border: "1px solid #E5E7EB"
-                    }}
-                  >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
-                      <span style={{ 
-                        fontSize: 10, padding: "2px 6px", borderRadius: 4,
-                        background: "#E0E7FF", color: "#4338CA", fontWeight: 600
-                      }}>
-                        {p.topic}
-                      </span>
-                      <span style={{ fontSize: 10, color: "#9CA3AF" }}>{p.date}</span>
-                    </div>
-                    <div style={{ fontSize: 12, color: "#111827", marginBottom: 4, lineHeight: 1.4 }}>
-                      {p.context}
-                    </div>
-                    <div style={{ fontSize: 10, color: "#6B7280" }}>
-                      {p.company} · {p.source}
-                    </div>
+          {/* ============================================================ */}
+          {/* TIER 1B: Countdown to Board Meeting - EXPANDED */}
+          {/* ============================================================ */}
+          
+          <section style={{ marginBottom: 24 }}>
+            <div style={{ 
+              background: "linear-gradient(135deg, #1E3A5F 0%, #2D4A6F 100%)", 
+              borderRadius: 12, padding: 20, color: "#fff" 
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <div>
+                  <h3 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Countdown to Board Meeting</h3>
+                  <p style={{ fontSize: 12, color: "#94A3B8", margin: "4px 0 0 0" }}>November 4, 2025</p>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ textAlign: "center", padding: "8px 20px", background: "rgba(255,255,255,0.1)", borderRadius: 8 }}>
+                    <div style={{ fontSize: 28, fontWeight: 800 }}>12</div>
+                    <div style={{ fontSize: 10, color: "#94A3B8" }}>days to go</div>
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
-
-            {/* Director Continuing Education */}
-            <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: 24 }}>
-              <SectionHeader 
-                title="🎓 Director Education Progress" 
-                subtitle="Continuing education credits (annual requirement: 20 credits)"
-              />
-              <div style={{ display: "grid", gap: 8 }}>
-                {DIRECTOR_EDUCATION.map((d, i) => (
-                  <div 
-                    key={i}
-                    style={{ 
-                      padding: 12, borderRadius: 8,
-                      background: d.status === "at-risk" ? "#FEF2F2" : d.status === "behind" ? "#FEF3C7" : "#F9FAFB",
-                      border: `1px solid ${d.status === "at-risk" ? "#FECACA" : d.status === "behind" ? "#FDE68A" : "#E5E7EB"}`
-                    }}
-                  >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{d.name}</div>
-                        <div style={{ fontSize: 10, color: "#6B7280" }}>{d.role}</div>
+              
+              {/* Week selector */}
+              <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+                {[4, 3, 2, 1].map((week) => {
+                  const actions = COUNTDOWN_ACTIONS.filter(a => a.weeksOut === week);
+                  const done = actions.filter(a => a.status === "done").length;
+                  const total = actions.length;
+                  const isSelected = expandedCountdownWeek === week;
+                  const allDone = done === total;
+                  
+                  return (
+                    <button
+                      key={week}
+                      onClick={() => setExpandedCountdownWeek(isSelected ? null : week)}
+                      style={{ 
+                        flex: 1, padding: "10px 12px", borderRadius: 8, cursor: "pointer",
+                        background: isSelected ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.05)",
+                        border: isSelected ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.1)",
+                        textAlign: "left"
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <span style={{ fontSize: 11, color: allDone ? "#86EFAC" : "#94A3B8", fontWeight: 600 }}>
+                          {allDone && "✓ "}{week}W OUT
+                        </span>
+                        <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>{done}/{total}</span>
                       </div>
-                      <span style={{
-                        fontSize: 9, padding: "2px 6px", borderRadius: 4, fontWeight: 600,
-                        background: d.status === "complete" ? "#ECFDF5" : d.status === "on-track" ? "#EFF6FF" : d.status === "behind" ? "#FEF3C7" : "#FEE2E2",
-                        color: d.status === "complete" ? "#047857" : d.status === "on-track" ? "#1D4ED8" : d.status === "behind" ? "#B45309" : "#DC2626"
+                      <div style={{ 
+                        height: 3, background: "rgba(255,255,255,0.2)", borderRadius: 2 
                       }}>
-                        {d.status === "complete" ? "Complete" : d.status === "on-track" ? "On Track" : d.status === "behind" ? "Behind" : "At Risk"}
-                      </span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ position: "relative", height: 6, background: "#E5E7EB", borderRadius: 3 }}>
-                          <div style={{ 
-                            position: "absolute", left: 0, top: 0, height: "100%", 
-                            width: `${Math.min((d.creditsCompleted / d.creditsRequired) * 100, 100)}%`,
-                            background: d.status === "complete" ? "#059669" : d.status === "on-track" ? "#3B82F6" : d.status === "behind" ? "#F59E0B" : "#DC2626",
-                            borderRadius: 3
-                          }} />
-                        </div>
-                      </div>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: "#374151", minWidth: 50 }}>
-                        {d.creditsCompleted}/{d.creditsRequired}
-                      </span>
-                    </div>
-                    {d.topics.length > 0 && (
-                      <div style={{ marginTop: 8, display: "flex", gap: 4, flexWrap: "wrap" }}>
-                        {d.topics.map((t, j) => (
-                          <span key={j} style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: "#E5E7EB", color: "#6B7280" }}>
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Row 6: Governance Maturity Trend */}
-          <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", padding: 24, marginBottom: 32 }}>
-            <SectionHeader 
-              title="📈 Governance Maturity Trend" 
-              subtitle="Score progression across last 4 board meetings"
-            />
-            <div style={{ display: "flex", gap: 24 }}>
-              {/* Chart area */}
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "flex-end", gap: 16, height: 180, paddingBottom: 24, borderBottom: "1px solid #E5E7EB" }}>
-                  {GOVERNANCE_MATURITY_TREND.map((m, i) => {
-                    const isLatest = i === GOVERNANCE_MATURITY_TREND.length - 1;
-                    const prevScore = i > 0 ? GOVERNANCE_MATURITY_TREND[i - 1].overall : m.overall;
-                    const trend = m.overall > prevScore ? "up" : m.overall < prevScore ? "down" : "same";
-                    return (
-                      <div key={m.meeting} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <div style={{ 
-                          fontSize: 14, fontWeight: 700, marginBottom: 8,
-                          color: isLatest ? (trend === "down" ? "#DC2626" : "#059669") : "#6B7280"
-                        }}>
-                          {m.overall}
-                          {isLatest && <span style={{ fontSize: 10, marginLeft: 4 }}>{trend === "up" ? "↑" : trend === "down" ? "↓" : ""}</span>}
-                        </div>
-                        <div style={{ 
-                          width: "100%", 
-                          height: `${m.overall * 1.5}px`,
-                          background: isLatest 
-                            ? (trend === "down" ? "linear-gradient(180deg, #FCA5A5 0%, #DC2626 100%)" : "linear-gradient(180deg, #86EFAC 0%, #059669 100%)")
-                            : "linear-gradient(180deg, #93C5FD 0%, #3B82F6 100%)",
-                          borderRadius: "4px 4px 0 0",
-                          opacity: isLatest ? 1 : 0.6
+                          height: "100%", borderRadius: 2,
+                          width: `${(done / total) * 100}%`,
+                          background: allDone ? "#22C55E" : "#60A5FA"
                         }} />
-                        <div style={{ fontSize: 11, color: "#6B7280", marginTop: 8 }}>{m.meeting}</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              
+              {/* Expanded action list */}
+              {expandedCountdownWeek && (
+                <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: 8, padding: 16 }}>
+                  <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 12, fontWeight: 600 }}>
+                    TASKS FOR {expandedCountdownWeek} WEEKS OUT
+                  </div>
+                  <div style={{ display: "grid", gap: 8 }}>
+                    {COUNTDOWN_ACTIONS.filter(a => a.weeksOut === expandedCountdownWeek).map((action, i) => (
+                      <div 
+                        key={i}
+                        style={{ 
+                          display: "flex", justifyContent: "space-between", alignItems: "center",
+                          padding: "10px 12px", borderRadius: 6,
+                          background: action.status === "done" ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.05)",
+                          border: `1px solid ${action.status === "done" ? "rgba(34,197,94,0.3)" : "rgba(255,255,255,0.1)"}`
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <span style={{ 
+                            width: 20, height: 20, borderRadius: "50%", 
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            background: action.status === "done" ? "#22C55E" : action.status === "in-progress" ? "#F59E0B" : "rgba(255,255,255,0.1)",
+                            fontSize: 10
+                          }}>
+                            {action.status === "done" ? "✓" : action.status === "in-progress" ? "⏳" : "○"}
+                          </span>
+                          <div>
+                            <div style={{ fontSize: 13, color: "#fff", fontWeight: 500 }}>{action.action}</div>
+                            <div style={{ fontSize: 11, color: "#94A3B8" }}>Owner: {action.owner} · Due: {action.dueDate}</div>
+                          </div>
+                        </div>
+                        <ActionButton onAction={(type) => handleAction(type, action.action)} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* ============================================================ */}
+          {/* TIER 2: CONTEXT - What to know before the meeting */}
+          {/* ============================================================ */}
+          
+          <section style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <span style={{ fontSize: 16 }}>📡</span>
+              <h2 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>External Context</h2>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              {/* Dogs Not Barking */}
+              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>🐕 Dogs Not Barking</h3>
+                  <ActionButton onAction={(type) => handleAction(type, "Dogs Not Barking analysis")} />
+                </div>
+                <div style={{ display: "grid", gap: 8 }}>
+                  {DOGS_NOT_BARKING.slice(0, 3).map((d, i) => (
+                    <div key={i} style={{ 
+                      padding: 10, borderRadius: 6,
+                      background: d.riskLevel === "high" ? "#FEF2F2" : "#FFFBEB",
+                      border: `1px solid ${d.riskLevel === "high" ? "#FECACA" : "#FDE68A"}`
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: d.riskLevel === "high" ? "#991B1B" : "#92400E" }}>
+                          {d.topic}
+                        </span>
+                        <span style={{ fontSize: 9, color: "#6B7280" }}>Last: {d.lastDiscussed}</span>
+                      </div>
+                      <div style={{ fontSize: 10, color: "#6B7280" }}>{d.externalSignal}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Peer Signals */}
+              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Peer Governance Signals</h3>
+                  <ActionButton onAction={(type) => handleAction(type, "Peer benchmarking")} />
+                </div>
+                <div style={{ display: "grid", gap: 8 }}>
+                  {PEER_SIGNALS.map((p, i) => (
+                    <div key={i} style={{ padding: 10, borderRadius: 6, background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                        <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#E0E7FF", color: "#4338CA", fontWeight: 600 }}>
+                          {p.topic}
+                        </span>
+                        <span style={{ fontSize: 9, color: "#9CA3AF" }}>{p.date}</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: "#111827", marginBottom: 2 }}>{p.context}</div>
+                      <div style={{ fontSize: 10, color: "#6B7280" }}>{p.company} · {p.source}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ============================================================ */}
+          {/* GOVERNANCE MATURITY - FULL WIDTH */}
+          {/* ============================================================ */}
+          
+          <section style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <span style={{ fontSize: 16 }}>📈</span>
+              <h2 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Governance Maturity</h2>
+            </div>
+            
+            <div style={{ background: "#fff", borderRadius: 12, padding: 24, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+              {/* Overall Score Row */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, paddingBottom: 20, borderBottom: "1px solid #E5E7EB" }}>
+                <div>
+                  <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 4 }}>Overall Governance Score</div>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                    <span style={{ fontSize: 48, fontWeight: 800, color: "#D97706" }}>{overallScores[3]}</span>
+                    <span style={{ fontSize: 14, color: "#DC2626", fontWeight: 500 }}>↓ {overallScores[2] - overallScores[3]} from Q2</span>
+                  </div>
+                </div>
+                
+                {/* Mini trend */}
+                <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 60 }}>
+                  {overallScores.map((score, i) => {
+                    const isLast = i === overallScores.length - 1;
+                    const prev = i > 0 ? overallScores[i-1] : score;
+                    const isDown = score < prev;
+                    return (
+                      <div key={i} style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 10, fontWeight: 600, color: isLast ? (isDown ? "#DC2626" : "#059669") : "#6B7280", marginBottom: 4 }}>
+                          {score}
+                        </div>
+                        <div style={{ 
+                          width: 32, height: score * 0.6, borderRadius: 4,
+                          background: isLast 
+                            ? (isDown ? "linear-gradient(180deg, #FCA5A5, #DC2626)" : "linear-gradient(180deg, #86EFAC, #059669)")
+                            : "#E5E7EB"
+                        }} />
+                        <div style={{ fontSize: 9, color: "#6B7280", marginTop: 4 }}>{MATURITY_QUARTERS[i]}</div>
                       </div>
                     );
                   })}
                 </div>
               </div>
               
-              {/* Breakdown */}
-              <div style={{ width: 280, paddingLeft: 24, borderLeft: "1px solid #E5E7EB" }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#6B7280", marginBottom: 12 }}>Q3 2025 BREAKDOWN</div>
-                {[
-                  { label: "Risk Oversight", value: 64, prev: 68 },
-                  { label: "Action Execution", value: 66, prev: 72 },
-                  { label: "Board Engagement", value: 72, prev: 73 },
-                  { label: "Peer Alignment", value: 70, prev: 71 },
-                ].map((item) => (
-                  <div key={item.label} style={{ marginBottom: 12 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                      <span style={{ fontSize: 12, color: "#374151" }}>{item.label}</span>
-                      <span style={{ 
-                        fontSize: 12, fontWeight: 600, 
-                        color: item.value < item.prev ? "#DC2626" : "#059669"
+              {/* Component Breakdown */}
+              <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 12, fontWeight: 600 }}>SCORE COMPONENTS</div>
+              <div style={{ display: "grid", gap: 12 }}>
+                {MATURITY_COMPONENTS.map((comp) => {
+                  const currentScore = comp.scores[3];
+                  const prevScore = comp.scores[2];
+                  const trend = currentScore - prevScore;
+                  return (
+                    <div key={comp.id} style={{ display: "grid", gridTemplateColumns: "200px 1fr 80px 100px", alignItems: "center", gap: 16 }}>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 500, color: "#111827" }}>{comp.name}</div>
+                        <div style={{ fontSize: 10, color: "#6B7280" }}>{comp.description}</div>
+                      </div>
+                      
+                      {/* Progress bar with quarters */}
+                      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        {comp.scores.map((score, i) => {
+                          const isLast = i === comp.scores.length - 1;
+                          return (
+                            <div key={i} style={{ flex: 1 }}>
+                              <div style={{ 
+                                height: 24, borderRadius: 4,
+                                background: isLast 
+                                  ? (score < comp.scores[i-1] ? "#FEE2E2" : "#ECFDF5")
+                                  : "#F3F4F6",
+                                display: "flex", alignItems: "center", justifyContent: "center"
+                              }}>
+                                <span style={{ 
+                                  fontSize: 11, fontWeight: 600,
+                                  color: isLast 
+                                    ? (score < comp.scores[i-1] ? "#DC2626" : "#059669")
+                                    : "#6B7280"
+                                }}>
+                                  {score}
+                                </span>
+                              </div>
+                              <div style={{ fontSize: 8, color: "#9CA3AF", textAlign: "center", marginTop: 2 }}>{MATURITY_QUARTERS[i]}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      
+                      <div style={{ textAlign: "center" }}>
+                        <span style={{ 
+                          fontSize: 11, fontWeight: 600,
+                          color: trend > 0 ? "#059669" : trend < 0 ? "#DC2626" : "#6B7280"
+                        }}>
+                          {trend > 0 ? `+${trend}` : trend}
+                        </span>
+                      </div>
+                      
+                      <div style={{ 
+                        fontSize: 10, color: "#6B7280", textAlign: "right"
                       }}>
-                        {item.value} <span style={{ fontSize: 10, fontWeight: 400 }}>({item.value < item.prev ? "↓" : "↑"} from {item.prev})</span>
+                        Weight: {comp.weight}%
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* ============================================================ */}
+          {/* TIER 3: TRACKING - Execution */}
+          {/* ============================================================ */}
+          
+          <section style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <span style={{ fontSize: 16 }}>📊</span>
+              <h2 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Execution Tracking</h2>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              {/* Promises vs Delivery */}
+              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Promises vs Delivery</h3>
+                  <ActionButton onAction={(type) => handleAction(type, "Execution report")} />
+                </div>
+                <div style={{ display: "grid", gap: 6 }}>
+                  {PROMISES_VS_DELIVERY.map((p, i) => (
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: i < PROMISES_VS_DELIVERY.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      <div>
+                        <div style={{ fontSize: 12, color: "#111827" }}>{p.promise}</div>
+                        <div style={{ fontSize: 10, color: "#6B7280" }}>Promised: {p.promisedQ}</div>
+                      </div>
+                      <span style={{
+                        fontSize: 10, padding: "3px 8px", borderRadius: 4, fontWeight: 600,
+                        background: p.status === "delivered" ? "#ECFDF5" : p.status === "in-progress" ? "#FEF3C7" : "#FEE2E2",
+                        color: p.status === "delivered" ? "#047857" : p.status === "in-progress" ? "#B45309" : "#DC2626"
+                      }}>
+                        {p.status === "delivered" ? "✓ Delivered" : p.status === "in-progress" ? "In Progress" : `${p.days}d late`}
                       </span>
                     </div>
-                    <div style={{ position: "relative", height: 4, background: "#E5E7EB", borderRadius: 2 }}>
-                      <div style={{ 
-                        position: "absolute", left: 0, top: 0, height: "100%", 
-                        width: `${item.value}%`,
-                        background: item.value < item.prev ? "#F87171" : "#4ADE80",
-                        borderRadius: 2
-                      }} />
+                  ))}
+                </div>
+              </div>
+              
+              {/* Topic Allocation */}
+              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Board Attention vs Benchmark</h3>
+                  <ActionButton onAction={(type) => handleAction(type, "Attention analysis")} />
+                </div>
+                <div style={{ display: "grid", gap: 10 }}>
+                  {TOPIC_ALLOCATION.map((t, i) => (
+                    <div key={i}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
+                        <span style={{ color: "#374151", fontWeight: 500 }}>{t.topic}</span>
+                        <span style={{ color: t.status === "below" ? "#DC2626" : "#059669", fontWeight: 600 }}>
+                          {t.pct}% {t.status === "below" ? "↓" : "↑"} (peer: {t.benchmark}%)
+                        </span>
+                      </div>
+                      <div style={{ height: 6, background: "#E5E7EB", borderRadius: 3, position: "relative" }}>
+                        <div style={{ 
+                          height: "100%", borderRadius: 3,
+                          width: `${t.pct}%`,
+                          background: t.status === "below" ? "#F87171" : "#4ADE80"
+                        }} />
+                        {/* Benchmark marker */}
+                        <div style={{ 
+                          position: "absolute", top: -2, left: `${t.benchmark}%`,
+                          width: 2, height: 10, background: "#374151", borderRadius: 1
+                        }} />
+                      </div>
                     </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ============================================================ */}
+          {/* DIRECTOR EDUCATION - EXPANDED */}
+          {/* ============================================================ */}
+          
+          <section style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 16 }}>🎓</span>
+                <h2 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Director Education</h2>
+                <span style={{ fontSize: 11, color: "#6B7280" }}>({DIRECTOR_EDUCATION.length} directors)</span>
+              </div>
+              <ActionButton onAction={(type) => handleAction(type, "Director education report")} />
+            </div>
+            
+            <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+              {/* Summary Row */}
+              <div style={{ display: "flex", gap: 16, marginBottom: 20, paddingBottom: 16, borderBottom: "1px solid #E5E7EB" }}>
+                <div style={{ flex: 1, padding: 12, background: "#ECFDF5", borderRadius: 8, textAlign: "center" }}>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: "#047857" }}>{directorSummary.complete}</div>
+                  <div style={{ fontSize: 10, color: "#047857", fontWeight: 500 }}>Complete</div>
+                </div>
+                <div style={{ flex: 1, padding: 12, background: "#EFF6FF", borderRadius: 8, textAlign: "center" }}>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: "#1D4ED8" }}>{directorSummary.onTrack}</div>
+                  <div style={{ fontSize: 10, color: "#1D4ED8", fontWeight: 500 }}>On Track</div>
+                </div>
+                <div style={{ flex: 1, padding: 12, background: "#FEF3C7", borderRadius: 8, textAlign: "center" }}>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: "#B45309" }}>{directorSummary.behind}</div>
+                  <div style={{ fontSize: 10, color: "#B45309", fontWeight: 500 }}>Behind</div>
+                </div>
+                <div style={{ flex: 1, padding: 12, background: "#FEE2E2", borderRadius: 8, textAlign: "center" }}>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: "#DC2626" }}>{directorSummary.atRisk}</div>
+                  <div style={{ fontSize: 10, color: "#DC2626", fontWeight: 500 }}>At Risk</div>
+                </div>
+              </div>
+              
+              {/* Director List */}
+              <div style={{ display: "grid", gap: 8 }}>
+                {(showAllDirectors ? DIRECTOR_EDUCATION : DIRECTOR_EDUCATION.slice(0, 6)).map((d, i) => (
+                  <div 
+                    key={i} 
+                    style={{ 
+                      display: "grid", gridTemplateColumns: "180px 1fr 80px 80px", alignItems: "center", gap: 16,
+                      padding: "10px 12px", borderRadius: 8,
+                      background: d.status === "at-risk" ? "#FEF2F2" : d.status === "behind" ? "#FFFBEB" : "#F9FAFB",
+                      border: `1px solid ${d.status === "at-risk" ? "#FECACA" : d.status === "behind" ? "#FDE68A" : "#E5E7EB"}`
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{d.name}</div>
+                      <div style={{ fontSize: 10, color: "#6B7280" }}>{d.role}</div>
+                    </div>
+                    
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ flex: 1, height: 6, background: "#E5E7EB", borderRadius: 3 }}>
+                        <div style={{ 
+                          height: "100%", borderRadius: 3,
+                          width: `${(d.credits / d.required) * 100}%`,
+                          background: d.status === "complete" ? "#059669" : d.status === "on-track" ? "#3B82F6" : d.status === "behind" ? "#F59E0B" : "#DC2626"
+                        }} />
+                      </div>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: "#374151", minWidth: 40 }}>{d.credits}/{d.required}</span>
+                    </div>
+                    
+                    <div style={{ fontSize: 10, color: "#6B7280" }}>
+                      {d.topics.length > 0 ? d.topics.slice(0, 2).join(", ") : "No courses"}
+                    </div>
+                    
+                    <span style={{
+                      fontSize: 9, padding: "3px 8px", borderRadius: 4, fontWeight: 600, textAlign: "center",
+                      background: d.status === "complete" ? "#ECFDF5" : d.status === "on-track" ? "#EFF6FF" : d.status === "behind" ? "#FEF3C7" : "#FEE2E2",
+                      color: d.status === "complete" ? "#047857" : d.status === "on-track" ? "#1D4ED8" : d.status === "behind" ? "#B45309" : "#DC2626"
+                    }}>
+                      {d.status.toUpperCase().replace("-", " ")}
+                    </span>
                   </div>
                 ))}
               </div>
+              
+              {/* Show More */}
+              {DIRECTOR_EDUCATION.length > 6 && (
+                <button
+                  onClick={() => setShowAllDirectors(!showAllDirectors)}
+                  style={{
+                    width: "100%", marginTop: 12, padding: "10px",
+                    background: "none", border: "1px solid #E5E7EB", borderRadius: 8,
+                    fontSize: 12, color: "#6B7280", cursor: "pointer", fontWeight: 500
+                  }}
+                >
+                  {showAllDirectors ? "Show Less" : `Show ${DIRECTOR_EDUCATION.length - 6} More Directors`}
+                </button>
+              )}
             </div>
-          </div>
+          </section>
 
-          {/* Row 7: Countdown to Next Meeting */}
-          <div style={{ background: "linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)", borderRadius: 12, padding: 24 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-              <div>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 4 }}>🗓️ Countdown to Next Board Meeting</h2>
-                <p style={{ fontSize: 13, color: "#A5B4FC" }}>November 4, 2025 — 12 days away</p>
-              </div>
-              <div style={{ 
-                padding: "12px 20px", background: "rgba(255,255,255,0.1)", borderRadius: 8,
-                textAlign: "center"
-              }}>
-                <div style={{ fontSize: 28, fontWeight: 800, color: "#fff" }}>12</div>
-                <div style={{ fontSize: 11, color: "#A5B4FC" }}>days to go</div>
+        </div>
+      </main>
+
+      {/* ================================================================ */}
+      {/* STICKY PROMPT BAR */}
+      {/* ================================================================ */}
+      
+      <div style={{ 
+        position: "fixed", bottom: 0, left: 0, right: 0,
+        background: "linear-gradient(180deg, transparent 0%, #F3F4F6 30%)",
+        padding: "40px 0 20px 0"
+      }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ 
+            display: "flex", alignItems: "center", gap: 12,
+            padding: "12px 16px",
+            background: "#fff", 
+            borderRadius: 12,
+            border: "1px solid #E5E7EB",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)"
+          }}>
+            <span style={{ fontSize: 18 }}>✨</span>
+            <input
+              type="text"
+              value={promptValue}
+              onChange={(e) => setPromptValue(e.target.value)}
+              placeholder="Ask GovernAI anything... e.g., 'Why is our risk coverage declining?' or 'Draft an agenda item for AI ethics'"
+              style={{
+                flex: 1, background: "none", border: "none", outline: "none",
+                fontSize: 14, color: "#111827"
+              }}
+            />
+            <button style={{
+              padding: "8px 16px", background: "#1E3A5F", color: "#fff",
+              border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer"
+            }}>
+              Ask
+            </button>
+          </div>
+          <div style={{ display: "flex", gap: 8, marginTop: 8, paddingLeft: 44 }}>
+            {["Why is governance score declining?", "Draft board agenda for AI risk", "Compare us to peers on cyber"].map((q) => (
+              <button
+                key={q}
+                onClick={() => setPromptValue(q)}
+                style={{
+                  padding: "4px 10px", background: "#fff", 
+                  border: "1px solid #E5E7EB", borderRadius: 6,
+                  fontSize: 11, color: "#6B7280", cursor: "pointer"
+                }}
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ================================================================ */}
+      {/* AGENT MODAL */}
+      {/* ================================================================ */}
+      
+      {showAgentModal && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200
+        }}>
+          <div style={{
+            background: "#fff", borderRadius: 16, padding: 24, width: 480,
+            boxShadow: "0 20px 60px rgba(0,0,0,0.2)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0 }}>🤖 Create Agent Task</h3>
+              <button 
+                onClick={() => setShowAgentModal(false)}
+                style={{ background: "none", border: "none", fontSize: 20, color: "#9CA3AF", cursor: "pointer" }}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 8 }}>What should the agent do?</div>
+              <div style={{ padding: 12, background: "#F9FAFB", borderRadius: 8, border: "1px solid #E5E7EB" }}>
+                <div style={{ fontSize: 13, color: "#111827", fontWeight: 500 }}>
+                  {selectedItem || "Analyze and provide recommendations"}
+                </div>
               </div>
             </div>
             
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-              {[4, 3, 2, 1].map((week) => {
-                const weekActions = COUNTDOWN_ACTIONS.filter(a => a.weeksOut === week);
-                const allDone = weekActions.every(a => a.status === "done");
-                const hasInProgress = weekActions.some(a => a.status === "in-progress");
-                return (
-                  <div 
-                    key={week}
-                    style={{ 
-                      padding: 16, borderRadius: 10,
-                      background: allDone ? "rgba(34, 197, 94, 0.1)" : hasInProgress ? "rgba(251, 191, 36, 0.1)" : "rgba(255,255,255,0.05)",
-                      border: `1px solid ${allDone ? "rgba(34, 197, 94, 0.3)" : hasInProgress ? "rgba(251, 191, 36, 0.3)" : "rgba(255,255,255,0.1)"}`
-                    }}
-                  >
-                    <div style={{ 
-                      fontSize: 11, fontWeight: 600, color: "#A5B4FC", marginBottom: 8,
-                      display: "flex", alignItems: "center", gap: 6
-                    }}>
-                      {allDone && <span style={{ color: "#4ADE80" }}>✓</span>}
-                      {week} {week === 1 ? "WEEK" : "WEEKS"} OUT
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 8 }}>Agent autonomy</div>
+              <div style={{ display: "grid", gap: 8 }}>
+                {[
+                  { level: "Draft for review", desc: "Agent creates draft, you approve before action" },
+                  { level: "Execute with notification", desc: "Agent acts, you get notified of results" },
+                  { level: "Fully autonomous", desc: "Agent handles end-to-end, reports on completion" },
+                ].map((opt, i) => (
+                  <label key={i} style={{ 
+                    display: "flex", alignItems: "flex-start", gap: 10, padding: 10, 
+                    background: "#F9FAFB", borderRadius: 6, cursor: "pointer",
+                    border: i === 0 ? "2px solid #1E3A5F" : "1px solid #E5E7EB"
+                  }}>
+                    <input type="radio" name="autonomy" defaultChecked={i === 0} style={{ marginTop: 2 }} />
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: "#111827" }}>{opt.level}</div>
+                      <div style={{ fontSize: 11, color: "#6B7280" }}>{opt.desc}</div>
                     </div>
-                    <div style={{ display: "grid", gap: 6 }}>
-                      {weekActions.map((a, i) => (
-                        <div 
-                          key={i}
-                          style={{ 
-                            padding: 8, borderRadius: 6, 
-                            background: "rgba(255,255,255,0.05)",
-                            opacity: a.status === "done" ? 0.6 : 1
-                          }}
-                        >
-                          <div style={{ 
-                            fontSize: 11, color: "#fff", marginBottom: 4,
-                            textDecoration: a.status === "done" ? "line-through" : "none"
-                          }}>
-                            {a.action}
-                          </div>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <span style={{ fontSize: 9, color: "#A5B4FC" }}>{a.owner}</span>
-                            {a.status === "done" && <span style={{ fontSize: 9, color: "#4ADE80" }}>✓ Done</span>}
-                            {a.status === "in-progress" && <span style={{ fontSize: 9, color: "#FBBF24" }}>In progress</span>}
-                            {a.status === "upcoming" && <span style={{ fontSize: 9, color: "#6B7280" }}>{a.dueDate}</span>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
+                  </label>
+                ))}
+              </div>
+            </div>
+            
+            <div style={{ display: "flex", gap: 12 }}>
+              <button 
+                onClick={() => setShowAgentModal(false)}
+                style={{ flex: 1, padding: "10px", background: "#F3F4F6", border: "none", borderRadius: 8, fontSize: 13, cursor: "pointer" }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => setShowAgentModal(false)}
+                style={{ flex: 1, padding: "10px", background: "#1E3A5F", color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+              >
+                Create Agent Task
+              </button>
             </div>
           </div>
-
         </div>
-      </div>
+      )}
     </div>
   );
 }
