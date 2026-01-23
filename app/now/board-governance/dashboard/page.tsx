@@ -205,7 +205,7 @@ export default function GovernanceDashboardPage() {
       {/* ================================================================ */}
       
       <div style={{ flexShrink: 0, padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
+        <div style={{ maxWidth: 1152, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
             <span style={{ fontSize: 10, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", background: "rgba(124,58,237,0.15)", padding: "4px 10px", borderRadius: 4 }}>
               Prototype
@@ -250,7 +250,7 @@ export default function GovernanceDashboardPage() {
         flex: 1, 
         display: "flex", 
         flexDirection: "column",
-        maxWidth: 1400, 
+        maxWidth: 1152, 
         margin: "24px auto 0 auto", 
         width: "calc(100% - 48px)",
         background: "#fff",
