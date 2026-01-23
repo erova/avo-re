@@ -168,9 +168,29 @@ function HeatMap3x3({
 }) {
   const likelihoodLevels: RiskLevel[] = ["High", "Medium", "Low"];
   const impactLevels: RiskLevel[] = ["Low", "Medium", "High"];
-  const holdTimer = useRef<number | null>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingHover = useRef<{ ctx: ClusterContext; rect: DOMRect } | null>(null);
 
   const levelNum = (l: RiskLevel) => (l === "Low" ? 1 : l === "Medium" ? 2 : 3);
+
+  const clearHold = () => {
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+    pendingHover.current = null;
+  };
+
+  const startHold = (ctx: ClusterContext, el: HTMLElement) => {
+    clearHold();
+    const rect = el.getBoundingClientRect();
+    pendingHover.current = { ctx, rect };
+    holdTimer.current = setTimeout(() => {
+      if (pendingHover.current) {
+        onCellHover(pendingHover.current.ctx, pendingHover.current.rect);
+      }
+    }, 150);
+  };
 
   return (
     <div style={{ position: "relative" }}>
@@ -190,17 +210,11 @@ function HeatMap3x3({
             const pill = deltaPillStyle(delta);
             const isActive = activeCell === k;
 
-            const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
-              if (holdTimer.current) window.clearTimeout(holdTimer.current);
-              holdTimer.current = window.setTimeout(() => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                onCellHover({
-                  likelihood: l, impact: i, count, delta,
-                  signals: delta > 0 ? [`Rising cluster: +${delta} vs last period`] : delta < 0 ? [`Improving: ${delta} vs last period`] : [],
-                  title: `${l} likelihood · ${i} impact`,
-                  subtitle: `${count} risks (${delta === 0 ? "0" : delta > 0 ? `+${delta}` : delta} vs last period)`,
-                }, rect);
-              }, 160);
+            const ctx: ClusterContext = {
+              likelihood: l, impact: i, count, delta,
+              signals: delta > 0 ? [`Rising cluster: +${delta} vs last period`] : delta < 0 ? [`Improving: ${delta} vs last period`] : [],
+              title: `${l} likelihood · ${i} impact`,
+              subtitle: `${count} risks (${delta === 0 ? "0" : delta > 0 ? `+${delta}` : delta} vs last period)`,
             };
 
             return (
@@ -208,9 +222,9 @@ function HeatMap3x3({
                 key={k}
                 type="button"
                 onClick={() => onCellClick(l, i)}
-                onMouseEnter={handleMouseEnter}
+                onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
                 onMouseLeave={() => {
-                  if (holdTimer.current) window.clearTimeout(holdTimer.current);
+                  clearHold();
                   onCellLeave();
                 }}
                 style={{
@@ -266,8 +280,29 @@ function HeatMap5x5({
 }) {
   const likelihoodLevels: RiskLevel5[] = ["Very High", "High", "Medium", "Low", "Very Low"];
   const impactLevels: RiskLevel5[] = ["Very Low", "Low", "Medium", "High", "Very High"];
-  const holdTimer = useRef<number | null>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingHover = useRef<{ ctx: ClusterContext; rect: DOMRect } | null>(null);
   const levelNum = (l: RiskLevel5) => ({ "Very Low": 1, "Low": 2, "Medium": 3, "High": 4, "Very High": 5 }[l]);
+
+  const clearHold = () => {
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+    pendingHover.current = null;
+  };
+
+  const startHold = (ctx: ClusterContext, el: HTMLElement) => {
+    if (!onCellHover) return;
+    clearHold();
+    const rect = el.getBoundingClientRect();
+    pendingHover.current = { ctx, rect };
+    holdTimer.current = setTimeout(() => {
+      if (pendingHover.current) {
+        onCellHover(pendingHover.current.ctx, pendingHover.current.rect);
+      }
+    }, 150);
+  };
 
   return (
     <div style={{ position: "relative" }}>
@@ -287,18 +322,11 @@ function HeatMap5x5({
             const pill = deltaPillStyle(delta);
             const isActive = activeCell === k;
 
-            const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
-              if (!onCellHover) return;
-              if (holdTimer.current) window.clearTimeout(holdTimer.current);
-              holdTimer.current = window.setTimeout(() => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                onCellHover({
-                  likelihood: l, impact: i, count, delta,
-                  signals: delta > 0 ? [`Rising: +${delta} vs last year`] : delta < 0 ? [`Improved: ${delta} vs last year`] : [],
-                  title: `${l} likelihood · ${i} impact`,
-                  subtitle: `${count} risks`,
-                }, rect);
-              }, 160);
+            const ctx: ClusterContext = {
+              likelihood: l, impact: i, count, delta,
+              signals: delta > 0 ? [`Rising: +${delta} vs last year`] : delta < 0 ? [`Improved: ${delta} vs last year`] : [],
+              title: `${l} likelihood · ${i} impact`,
+              subtitle: `${count} risks`,
             };
 
             return (
@@ -306,8 +334,8 @@ function HeatMap5x5({
                 key={k}
                 type="button"
                 onClick={() => onCellClick?.(l, i)}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={() => { if (holdTimer.current) window.clearTimeout(holdTimer.current); onCellLeave?.(); }}
+                onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
+                onMouseLeave={() => { clearHold(); onCellLeave?.(); }}
                 style={{
                   height: 56, borderRadius: 8, border: "1px solid rgba(15,23,42,0.1)",
                   background: `linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%), ${bg}`,
@@ -353,7 +381,27 @@ function GaussianChart({
   activeBin: string | null;
 }) {
   const maxCount = Math.max(...GAUSSIAN_BINS.map((b) => b.count));
-  const holdTimer = useRef<number | null>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingHover = useRef<{ ctx: ClusterContext; rect: DOMRect } | null>(null);
+
+  const clearHold = () => {
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+    pendingHover.current = null;
+  };
+
+  const startHold = (ctx: ClusterContext, el: HTMLElement) => {
+    clearHold();
+    const rect = el.getBoundingClientRect();
+    pendingHover.current = { ctx, rect };
+    holdTimer.current = setTimeout(() => {
+      if (pendingHover.current) {
+        onBinHover(pendingHover.current.ctx, pendingHover.current.rect);
+      }
+    }, 150);
+  };
 
   return (
     <div style={{ position: "relative", height: 280 }}>
@@ -371,19 +419,13 @@ function GaussianChart({
           const bg = isLow ? "#22C55E" : isMed ? "#F59E0B" : "#EF4444";
           const bgLight = isLow ? "#4ADE80" : isMed ? "#FBBF24" : "#F87171";
           const isActive = activeBin === bin.range;
+          const zone = isLow ? "Low" : isMed ? "Medium" : "High";
 
-          const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
-            if (holdTimer.current) window.clearTimeout(holdTimer.current);
-            holdTimer.current = window.setTimeout(() => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const zone = isLow ? "Low" : isMed ? "Medium" : "High";
-              onBinHover({
-                likelihood: zone, impact: bin.range, count: bin.count, delta: 0,
-                signals: [`Score range: ${bin.range}`, `Zone: ${zone} risk`],
-                title: `Risk Score ${bin.range}`,
-                subtitle: `${bin.count} risks in this range`,
-              }, rect);
-            }, 160);
+          const ctx: ClusterContext = {
+            likelihood: zone, impact: bin.range, count: bin.count, delta: 0,
+            signals: [`Score range: ${bin.range}`, `Zone: ${zone} risk`],
+            title: `Risk Score ${bin.range}`,
+            subtitle: `${bin.count} risks in this range`,
           };
 
           return (
@@ -391,8 +433,8 @@ function GaussianChart({
               key={bin.range}
               type="button"
               onClick={() => onBinClick(bin.range, bin.count)}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={() => { if (holdTimer.current) window.clearTimeout(holdTimer.current); onBinLeave(); }}
+              onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
+              onMouseLeave={() => { clearHold(); onBinLeave(); }}
               style={{
                 flex: 1, maxWidth: 28, height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end",
                 background: "transparent", border: "none", cursor: "pointer", padding: 0,
@@ -444,7 +486,27 @@ function CostNotionChart({
     { label: "$250K-500K", min: 250, max: 500 },
     { label: "$500K+", min: 500, max: Infinity },
   ];
-  const holdTimer = useRef<number | null>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingHover = useRef<{ ctx: ClusterContext; rect: DOMRect } | null>(null);
+
+  const clearHold = () => {
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+    pendingHover.current = null;
+  };
+
+  const startHold = (ctx: ClusterContext, el: HTMLElement) => {
+    clearHold();
+    const rect = el.getBoundingClientRect();
+    pendingHover.current = { ctx, rect };
+    holdTimer.current = setTimeout(() => {
+      if (pendingHover.current) {
+        onCellHover(pendingHover.current.ctx, pendingHover.current.rect);
+      }
+    }, 150);
+  };
 
   return (
     <div style={{ position: "relative" }}>
@@ -463,17 +525,11 @@ function CostNotionChart({
             const severity = (4 - notionScore) + costScore;
             const bg = severity <= 2 ? "#E8FFF0" : severity <= 4 ? "#FFF7C2" : severity <= 5 ? "#FFD5D5" : "#FF8E8E";
 
-            const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
-              if (holdTimer.current) window.clearTimeout(holdTimer.current);
-              holdTimer.current = window.setTimeout(() => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                onCellHover({
-                  likelihood: notion, impact: bucket.label, count, delta: 0,
-                  signals: cellRisks.map((r) => r.name),
-                  title: `${notion} · ${bucket.label}`,
-                  subtitle: `${count} risks`,
-                }, rect);
-              }, 160);
+            const ctx: ClusterContext = {
+              likelihood: notion, impact: bucket.label, count, delta: 0,
+              signals: cellRisks.map((r) => r.name),
+              title: `${notion} · ${bucket.label}`,
+              subtitle: `${count} risks`,
             };
 
             return (
@@ -481,8 +537,8 @@ function CostNotionChart({
                 key={k}
                 type="button"
                 onClick={() => onCellClick(notion, bucket.label)}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={() => { if (holdTimer.current) window.clearTimeout(holdTimer.current); onCellLeave(); }}
+                onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
+                onMouseLeave={() => { clearHold(); onCellLeave(); }}
                 style={{
                   height: 60, borderRadius: 10, border: "1px solid rgba(15,23,42,0.12)",
                   background: `linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%), ${bg}`,
