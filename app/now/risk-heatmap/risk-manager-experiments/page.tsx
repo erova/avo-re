@@ -612,8 +612,8 @@ export default function RiskManagerExperimentsPage() {
 
   const [popoverCtx, setPopoverCtx] = useState<ClusterContext | null>(null);
   const [popoverRect, setPopoverRect] = useState<DOMRect | null>(null);
-  const popoverHoveredRef = useRef(false);
-  const closeTimerRef = useRef<number | null>(null);
+  const [isHoveringPopover, setIsHoveringPopover] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [agentPrompt, setAgentPrompt] = useState("");
   const [agentRunning, setAgentRunning] = useState(false);
@@ -631,37 +631,58 @@ export default function RiskManagerExperimentsPage() {
 
   const activeFiltersCount = (likelihood ? 1 : 0) + (impact ? 1 : 0);
 
+  // Clear any pending close timer
   const clearCloseTimer = () => {
     if (closeTimerRef.current) {
-      window.clearTimeout(closeTimerRef.current);
+      clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
     }
   };
 
+  // Close the popover
+  const closePopover = () => {
+    setPopoverCtx(null);
+    setPopoverRect(null);
+  };
+
+  // Schedule a delayed close (gives user time to move to popover)
   const scheduleClose = () => {
     clearCloseTimer();
-    closeTimerRef.current = window.setTimeout(() => {
-      if (!popoverHoveredRef.current) {
-        setPopoverCtx(null);
-        setPopoverRect(null);
-      }
-    }, 150);
+    closeTimerRef.current = setTimeout(() => {
+      // Only close if not currently hovering the popover
+      setPopoverCtx((current) => {
+        // This runs in the timeout, check state at execution time
+        return current; // Keep current - we'll close via container leave
+      });
+    }, 300);
   };
 
+  // When a cell is hovered, show the popover
   const handleCellHover = (ctx: ClusterContext | null, rect: DOMRect | null) => {
     clearCloseTimer();
-    setPopoverCtx(ctx);
-    setPopoverRect(rect);
+    if (ctx && rect) {
+      setPopoverCtx(ctx);
+      setPopoverRect(rect);
+    }
   };
 
+  // When mouse enters the popover panel
   const handlePopoverEnter = () => {
-    popoverHoveredRef.current = true;
     clearCloseTimer();
+    setIsHoveringPopover(true);
   };
 
+  // When mouse leaves the popover panel
   const handlePopoverLeave = () => {
-    popoverHoveredRef.current = false;
-    scheduleClose();
+    setIsHoveringPopover(false);
+    closePopover();
+  };
+
+  // When mouse leaves the entire visualization container
+  const handleContainerLeave = () => {
+    if (!isHoveringPopover) {
+      closePopover();
+    }
   };
 
   const handleFilter = (l: string, i: string) => {
@@ -768,83 +789,100 @@ export default function RiskManagerExperimentsPage() {
             ))}
           </div>
 
-          {/* Visualization card */}
-          <div className={styles.card} style={{ margin: "0 14px" }}>
-            <div className={styles.cardHeader}>
-              <div>
-                <div className={styles.cardTitle}>
-                  {viewMode === "3x3" && "Risk Heatmap (3×3)"}
-                  {viewMode === "5x5" && "Risk Heatmap (5×5)"}
-                  {viewMode === "compare" && "Year-over-Year Comparison"}
-                  {viewMode === "gaussian" && "Risk Score Distribution"}
-                  {viewMode === "cost" && "Cost × Notion Matrix"}
+          {/* Visualization card - wrapped in hover container */}
+          <div 
+            style={{ margin: "0 14px", position: "relative" }}
+            onMouseLeave={handleContainerLeave}
+          >
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <div className={styles.cardTitle}>
+                    {viewMode === "3x3" && "Risk Heatmap (3×3)"}
+                    {viewMode === "5x5" && "Risk Heatmap (5×5)"}
+                    {viewMode === "compare" && "Year-over-Year Comparison"}
+                    {viewMode === "gaussian" && "Risk Score Distribution"}
+                    {viewMode === "cost" && "Cost × Notion Matrix"}
+                  </div>
+                  <div className={styles.cardMeta}>Hover-hold to preview · Click to filter or open actions</div>
                 </div>
-                <div className={styles.cardMeta}>Hover-hold to preview · Click to filter or open actions</div>
               </div>
+
+              <div className={styles.cardBodyHeatmap}>
+                {viewMode === "3x3" && (
+                  <HeatMap3x3
+                    onCellClick={(l, i) => handleFilter(l, i)}
+                    onCellHover={handleCellHover}
+                    onCellLeave={() => {}}
+                    activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
+                  />
+                )}
+
+                {viewMode === "5x5" && (
+                  <HeatMap5x5
+                    data={HEATMAP_5X5_CURRENT}
+                    onCellClick={(l, i) => handleFilter(l, i)}
+                    onCellHover={handleCellHover}
+                    onCellLeave={() => {}}
+                    activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
+                  />
+                )}
+
+                {viewMode === "compare" && (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>Today (94 risks)</div>
+                      <HeatMap5x5 data={HEATMAP_5X5_CURRENT} onCellClick={(l, i) => handleFilter(l, i)} onCellHover={handleCellHover} onCellLeave={() => {}} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>1 Year Ago (99 risks)</div>
+                      <HeatMap5x5 data={HEATMAP_5X5_YEAR_AGO} />
+                    </div>
+                  </div>
+                )}
+
+                {viewMode === "gaussian" && (
+                  <GaussianChart
+                    onBinClick={(range, count) => {
+                      const start = parseInt(range.split("-")[0]);
+                      const zone = start < 30 ? "Low" : start < 70 ? "Medium" : "High";
+                      setLikelihood(zone as RiskLevel);
+                      setImpact(null);
+                      setTableVersion((v) => v + 1);
+                    }}
+                    onBinHover={handleCellHover}
+                    onBinLeave={() => {}}
+                    activeBin={null}
+                  />
+                )}
+
+                {viewMode === "cost" && (
+                  <CostNotionChart
+                    onCellClick={(notion, cost) => {
+                      const map = { "Very Large": "High", "Large": "High", "Medium": "Medium", "Small": "Low" } as const;
+                      setLikelihood(map[notion as keyof typeof map] as RiskLevel);
+                      setImpact(null);
+                      setTableVersion((v) => v + 1);
+                    }}
+                    onCellHover={handleCellHover}
+                    onCellLeave={() => {}}
+                  activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
+                />
+              )}
+            </div>
             </div>
 
-            <div className={styles.cardBodyHeatmap}>
-              {viewMode === "3x3" && (
-                <HeatMap3x3
-                  onCellClick={(l, i) => handleFilter(l, i)}
-                  onCellHover={handleCellHover}
-                  onCellLeave={scheduleClose}
-                  activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
-                />
-              )}
-
-              {viewMode === "5x5" && (
-                <HeatMap5x5
-                  data={HEATMAP_5X5_CURRENT}
-                  onCellClick={(l, i) => handleFilter(l, i)}
-                  onCellHover={handleCellHover}
-                  onCellLeave={scheduleClose}
-                  activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
-                />
-              )}
-
-              {viewMode === "compare" && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>Today (94 risks)</div>
-                    <HeatMap5x5 data={HEATMAP_5X5_CURRENT} onCellClick={(l, i) => handleFilter(l, i)} onCellHover={handleCellHover} onCellLeave={scheduleClose} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>1 Year Ago (99 risks)</div>
-                    <HeatMap5x5 data={HEATMAP_5X5_YEAR_AGO} />
-                  </div>
-                </div>
-              )}
-
-              {viewMode === "gaussian" && (
-                <GaussianChart
-                  onBinClick={(range, count) => {
-                    const start = parseInt(range.split("-")[0]);
-                    const zone = start < 30 ? "Low" : start < 70 ? "Medium" : "High";
-                    setLikelihood(zone as RiskLevel);
-                    setImpact(null);
-                    setTableVersion((v) => v + 1);
-                  }}
-                  onBinHover={handleCellHover}
-                  onBinLeave={scheduleClose}
-                  activeBin={null}
-                />
-              )}
-
-              {viewMode === "cost" && (
-                <CostNotionChart
-                  onCellClick={(notion, cost) => {
-                    const map = { "Very Large": "High", "Large": "High", "Medium": "Medium", "Small": "Low" } as const;
-                    setLikelihood(map[notion as keyof typeof map] as RiskLevel);
-                    setImpact(null);
-                    setTableVersion((v) => v + 1);
-                  }}
-                  onCellHover={handleCellHover}
-                  onCellLeave={scheduleClose}
-                  activeCell={popoverCtx ? `${popoverCtx.likelihood}-${popoverCtx.impact}` : null}
-                />
-              )}
-            </div>
+            {/* Popover - rendered inside the hover container */}
+            {popoverCtx && popoverRect && (
+              <PopoverPanel
+                ctx={popoverCtx}
+                rect={popoverRect}
+                onOpenTray={() => openTray(popoverCtx)}
+                onFilter={() => handleFilter(popoverCtx.likelihood, popoverCtx.impact)}
+                onMouseEnter={handlePopoverEnter}
+                onMouseLeave={handlePopoverLeave}
+              />
+            )}
           </div>
 
           {/* Table region */}
@@ -908,18 +946,6 @@ export default function RiskManagerExperimentsPage() {
             <div className={styles.tableFooter}>Showing {Math.min(15, filteredRows.length)} of {filteredRows.length} results</div>
           </div>
         </div>
-
-        {/* Popover */}
-        {popoverCtx && popoverRect && (
-          <PopoverPanel
-            ctx={popoverCtx}
-            rect={popoverRect}
-            onOpenTray={() => openTray(popoverCtx)}
-            onFilter={() => handleFilter(popoverCtx.likelihood, popoverCtx.impact)}
-            onMouseEnter={handlePopoverEnter}
-            onMouseLeave={handlePopoverLeave}
-          />
-        )}
 
         {/* Backdrop */}
         {trayOpen && <button type="button" aria-label="Close" className={styles.trayBackdrop} onClick={closeTray} />}
