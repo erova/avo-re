@@ -269,6 +269,8 @@ function HeatMap5x5({
   onCellHover,
   onCellLeave,
   activeCell,
+  highlightKey,
+  onHoverKeyChange,
 }: {
   data: Record<string, number>;
   compareData?: Record<string, number>;
@@ -277,6 +279,8 @@ function HeatMap5x5({
   onCellHover?: (ctx: ClusterContext | null, rect: DOMRect | null) => void;
   onCellLeave?: () => void;
   activeCell?: string | null;
+  highlightKey?: string | null; // For synced highlighting in compare view
+  onHoverKeyChange?: (key: string | null) => void; // Callback when hover changes
 }) {
   const likelihoodLevels: RiskLevel5[] = ["Very High", "High", "Medium", "Low", "Very Low"];
   const impactLevels: RiskLevel5[] = ["Very Low", "Low", "Medium", "High", "Very High"];
@@ -292,7 +296,10 @@ function HeatMap5x5({
     pendingHover.current = null;
   };
 
-  const startHold = (ctx: ClusterContext, el: HTMLElement) => {
+  const startHold = (ctx: ClusterContext, el: HTMLElement, key: string) => {
+    // Always notify hover key change for sync
+    onHoverKeyChange?.(key);
+    
     if (!onCellHover) return;
     clearHold();
     const rect = el.getBoundingClientRect();
@@ -302,6 +309,12 @@ function HeatMap5x5({
         onCellHover(pendingHover.current.ctx, pendingHover.current.rect);
       }
     }, 150);
+  };
+
+  const handleLeave = () => {
+    clearHold();
+    onHoverKeyChange?.(null);
+    onCellLeave?.();
   };
 
   return (
@@ -321,6 +334,7 @@ function HeatMap5x5({
             const fg = textColorFor(sev, 25);
             const pill = deltaPillStyle(delta);
             const isActive = activeCell === k;
+            const isHighlighted = highlightKey === k;
 
             const ctx: ClusterContext = {
               likelihood: l, impact: i, count, delta,
@@ -334,16 +348,18 @@ function HeatMap5x5({
                 key={k}
                 type="button"
                 onClick={() => onCellClick?.(l, i)}
-                onMouseEnter={(e) => startHold(ctx, e.currentTarget)}
-                onMouseLeave={() => { clearHold(); onCellLeave?.(); }}
+                onMouseEnter={(e) => startHold(ctx, e.currentTarget, k)}
+                onMouseLeave={handleLeave}
                 style={{
                   height: 56, borderRadius: 8, border: "1px solid rgba(15,23,42,0.1)",
                   background: `linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%), ${bg}`,
                   color: fg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                   cursor: onCellClick ? "pointer" : "default",
-                  boxShadow: isActive ? "0 12px 32px rgba(15,23,42,0.18)" : "0 4px 12px rgba(15,23,42,0.08)",
-                  outline: isActive ? "2px solid #111827" : "none", outlineOffset: 2,
-                  opacity: count === 0 ? 0.4 : 1, transition: "all 140ms ease",
+                  boxShadow: (isActive || isHighlighted) ? "0 12px 32px rgba(15,23,42,0.18)" : "0 4px 12px rgba(15,23,42,0.08)",
+                  outline: (isActive || isHighlighted) ? "2px solid #111827" : "none", outlineOffset: 2,
+                  opacity: count === 0 ? 0.4 : 1, 
+                  transition: "all 140ms ease",
+                  transform: isHighlighted ? "translateY(-2px)" : "none",
                 }}
               >
                 <div style={{ fontSize: 14, fontWeight: 900 }}>{count}</div>
@@ -651,6 +667,59 @@ function PopoverPanel({
 // Main Page
 // ============================================================================
 
+// Context-aware next best actions
+function getNextBestActions(ctx: ClusterContext | null): { icon: string; text: string; sub: string; id: string }[] {
+  if (!ctx) return [];
+  
+  const actions: { icon: string; text: string; sub: string; id: string }[] = [];
+  
+  // Always include filter & triage
+  actions.push({ id: "filter", icon: "⚡", text: "Filter & triage", sub: `Review all ${ctx.count} risks in table` });
+  
+  // High severity or high count actions
+  if (ctx.likelihood === "High" || ctx.likelihood === "Very High" || ctx.count >= 10) {
+    actions.push({ id: "escalate", icon: "↗", text: "Escalate to leadership", sub: "Draft executive summary" });
+    actions.push({ id: "schedule", icon: "📅", text: "Schedule review meeting", sub: "Bring stakeholders together" });
+  }
+  
+  // Rising trend actions
+  if (ctx.delta > 0) {
+    actions.push({ id: "investigate", icon: "🔍", text: "Investigate root cause", sub: `+${ctx.delta} new risks need attention` });
+    actions.push({ id: "alert", icon: "🔔", text: "Set up monitoring alerts", sub: "Get notified of further changes" });
+  }
+  
+  // Improving trend actions  
+  if (ctx.delta < 0) {
+    actions.push({ id: "document", icon: "📝", text: "Document success factors", sub: "Capture what worked" });
+    actions.push({ id: "replicate", icon: "🔄", text: "Replicate to other clusters", sub: "Apply learnings elsewhere" });
+  }
+  
+  // Medium count actions
+  if (ctx.count >= 5 && ctx.count < 20) {
+    actions.push({ id: "assign", icon: "👤", text: "Assign risk owners", sub: "Distribute accountability" });
+    actions.push({ id: "prioritize", icon: "📊", text: "Run prioritization", sub: "Stack rank by business impact" });
+  }
+  
+  // Low likelihood / stable
+  if ((ctx.likelihood === "Low" || ctx.likelihood === "Very Low") && ctx.delta === 0) {
+    actions.push({ id: "archive", icon: "📦", text: "Review for archival", sub: "Consider closing stable low risks" });
+  }
+  
+  // Large clusters
+  if (ctx.count >= 20) {
+    actions.push({ id: "segment", icon: "✂️", text: "Segment into sub-clusters", sub: "Break down for targeted action" });
+    actions.push({ id: "automate", icon: "🤖", text: "Identify automation candidates", sub: "Reduce manual overhead" });
+  }
+  
+  // Always include send to decision-maker if not already too many
+  if (actions.length < 4) {
+    actions.push({ id: "send", icon: "✉️", text: "Send to decision-maker", sub: "Draft a concise note" });
+  }
+  
+  // Return top 4 most relevant
+  return actions.slice(0, 4);
+}
+
 export default function RiskManagerExperimentsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("3x3");
   const [likelihood, setLikelihood] = useState<string | null>(null);
@@ -662,6 +731,9 @@ export default function RiskManagerExperimentsPage() {
 
   const [popoverCtx, setPopoverCtx] = useState<ClusterContext | null>(null);
   const [popoverRect, setPopoverRect] = useState<DOMRect | null>(null);
+  
+  // For year comparison: sync hover between both heatmaps
+  const [compareHoverKey, setCompareHoverKey] = useState<string | null>(null);
 
   const [agentPrompt, setAgentPrompt] = useState("");
   const [agentRunning, setAgentRunning] = useState(false);
@@ -693,27 +765,50 @@ export default function RiskManagerExperimentsPage() {
     }
   };
 
+  // Map 5-level to 3-level for table filtering (since RISK_ROWS only has 3 levels)
+  const map5to3 = (level: string): RiskLevel => {
+    if (level === "Very Low" || level === "Low") return "Low";
+    if (level === "Medium") return "Medium";
+    return "High";
+  };
+
   const handleFilter = (l: string, i: string) => {
-    // Map 5-level to 3-level for table filtering
-    const map5to3 = (level: string): RiskLevel => {
-      if (level === "Very Low" || level === "Low") return "Low";
-      if (level === "Medium") return "Medium";
-      return "High";
-    };
-    setLikelihood(map5to3(l));
-    setImpact(map5to3(i));
+    // For 3x3, use exact values; for 5x5, map to 3-level
+    const mappedL = map5to3(l);
+    const mappedI = map5to3(i);
+    setLikelihood(mappedL);
+    setImpact(mappedI);
     setTableVersion((v) => v + 1);
     setPopoverCtx(null);
     setPopoverRect(null);
   };
 
   const openTray = (ctx: ClusterContext) => {
-    setTrayContext(ctx);
+    // Calculate actual table count for this filter
+    const mappedL = map5to3(ctx.likelihood);
+    const mappedI = map5to3(ctx.impact);
+    const tableCount = rowsSeed.filter(r => r.likelihood === mappedL && r.impact === mappedI).length;
+    
+    // Enrich context with table count - use table count for actions
+    const enrichedCtx: ClusterContext = {
+      ...ctx,
+      count: tableCount, // Use actual table count for next best actions
+      subtitle: tableCount === ctx.count 
+        ? `${tableCount} risks` 
+        : `${tableCount} risks in table`,
+    };
+    
+    setTrayContext(enrichedCtx);
     setTrayOpen(true);
     setAgentResult(null);
-    setAgentPrompt(`Context: ${ctx.title}\n${ctx.subtitle}\n\nReview this cluster and propose next best actions.`);
+    setAgentPrompt(`Context: ${ctx.title}\n${tableCount} risks matching this filter.\n\nReview this cluster and propose next best actions.`);
     setPopoverCtx(null);
     setPopoverRect(null);
+    
+    // Also apply the filter so table shows the matching risks
+    setLikelihood(mappedL);
+    setImpact(mappedI);
+    setTableVersion((v) => v + 1);
   };
 
   const closeTray = () => {
@@ -839,12 +934,48 @@ export default function RiskManagerExperimentsPage() {
                 {viewMode === "compare" && (
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>Today (94 risks)</div>
-                      <HeatMap5x5 data={HEATMAP_5X5_CURRENT} onCellClick={(l, i) => handleFilter(l, i)} onCellHover={handleCellHover} onCellLeave={() => {}} />
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>
+                        Today (94 risks)
+                        {compareHoverKey && (
+                          <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 500, color: "#6B7280" }}>
+                            · {HEATMAP_5X5_CURRENT[compareHoverKey] ?? 0} in this cell
+                          </span>
+                        )}
+                      </div>
+                      <HeatMap5x5 
+                        data={HEATMAP_5X5_CURRENT} 
+                        onCellClick={(l, i) => handleFilter(l, i)} 
+                        onCellHover={handleCellHover} 
+                        onCellLeave={() => {}}
+                        highlightKey={compareHoverKey}
+                        onHoverKeyChange={setCompareHoverKey}
+                      />
                     </div>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>1 Year Ago (99 risks)</div>
-                      <HeatMap5x5 data={HEATMAP_5X5_YEAR_AGO} />
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 10 }}>
+                        1 Year Ago (99 risks)
+                        {compareHoverKey && (
+                          <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 500, color: "#6B7280" }}>
+                            · {HEATMAP_5X5_YEAR_AGO[compareHoverKey] ?? 0} in this cell
+                            {(() => {
+                              const now = HEATMAP_5X5_CURRENT[compareHoverKey] ?? 0;
+                              const then = HEATMAP_5X5_YEAR_AGO[compareHoverKey] ?? 0;
+                              const diff = now - then;
+                              if (diff === 0) return null;
+                              return (
+                                <span style={{ fontWeight: 700, color: diff > 0 ? "#D91C1C" : "#15803D", marginLeft: 4 }}>
+                                  ({diff > 0 ? `+${diff}` : diff} change)
+                                </span>
+                              );
+                            })()}
+                          </span>
+                        )}
+                      </div>
+                      <HeatMap5x5 
+                        data={HEATMAP_5X5_YEAR_AGO} 
+                        highlightKey={compareHoverKey}
+                        onHoverKeyChange={setCompareHoverKey}
+                      />
                     </div>
                   </div>
                 )}
@@ -984,14 +1115,23 @@ export default function RiskManagerExperimentsPage() {
             <div className={styles.traySection}>
               <div className={styles.traySectionTitle}>Next best actions</div>
               <div className={styles.actionList}>
-                <button className={styles.actionRow} type="button">
-                  <span className={styles.actionIcon}>↗</span>
-                  <span className={styles.actionText}>Send to decision-maker<span className={styles.actionSub}>Draft a concise note</span></span>
-                </button>
-                <button className={styles.actionRow} type="button" onClick={() => { if (trayContext) handleFilter(trayContext.likelihood, trayContext.impact); closeTray(); }}>
-                  <span className={styles.actionIcon}>⚡</span>
-                  <span className={styles.actionText}>Filter & triage<span className={styles.actionSub}>Jump to table and work owners</span></span>
-                </button>
+                {getNextBestActions(trayContext).map((action) => (
+                  <button 
+                    key={action.id}
+                    className={styles.actionRow} 
+                    type="button" 
+                    onClick={() => {
+                      if (action.id === "filter" && trayContext) {
+                        handleFilter(trayContext.likelihood, trayContext.impact);
+                        closeTray();
+                      }
+                      // Other actions would have their own handlers in a real app
+                    }}
+                  >
+                    <span className={styles.actionIcon}>{action.icon}</span>
+                    <span className={styles.actionText}>{action.text}<span className={styles.actionSub}>{action.sub}</span></span>
+                  </button>
+                ))}
               </div>
             </div>
 
