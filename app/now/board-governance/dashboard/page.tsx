@@ -13,10 +13,8 @@ type TimeRange = "quarter" | "year" | "all";
 // ============================================================================
 
 const URGENT_ITEMS = [
-  { id: 1, type: "overdue", title: "Vendor concentration mitigation plan", owner: "CPO", daysLate: 45, source: "Q2 Board Meeting" },
-  { id: 2, type: "overdue", title: "AI regulatory go/no-go criteria", owner: "CLO", daysLate: 30, source: "Q2 Board Meeting" },
-  { id: 3, type: "overdue", title: "C-suite succession plan update", owner: "CHRO", daysLate: 180, source: "Q1 Board Meeting" },
-  { id: 4, type: "blind-spot", title: "AI Ethics & Bias - never discussed", riskLevel: "high", externalSignal: "EU AI Act requires documented bias testing" },
+  { id: 1, type: "overdue", title: "AI regulatory go/no-go criteria", owner: "CLO", daysLate: 30, source: "Q2 Board Meeting", suggestedAction: "Generate EU AI Act readiness checklist", actionType: "agent-draft" },
+  { id: 2, type: "blind-spot", title: "AI Ethics & Bias - never discussed", riskLevel: "high", externalSignal: "EU AI Act requires documented bias testing", suggestedAction: "Add to next board agenda with briefing", actionType: "agent-draft" },
 ];
 
 const COUNTDOWN_ACTIONS = [
@@ -81,6 +79,47 @@ const DIRECTOR_EDUCATION = [
   { name: "Elizabeth Brown", role: "Director", credits: 2, required: 20, status: "at-risk", topics: [] },
   { name: "Thomas Anderson", role: "Director", credits: 0, required: 20, status: "at-risk", topics: [] },
 ];
+
+// Topic evolution over 4 quarters (1 year)
+const TOPIC_EVOLUTION = {
+  quarters: ["Q4'24", "Q1'25", "Q2'25", "Q3'25"],
+  topics: [
+    // Emerging topics (gaining attention)
+    { name: "AI Ethics & Governance", trend: "emerging", mentions: [0, 2, 5, 8], sentiment: "concern", note: "EU AI Act driving urgency" },
+    { name: "Geopolitical Risk", trend: "emerging", mentions: [1, 3, 6, 9], sentiment: "concern", note: "Supply chain and market access" },
+    { name: "Workforce AI Displacement", trend: "emerging", mentions: [0, 1, 3, 5], sentiment: "mixed", note: "Union concerns, reskilling costs" },
+    
+    // Steady topics
+    { name: "Cybersecurity", trend: "steady", mentions: [7, 8, 7, 8], sentiment: "neutral", note: "Consistent focus" },
+    { name: "Financial Performance", trend: "steady", mentions: [12, 11, 12, 11], sentiment: "positive", note: "Core agenda item" },
+    
+    // Declining topics (falling off radar)
+    { name: "Inflation Response", trend: "declining", mentions: [9, 7, 4, 2], sentiment: "positive", note: "Rates stabilizing" },
+    { name: "Remote Work Policy", trend: "declining", mentions: [6, 4, 2, 1], sentiment: "neutral", note: "Policies settled" },
+    { name: "Crypto Exposure", trend: "declining", mentions: [5, 3, 1, 0], sentiment: "positive", note: "Exited positions" },
+  ]
+};
+
+// Sentiment signals from recent meetings
+const SENTIMENT_SIGNALS = [
+  { type: "positive", text: "Best GRR in company history", source: "CEO Update, Q3", meeting: "Q3'25" },
+  { type: "positive", text: "AI product launch ahead of schedule", source: "Product Review, Q3", meeting: "Q3'25" },
+  { type: "positive", text: "Zero material audit findings", source: "Audit Committee, Q2", meeting: "Q2'25" },
+  { type: "concern", text: "New sales 68% to budget — not prominently addressed", source: "Financial Review, Q3", meeting: "Q3'25" },
+  { type: "concern", text: "Regulatory timeline concerns raised but no follow-up scheduled", source: "Risk Committee, Q2", meeting: "Q2'25" },
+  { type: "concern", text: "Third consecutive quarter succession planning deferred", source: "Talent Review, Q3", meeting: "Q3'25" },
+  { type: "concern", text: "Customer churn uptick mentioned once, no deep-dive", source: "CEO Update, Q3", meeting: "Q3'25" },
+];
+
+// Action metrics
+const ACTION_METRICS = {
+  raised: 47,
+  closed: 31,
+  open: 12,
+  overdue: 4,
+  avgDaysToClose: 34,
+  avgDaysLastQ: 28,
+};
 
 // ============================================================================
 // Diligent Logo Component
@@ -315,31 +354,72 @@ export default function GovernanceDashboardPage() {
               </span>
             </div>
             
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
+            <div style={{ display: "grid", gap: 8 }}>
               {URGENT_ITEMS.map((item) => (
                 <div 
                   key={item.id}
                   style={{ 
-                    padding: 16, borderRadius: 10, background: "#fff",
-                    border: "2px solid #FCA5A5",
+                    display: "grid",
+                    gridTemplateColumns: "1fr auto",
+                    gap: 16,
+                    alignItems: "center",
+                    padding: "12px 16px", 
+                    borderRadius: 8, 
+                    background: "#fff",
+                    border: "1px solid #FCA5A5",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
                   }}
                 >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                    <span style={{ 
-                      fontSize: 10, padding: "2px 6px", borderRadius: 4, fontWeight: 600,
-                      background: item.type === "overdue" ? "#FEE2E2" : "#FEF3C7",
-                      color: item.type === "overdue" ? "#DC2626" : "#B45309"
-                    }}>
-                      {item.type === "overdue" ? `${item.daysLate}d OVERDUE` : "BLIND SPOT"}
+                  {/* Left: Issue details */}
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                      <span style={{ 
+                        fontSize: 9, padding: "2px 6px", borderRadius: 4, fontWeight: 600,
+                        background: item.type === "overdue" ? "#FEE2E2" : "#FEF3C7",
+                        color: item.type === "overdue" ? "#DC2626" : "#B45309"
+                      }}>
+                        {item.type === "overdue" ? `${item.daysLate}d OVERDUE` : "BLIND SPOT"}
+                      </span>
+                      <span style={{ fontSize: 10, color: "#6B7280" }}>
+                        {item.type === "overdue" ? `${item.owner} · ${item.source}` : ""}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>
+                      {item.title}
+                    </div>
+                    {item.type !== "overdue" && (
+                      <div style={{ fontSize: 10, color: "#6B7280", marginTop: 2 }}>{item.externalSignal}</div>
+                    )}
+                  </div>
+                  
+                  {/* Right: Suggested Action - inline */}
+                  <div style={{ 
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "6px 10px", 
+                    background: "#F0FDF4", 
+                    borderRadius: 6,
+                    border: "1px solid #D1FAE5"
+                  }}>
+                    <span style={{ fontSize: 12 }}>🤖</span>
+                    <span style={{ fontSize: 11, color: "#166534" }}>
+                      <strong style={{ fontWeight: 600 }}>Agent:</strong> {item.suggestedAction}
                     </span>
-                    <ActionButton onAction={(type) => handleAction(type, item.title)} />
-                  </div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: "#111827", marginBottom: 4 }}>
-                    {item.title}
-                  </div>
-                  <div style={{ fontSize: 11, color: "#6B7280" }}>
-                    {item.type === "overdue" ? `Owner: ${item.owner} · ${item.source}` : item.externalSignal}
+                    <button 
+                      onClick={() => handleAction("agent", item.suggestedAction)}
+                      style={{
+                        padding: "4px 10px",
+                        background: "#15803D",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 4,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        whiteSpace: "nowrap"
+                      }}
+                    >
+                      Deploy
+                    </button>
                   </div>
                 </div>
               ))}
@@ -503,6 +583,145 @@ export default function GovernanceDashboardPage() {
                       <div style={{ fontSize: 10, color: "#6B7280" }}>{p.company} · {p.source}</div>
                     </div>
                   ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ============================================================ */}
+          {/* SENTIMENT & TOPIC EVOLUTION */}
+          {/* ============================================================ */}
+          
+          <section style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <span style={{ fontSize: 16 }}>🎯</span>
+              <h2 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Board Attention Over Time</h2>
+              <span style={{ fontSize: 11, color: "#6B7280" }}>Last 4 meetings</span>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 }}>
+              {/* Topic Evolution */}
+              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Topic Evolution</h3>
+                  <div style={{ display: "flex", gap: 12, fontSize: 10 }}>
+                    <span style={{ color: "#059669" }}>● Emerging</span>
+                    <span style={{ color: "#6B7280" }}>● Steady</span>
+                    <span style={{ color: "#9CA3AF" }}>● Declining</span>
+                  </div>
+                </div>
+                
+                {/* Quarter headers */}
+                <div style={{ display: "grid", gridTemplateColumns: "140px repeat(4, 1fr) 1fr", gap: 8, marginBottom: 8, paddingBottom: 8, borderBottom: "1px solid #E5E7EB" }}>
+                  <div style={{ fontSize: 10, color: "#6B7280", fontWeight: 600 }}>TOPIC</div>
+                  {TOPIC_EVOLUTION.quarters.map(q => (
+                    <div key={q} style={{ fontSize: 10, color: "#6B7280", textAlign: "center", fontWeight: 500 }}>{q}</div>
+                  ))}
+                  <div style={{ fontSize: 10, color: "#6B7280", textAlign: "right", fontWeight: 500 }}>TREND</div>
+                </div>
+                
+                {/* Topics */}
+                <div style={{ display: "grid", gap: 6 }}>
+                  {TOPIC_EVOLUTION.topics.map((topic, i) => (
+                    <div key={i} style={{ 
+                      display: "grid", gridTemplateColumns: "140px repeat(4, 1fr) 1fr", gap: 8, alignItems: "center",
+                      padding: "8px 0",
+                      borderBottom: i < TOPIC_EVOLUTION.topics.length - 1 ? "1px solid #F3F4F6" : "none"
+                    }}>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 500, color: "#111827" }}>{topic.name}</div>
+                        <div style={{ fontSize: 9, color: "#9CA3AF" }}>{topic.note}</div>
+                      </div>
+                      {topic.mentions.map((count, qi) => {
+                        const maxMentions = Math.max(...TOPIC_EVOLUTION.topics.flatMap(t => t.mentions));
+                        const intensity = count / maxMentions;
+                        return (
+                          <div key={qi} style={{ display: "flex", justifyContent: "center" }}>
+                            <div style={{
+                              width: 28, height: 28, borderRadius: 6,
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                              fontSize: 11, fontWeight: 600,
+                              background: count === 0 ? "#F9FAFB" : 
+                                topic.trend === "emerging" ? `rgba(5, 150, 105, ${0.1 + intensity * 0.3})` :
+                                topic.trend === "declining" ? `rgba(156, 163, 175, ${0.1 + intensity * 0.2})` :
+                                `rgba(59, 130, 246, ${0.1 + intensity * 0.2})`,
+                              color: count === 0 ? "#D1D5DB" :
+                                topic.trend === "emerging" ? "#047857" :
+                                topic.trend === "declining" ? "#6B7280" :
+                                "#1D4ED8"
+                            }}>
+                              {count}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <div style={{ textAlign: "right" }}>
+                        <span style={{
+                          fontSize: 9, padding: "3px 8px", borderRadius: 4, fontWeight: 600,
+                          background: topic.trend === "emerging" ? "#ECFDF5" : topic.trend === "declining" ? "#F3F4F6" : "#EFF6FF",
+                          color: topic.trend === "emerging" ? "#047857" : topic.trend === "declining" ? "#6B7280" : "#1D4ED8"
+                        }}>
+                          {topic.trend === "emerging" ? "↑ EMERGING" : topic.trend === "declining" ? "↓ FADING" : "— STEADY"}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Sentiment Signals */}
+              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Narrative vs Reality</h3>
+                  <ActionButton onAction={(type) => handleAction(type, "Sentiment analysis")} />
+                </div>
+                <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 12 }}>
+                  Is the board "walking its talk"? Key signals from recent meetings.
+                </div>
+                
+                {/* Quick stats */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+                  <div style={{ padding: 10, background: "#ECFDF5", borderRadius: 8, textAlign: "center" }}>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: "#047857" }}>
+                      {SENTIMENT_SIGNALS.filter(s => s.type === "positive").length}
+                    </div>
+                    <div style={{ fontSize: 9, color: "#047857" }}>Positive signals</div>
+                  </div>
+                  <div style={{ padding: 10, background: "#FEF2F2", borderRadius: 8, textAlign: "center" }}>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: "#DC2626" }}>
+                      {SENTIMENT_SIGNALS.filter(s => s.type === "concern").length}
+                    </div>
+                    <div style={{ fontSize: 9, color: "#DC2626" }}>Red flags</div>
+                  </div>
+                </div>
+                
+                {/* Signals list */}
+                <div style={{ display: "grid", gap: 6 }}>
+                  {SENTIMENT_SIGNALS.slice(0, 5).map((signal, i) => (
+                    <div key={i} style={{
+                      padding: 8, borderRadius: 6, fontSize: 11,
+                      background: signal.type === "positive" ? "#F0FDF4" : "#FEF2F2",
+                      borderLeft: `3px solid ${signal.type === "positive" ? "#22C55E" : "#EF4444"}`
+                    }}>
+                      <div style={{ color: "#111827", marginBottom: 2 }}>
+                        {signal.type === "positive" ? "✓" : "⚠"} {signal.text}
+                      </div>
+                      <div style={{ fontSize: 9, color: "#6B7280" }}>{signal.source}</div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Action metrics footer */}
+                <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid #E5E7EB" }}>
+                  <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 8, fontWeight: 600 }}>ACTION VELOCITY</div>
+                  <div style={{ display: "flex", gap: 12, fontSize: 11 }}>
+                    <span><strong>{ACTION_METRICS.raised}</strong> raised</span>
+                    <span><strong>{ACTION_METRICS.closed}</strong> closed</span>
+                    <span style={{ color: "#DC2626" }}><strong>{ACTION_METRICS.overdue}</strong> overdue</span>
+                  </div>
+                  <div style={{ fontSize: 10, color: "#6B7280", marginTop: 4 }}>
+                    Avg {ACTION_METRICS.avgDaysToClose}d to close (was {ACTION_METRICS.avgDaysLastQ}d)
+                  </div>
                 </div>
               </div>
             </div>
@@ -742,7 +961,7 @@ export default function GovernanceDashboardPage() {
                       <div style={{ flex: 1, height: 6, background: "#E5E7EB", borderRadius: 3 }}>
                         <div style={{ 
                           height: "100%", borderRadius: 3,
-                          width: `${(d.credits / d.required) * 100}%`,
+                          width: `${Math.min((d.credits / d.required) * 100, 100)}%`,
                           background: d.status === "complete" ? "#059669" : d.status === "on-track" ? "#3B82F6" : d.status === "behind" ? "#F59E0B" : "#DC2626"
                         }} />
                       </div>
