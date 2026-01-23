@@ -7,6 +7,7 @@ import React, { useState } from "react";
 // ============================================================================
 
 type SlideType = "agenda" | "data" | "content";
+type ViewMode = "meeting" | "prep"; // In-meeting (minimal) vs Pre-meeting (rich insights)
 
 type Slide = {
   id: number;
@@ -33,38 +34,35 @@ type Action = {
 // ============================================================================
 
 const MEETING_INFO = {
-  title: "SLT Meeting",
-  date: "December 17, 2025",
-  totalSlides: 19,
-  attendees: 12,
-  duration: "2h 15m",
+  title: "Q3'25 Earnings Review",
+  date: "October 30, 2025",
+  totalSlides: 24,
+  attendees: 8,
+  duration: "1h 45m",
 };
 
 const SLIDES: Slide[] = [
-  { id: 1, type: "agenda", title: "Agenda", topics: ["Welcome", "Commercial", "Strategy", "OKRs"] },
-  { id: 2, type: "content", title: "Welcome and Congratulations", topics: ["People"], sentiment: "positive" },
-  { id: 3, type: "data", title: "People & Commercial Update", topics: ["Commercial", "People"], hasActions: true, actionCount: 2 },
-  { id: 4, type: "data", title: "Q4 Momentum", topics: ["Commercial", "Finance"], sentiment: "positive" },
-  { id: 5, type: "data", title: "Regional Performance", topics: ["Commercial"], hasActions: true, actionCount: 1 },
-  { id: 6, type: "content", title: "Road to 2026", topics: ["Strategy"], hasActions: true, actionCount: 3 },
-  { id: 7, type: "data", title: "Strategic Priorities", topics: ["Strategy"] },
-  { id: 8, type: "data", title: "OKR Review - Company", topics: ["OKRs", "Performance"], sentiment: "caution", hasActions: true, actionCount: 2 },
-  { id: 9, type: "data", title: "OKR Review - Product", topics: ["OKRs", "Product"] },
-  { id: 10, type: "data", title: "OKR Review - GTM", topics: ["OKRs", "Commercial"], sentiment: "positive" },
-  { id: 11, type: "content", title: "Risk Update", topics: ["Risk", "Compliance"], riskRelated: true, hasActions: true, actionCount: 1 },
-  { id: 12, type: "content", title: "Breakout Groups - Ignite!", topics: ["Culture"] },
+  { id: 1, type: "agenda", title: "Q3'25 Earnings Overview", topics: ["Earnings", "Financial"] },
+  { id: 2, type: "data", title: "Ad Revenue by Geography", topics: ["Revenue", "Geographic"], sentiment: "positive", hasActions: true, actionCount: 2 },
+  { id: 3, type: "data", title: "Family of Apps Revenue", topics: ["Revenue", "Products"] },
+  { id: 4, type: "data", title: "Reality Labs Update", topics: ["Products", "Investment"], sentiment: "caution", hasActions: true, actionCount: 1 },
+  { id: 5, type: "data", title: "Headcount & Expenses", topics: ["Operations", "Cost"], hasActions: true, actionCount: 3 },
+  { id: 6, type: "content", title: "AI Investment Outlook", topics: ["Strategy", "AI"], sentiment: "positive" },
+  { id: 7, type: "data", title: "CapEx Guidance", topics: ["Financial", "Investment"] },
+  { id: 8, type: "content", title: "Regulatory Update", topics: ["Risk", "Compliance"], riskRelated: true, hasActions: true, actionCount: 2 },
+  { id: 9, type: "data", title: "User Growth Metrics", topics: ["Growth", "Products"] },
+  { id: 10, type: "content", title: "Q&A Preparation", topics: ["Earnings"] },
 ];
 
 const ACTIONS: Action[] = [
-  { id: "A-1", text: "Follow up on EMEA pipeline concerns", owner: "Sarah M.", status: "open", dueDate: "Jan 3", sourceSlide: 3 },
-  { id: "A-2", text: "Schedule deep-dive on APAC growth", owner: "James K.", status: "in-progress", dueDate: "Jan 10", sourceSlide: 3 },
-  { id: "A-3", text: "Investigate DMI underperformance", owner: "Michael R.", status: "overdue", dueDate: "Dec 20", sourceSlide: 5 },
-  { id: "A-4", text: "Finalize 2026 strategic pillars", owner: "CEO", status: "open", dueDate: "Jan 15", sourceSlide: 6 },
-  { id: "A-5", text: "Board presentation on strategy", owner: "Sarah M.", status: "open", dueDate: "Jan 20", sourceSlide: 6 },
-  { id: "A-6", text: "Resource allocation review", owner: "CFO", status: "in-progress", dueDate: "Jan 5", sourceSlide: 6 },
-  { id: "A-7", text: "Address OKR scoring methodology", owner: "James K.", status: "open", dueDate: "Jan 8", sourceSlide: 8 },
-  { id: "A-8", text: "Escalate product delays to board", owner: "CTO", status: "closed", dueDate: "Dec 18", sourceSlide: 8 },
-  { id: "A-9", text: "Update risk register with new items", owner: "Risk Lead", status: "open", dueDate: "Jan 12", sourceSlide: 11 },
+  { id: "A-1", text: "Review APAC growth drivers for investor call", owner: "CFO", status: "open", dueDate: "Nov 5", sourceSlide: 2 },
+  { id: "A-2", text: "Prepare Europe regulatory impact analysis", owner: "Legal", status: "in-progress", dueDate: "Nov 10", sourceSlide: 2 },
+  { id: "A-3", text: "Reality Labs cost reduction plan", owner: "CTO", status: "overdue", dueDate: "Oct 25", sourceSlide: 4 },
+  { id: "A-4", text: "Headcount freeze communication", owner: "CHRO", status: "open", dueDate: "Nov 1", sourceSlide: 5 },
+  { id: "A-5", text: "Expense reduction targets by division", owner: "CFO", status: "open", dueDate: "Nov 8", sourceSlide: 5 },
+  { id: "A-6", text: "Update board on hiring pause", owner: "CEO", status: "in-progress", dueDate: "Nov 3", sourceSlide: 5 },
+  { id: "A-7", text: "EU DSA compliance status update", owner: "Legal", status: "open", dueDate: "Nov 15", sourceSlide: 8 },
+  { id: "A-8", text: "Antitrust litigation reserve review", owner: "CFO", status: "closed", dueDate: "Oct 28", sourceSlide: 8 },
 ];
 
 const TOPIC_ATTENTION = [
@@ -124,8 +122,9 @@ function SentimentIndicator({ sentiment }: { sentiment: Slide["sentiment"] }) {
 // ============================================================================
 
 export default function BoardGovernancePage() {
-  const [currentSlide, setCurrentSlide] = useState(4);
-  const [governAiOpen, setGovernAiOpen] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(2);
+  const [viewMode, setViewMode] = useState<ViewMode>("prep"); // prep = rich insights, meeting = minimal
+  const [notesOpen, setNotesOpen] = useState(true);
   const [aiPanelMode, setAiPanelMode] = useState<"context" | "meeting" | "actions">("context");
 
   const slide = SLIDES[currentSlide - 1] || SLIDES[0];
@@ -157,34 +156,46 @@ export default function BoardGovernancePage() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {/* View Mode Toggle */}
+          <div style={{ 
+            display: "flex", background: "#F3F4F6", borderRadius: 8, padding: 2,
+            border: "1px solid #E5E7EB"
+          }}>
+            <button 
+              onClick={() => setViewMode("meeting")}
+              style={{ 
+                padding: "5px 10px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                background: viewMode === "meeting" ? "#fff" : "transparent",
+                border: "none", color: viewMode === "meeting" ? "#111827" : "#6B7280",
+                boxShadow: viewMode === "meeting" ? "0 1px 3px rgba(0,0,0,0.1)" : "none"
+              }}
+            >
+              In Meeting
+            </button>
+            <button 
+              onClick={() => setViewMode("prep")}
+              style={{ 
+                padding: "5px 10px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                background: viewMode === "prep" ? "#fff" : "transparent",
+                border: "none", color: viewMode === "prep" ? "#7C3AED" : "#6B7280",
+                boxShadow: viewMode === "prep" ? "0 1px 3px rgba(0,0,0,0.1)" : "none"
+              }}
+            >
+              ✨ Prep Mode
+            </button>
+          </div>
+
+          <div style={{ width: 1, height: 24, background: "#E5E7EB" }} />
+          
           <button style={{ padding: "6px 12px", background: "none", border: "1px solid #E5E7EB", borderRadius: 6, fontSize: 13, color: "#374151", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
             <span>🖥</span> Present
           </button>
           <button style={{ padding: "6px 12px", background: "none", border: "1px solid #E5E7EB", borderRadius: 6, fontSize: 13, color: "#374151", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
             <span>👁</span> Follow
           </button>
-          <button 
-            onClick={() => setGovernAiOpen(!governAiOpen)}
-            style={{ 
-              padding: "6px 12px", 
-              background: governAiOpen ? "#7C3AED" : "none", 
-              border: governAiOpen ? "1px solid #7C3AED" : "1px solid #E5E7EB", 
-              borderRadius: 6, fontSize: 13, 
-              color: governAiOpen ? "#FFFFFF" : "#7C3AED", 
-              cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
-              fontWeight: 600
-            }}
-          >
-            <span>✨</span> GovernAI
-          </button>
+          
           <div style={{ width: 1, height: 24, background: "#E5E7EB" }} />
           <button style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18 }}>🔍</button>
-          <div style={{ 
-            width: 20, height: 20, borderRadius: "50%", background: "#EF4444", color: "#fff",
-            fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center"
-          }}>
-            5
-          </div>
           <button style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18 }}>❓</button>
         </div>
       </header>
@@ -200,29 +211,27 @@ export default function BoardGovernancePage() {
             </div>
           </div>
 
-          {/* GovernAI Section */}
-          <div style={{ padding: "8px 12px", background: "#F5F3FF", margin: "0 8px", borderRadius: 8, marginBottom: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 14 }}>✨</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: "#5B21B6" }}>GovernAI</span>
-            </div>
-            <div style={{ display: "grid", gap: 4 }}>
-              <div style={{ fontSize: 11, color: "#6B7280", display: "flex", justifyContent: "space-between" }}>
-                <span>Meeting Health</span>
-                <span style={{ fontWeight: 600, color: "#059669" }}>Good</span>
+          {/* GovernAI Section - Only in Prep Mode */}
+          {viewMode === "prep" && (
+            <div style={{ padding: "8px 12px", background: "#F5F3FF", margin: "0 8px", borderRadius: 8, marginBottom: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span style={{ fontSize: 14 }}>✨</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: "#5B21B6" }}>Meeting Prep</span>
               </div>
-              <div style={{ fontSize: 11, color: "#6B7280", display: "flex", justifyContent: "space-between" }}>
-                <span>Open Actions</span>
-                <span style={{ fontWeight: 600, color: overdueActions.length > 0 ? "#DC2626" : "#374151" }}>
-                  {allOpenActions.length} {overdueActions.length > 0 && `(${overdueActions.length} overdue)`}
-                </span>
-              </div>
-              <div style={{ fontSize: 11, color: "#6B7280", display: "flex", justifyContent: "space-between" }}>
-                <span>Topics Covered</span>
-                <span style={{ fontWeight: 600, color: "#374151" }}>4 of 5</span>
+              <div style={{ display: "grid", gap: 4 }}>
+                <div style={{ fontSize: 11, color: "#6B7280", display: "flex", justifyContent: "space-between" }}>
+                  <span>Open Actions</span>
+                  <span style={{ fontWeight: 600, color: overdueActions.length > 0 ? "#DC2626" : "#374151" }}>
+                    {allOpenActions.length} {overdueActions.length > 0 && `(${overdueActions.length} overdue)`}
+                  </span>
+                </div>
+                <div style={{ fontSize: 11, color: "#6B7280", display: "flex", justifyContent: "space-between" }}>
+                  <span>Topics to Watch</span>
+                  <span style={{ fontWeight: 600, color: "#D97706" }}>2 flags</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Meeting Tab */}
           <div style={{ padding: "0 8px" }}>
@@ -295,82 +304,97 @@ export default function BoardGovernancePage() {
             </div>
           </div>
 
-          {/* Slide Content */}
+          {/* Slide Content - Meta Ad Revenue */}
           <div style={{ 
             flex: 1, background: "#FFFFFF", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-            display: "flex", flexDirection: "column", overflow: "hidden"
+            display: "flex", flexDirection: "column", overflow: "hidden", padding: 32
           }}>
-            {/* Red banner */}
-            <div style={{ height: 60, background: "linear-gradient(135deg, #DC2626 0%, #B91C1C 100%)", position: "relative" }}>
-              <div style={{ 
-                position: "absolute", right: 0, top: 0, bottom: 0, width: 200,
-                background: "linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%)"
-              }} />
-            </div>
-
-            {/* Slide body */}
-            <div style={{ flex: 1, padding: 32 }}>
-              <h1 style={{ fontSize: 32, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
-                Q4 momentum is huge, and we're up 21% vs. the same time last year
-              </h1>
-              <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 24 }}>Let's finish out the year strong!</p>
-
-              {/* Data table */}
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
-                <thead>
-                  <tr style={{ background: "#6B7280" }}>
-                    <th style={{ padding: "10px 12px", textAlign: "left", color: "#fff", fontWeight: 600 }}>Bookings</th>
-                    <th style={{ padding: "10px 12px", textAlign: "right", color: "#fff", fontWeight: 600 }}>Q4 QTD</th>
-                    <th style={{ padding: "10px 12px", textAlign: "right", color: "#fff", fontWeight: 600 }}>Q4 CMT</th>
-                    <th style={{ padding: "10px 12px", textAlign: "right", color: "#fff", fontWeight: 600 }}>QTD % of CMT</th>
-                    <th style={{ padding: "10px 12px", textAlign: "right", color: "#fff", fontWeight: 600 }}>TGT</th>
-                    <th style={{ padding: "10px 12px", textAlign: "right", color: "#fff", fontWeight: 600 }}>QTD % of TGT</th>
-                    <th style={{ padding: "10px 12px", textAlign: "right", color: "#fff", fontWeight: 600 }}>PY QTD</th>
-                    <th style={{ padding: "10px 12px", textAlign: "right", color: "#fff", fontWeight: 600 }}>YoY</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { region: "AMS", q4qtd: "$5.49", q4cmt: "$8.13", qtdPct: "68%", tgt: "$9.17", tgtPct: "60%", pyQtd: "$4.71", yoy: "17%" },
-                    { region: "EMEA", q4qtd: "$4.13", q4cmt: "$5.93", qtdPct: "70%", tgt: "$7.15", tgtPct: "58%", pyQtd: "$3.27", yoy: "26%" },
-                    { region: "APAC", q4qtd: "$1.16", q4cmt: "$1.87", qtdPct: "62%", tgt: "$2.21", tgtPct: "53%", pyQtd: "$1.15", yoy: "2%" },
-                    { region: "MDO", q4qtd: "$1.90", q4cmt: "$2.59", qtdPct: "73%", tgt: "$2.80", tgtPct: "68%", pyQtd: "$1.45", yoy: "31%" },
-                    { region: "DMI", q4qtd: "$0.41", q4cmt: "$0.79", qtdPct: "52%", tgt: "$0.75", tgtPct: "55%", pyQtd: "$0.29", yoy: "43%" },
-                  ].map((row, i) => (
-                    <tr key={row.region} style={{ background: i % 2 === 0 ? "#F9FAFB" : "#fff" }}>
-                      <td style={{ padding: "10px 12px", fontWeight: 600, background: "#6B7280", color: "#fff" }}>{row.region}</td>
-                      <td style={{ padding: "10px 12px", textAlign: "right" }}>{row.q4qtd}</td>
-                      <td style={{ padding: "10px 12px", textAlign: "right" }}>{row.q4cmt}</td>
-                      <td style={{ padding: "10px 12px", textAlign: "right" }}>{row.qtdPct}</td>
-                      <td style={{ padding: "10px 12px", textAlign: "right" }}>{row.tgt}</td>
-                      <td style={{ padding: "10px 12px", textAlign: "right" }}>{row.tgtPct}</td>
-                      <td style={{ padding: "10px 12px", textAlign: "right" }}>{row.pyQtd}</td>
-                      <td style={{ padding: "10px 12px", textAlign: "right", color: "#059669", fontWeight: 600 }}>{row.yoy}</td>
-                    </tr>
-                  ))}
-                  <tr style={{ background: "#FEE2E2" }}>
-                    <td style={{ padding: "10px 12px", fontWeight: 700, background: "#DC2626", color: "#fff" }}>TOTAL</td>
-                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700 }}>$12.45</td>
-                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700 }}>$19.31</td>
-                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700 }}>67%</td>
-                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700 }}>$22.09</td>
-                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700 }}>59%</td>
-                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700 }}>$10.86</td>
-                    <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#059669" }}>21%</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              {/* Footer */}
-              <div style={{ marginTop: 32, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <div style={{ width: 24, height: 24, background: "#DC2626", borderRadius: 4 }} />
-                  <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>Diligent</span>
-                </div>
-                <span style={{ fontSize: 12, color: "#9CA3AF" }}>Note: Data as of 12/17</span>
-                <span style={{ fontSize: 11, color: "#9CA3AF" }}>© 2025 Diligent Corporation</span>
+            {/* Header */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+              <div>
+                <h1 style={{ fontSize: 28, fontWeight: 400, color: "#1a1a1a", marginBottom: 4 }}>
+                  Advertising Revenue by User Geography
+                </h1>
+                <p style={{ fontSize: 14, color: "#666" }}>In Millions</p>
+              </div>
+              {/* Meta Logo */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <svg width="32" height="20" viewBox="0 0 32 20" fill="none">
+                  <path d="M16 0C11.6 0 8.4 3.6 6 7.2C3.6 3.6 0.4 0 0 0V20H4V8C6 12 9 16 12 16C15 16 16 12 16 12C16 12 17 16 20 16C23 16 26 12 28 8V20H32V0C31.6 0 28.4 3.6 26 7.2C23.6 3.6 20.4 0 16 0Z" fill="#0668E1"/>
+                </svg>
+                <span style={{ fontSize: 18, fontWeight: 600, color: "#1a1a1a" }}>Meta</span>
               </div>
             </div>
+
+            {/* Stacked Bar Chart */}
+            <div style={{ flex: 1, display: "flex", alignItems: "flex-end", gap: 12, paddingBottom: 40, position: "relative" }}>
+              {[
+                { q: "Q3'23", total: "$33,643", us: 14956, eu: 7721, apac: 6829, row: 4137 },
+                { q: "Q4'23", total: "$38,706", us: 17784, eu: 9159, apac: 7316, row: 4447 },
+                { q: "Q1'24", total: "$35,635", us: 15451, eu: 8327, apac: 7338, row: 4519 },
+                { q: "Q2'24", total: "$38,329", us: 16593, eu: 9135, apac: 7721, row: 4880 },
+                { q: "Q3'24", total: "$39,885", us: 17389, eu: 9358, apac: 8050, row: 5088 },
+                { q: "Q4'24", total: "$46,783", us: 20982, eu: 11154, apac: 9012, row: 5635 },
+                { q: "Q1'25", total: "$41,392", us: 18259, eu: 9527, apac: 8224, row: 5382 },
+                { q: "Q2'25", total: "$46,563", us: 20045, eu: 11366, apac: 9148, row: 6004 },
+                { q: "Q3'25", total: "$50,082", us: 21331, eu: 12072, apac: 10020, row: 6659 },
+              ].map((d, i) => {
+                const max = 50082;
+                const scale = 280 / max;
+                return (
+                  <div key={d.q} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    {/* Total label */}
+                    <div style={{ fontSize: 11, fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>{d.total}</div>
+                    
+                    {/* Stacked bars */}
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                      {/* Rest of World */}
+                      <div style={{ height: d.row * scale, background: "#B8C5D6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: 9, color: "#1a1a1a" }}>${(d.row / 1000).toFixed(0)}K</span>
+                      </div>
+                      {/* Asia-Pacific */}
+                      <div style={{ height: d.apac * scale, background: "#7A99C5", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: 9, color: "#fff" }}>${(d.apac / 1000).toFixed(0)}K</span>
+                      </div>
+                      {/* Europe */}
+                      <div style={{ height: d.eu * scale, background: "#4A6FA5", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: 9, color: "#fff" }}>${(d.eu / 1000).toFixed(0)}K</span>
+                      </div>
+                      {/* US & Canada */}
+                      <div style={{ height: d.us * scale, background: "#1a365d", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: 9, color: "#fff" }}>${(d.us / 1000).toFixed(0)}K</span>
+                      </div>
+                    </div>
+                    
+                    {/* Quarter label */}
+                    <div style={{ fontSize: 11, color: "#666", marginTop: 8 }}>{d.q}</div>
+                  </div>
+                );
+              })}
+
+              {/* Legend */}
+              <div style={{ position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)", display: "flex", flexDirection: "column", gap: 8 }}>
+                {[
+                  { color: "#B8C5D6", label: "Rest of World" },
+                  { color: "#7A99C5", label: "Asia-Pacific" },
+                  { color: "#4A6FA5", label: "Europe" },
+                  { color: "#1a365d", label: "US & Canada" },
+                ].map((item) => (
+                  <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 16, height: 16, background: item.color }} />
+                    <span style={{ fontSize: 12, color: "#1a1a1a" }}>{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer note */}
+            <div style={{ fontSize: 10, color: "#999", lineHeight: 1.4, marginTop: 16 }}>
+              Our revenue by user geography is geographically apportioned based on our estimation of the geographic location of our users when they perform a revenue-generating activity. This allocation differs from our revenue disaggregated by geography disclosure in our condensed consolidated financial statements where revenue is geographically apportioned based on the addresses of our customers.
+            </div>
+
+            {/* Page number */}
+            <div style={{ textAlign: "right", marginTop: 8, fontSize: 12, color: "#666" }}>2</div>
           </div>
 
           {/* Page Navigation */}
@@ -423,8 +447,8 @@ export default function BoardGovernancePage() {
           </div>
         </main>
 
-        {/* Right Sidebar - GovernAI Panel */}
-        {governAiOpen && (
+        {/* Right Sidebar - Different content based on view mode */}
+        {notesOpen && (
           <aside style={{ width: 320, background: "#FFFFFF", borderLeft: "1px solid #E5E7EB", display: "flex", flexDirection: "column" }}>
             {/* Panel Header */}
             <div style={{ 
@@ -432,38 +456,82 @@ export default function BoardGovernancePage() {
               display: "flex", alignItems: "center", justifyContent: "space-between"
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 16 }}>✨</span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: "#5B21B6" }}>GovernAI Insights</span>
+                {viewMode === "prep" ? (
+                  <>
+                    <span style={{ fontSize: 16 }}>✨</span>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: "#5B21B6" }}>Meeting Prep</span>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ fontSize: 16 }}>📝</span>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: "#374151" }}>Notes</span>
+                  </>
+                )}
               </div>
               <button 
-                onClick={() => setGovernAiOpen(false)}
+                onClick={() => setNotesOpen(false)}
                 style={{ background: "none", border: "none", cursor: "pointer", color: "#9CA3AF", fontSize: 18 }}
               >
                 ×
               </button>
             </div>
 
-            {/* Panel Mode Tabs */}
-            <div style={{ display: "flex", borderBottom: "1px solid #E5E7EB" }}>
-              {[
-                { id: "context" as const, label: "This Slide" },
-                { id: "meeting" as const, label: "Meeting" },
-                { id: "actions" as const, label: "Actions" },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setAiPanelMode(tab.id)}
-                  style={{
-                    flex: 1, padding: "10px 8px", fontSize: 12, fontWeight: 600, cursor: "pointer",
-                    background: "none", border: "none",
-                    color: aiPanelMode === tab.id ? "#5B21B6" : "#6B7280",
-                    borderBottom: aiPanelMode === tab.id ? "2px solid #5B21B6" : "2px solid transparent",
-                  }}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            {/* In-Meeting Mode: Simple Notes */}
+            {viewMode === "meeting" && (
+              <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                <div style={{ padding: 16, borderBottom: "1px solid #E5E7EB" }}>
+                  <button style={{ 
+                    width: "100%", padding: "10px 12px", background: "#F9FAFB", 
+                    border: "1px dashed #D1D5DB", borderRadius: 8, color: "#6B7280",
+                    fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6
+                  }}>
+                    <span>+</span> Add note
+                  </button>
+                </div>
+                
+                {/* Empty state */}
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 32, color: "#9CA3AF" }}>
+                  <div style={{ fontSize: 48, marginBottom: 12, opacity: 0.5 }}>📝</div>
+                  <div style={{ fontSize: 13, textAlign: "center" }}>No page notes</div>
+                  <div style={{ fontSize: 12, textAlign: "center", marginTop: 4 }}>Click above to add a note to this slide</div>
+                </div>
+
+                {/* Subtle action indicator if there are actions */}
+                {slideActions.length > 0 && (
+                  <div style={{ padding: 12, borderTop: "1px solid #E5E7EB", background: "#FFFBEB" }}>
+                    <div style={{ fontSize: 11, color: "#92400E", display: "flex", alignItems: "center", gap: 6 }}>
+                      <span>⚡</span>
+                      <span>{slideActions.length} open action{slideActions.length > 1 ? "s" : ""} from this slide</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Prep Mode: Full GovernAI Panel */}
+            {viewMode === "prep" && (
+              <>
+                {/* Panel Mode Tabs */}
+                <div style={{ display: "flex", borderBottom: "1px solid #E5E7EB" }}>
+                  {[
+                    { id: "context" as const, label: "This Slide" },
+                    { id: "meeting" as const, label: "Overview" },
+                    { id: "actions" as const, label: "Actions" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setAiPanelMode(tab.id)}
+                      style={{
+                        flex: 1, padding: "10px 8px", fontSize: 12, fontWeight: 600, cursor: "pointer",
+                        background: "none", border: "none",
+                        color: aiPanelMode === tab.id ? "#5B21B6" : "#6B7280",
+                        borderBottom: aiPanelMode === tab.id ? "2px solid #5B21B6" : "2px solid transparent",
+                      }}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
 
             {/* Panel Content */}
             <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
@@ -496,11 +564,11 @@ export default function BoardGovernancePage() {
                       borderRadius: 8, border: "1px solid #DDD6FE"
                     }}>
                       <div style={{ fontSize: 12, color: "#5B21B6", lineHeight: 1.5 }}>
-                        <strong>Strong Q4 performance</strong> — 21% YoY growth is well above industry benchmark (12%). 
-                        This slide reinforces the positive commercial signals from the past 3 meetings.
+                        <strong>Strong geographic diversification</strong> — Q3'25 shows $50B total ad revenue, up 49% from Q3'23. 
+                        US/Canada remains dominant (43%) but international growth is accelerating.
                       </div>
                       <div style={{ marginTop: 8, fontSize: 11, color: "#7C3AED" }}>
-                        💡 Consider: How is this growth reflected in updated risk exposure for scaling operations?
+                        💡 Prep question: What regulatory risks in EU/APAC could impact this growth trajectory?
                       </div>
                     </div>
                   </div>
@@ -535,13 +603,13 @@ export default function BoardGovernancePage() {
                       padding: 10, background: "#FEF3C7", borderRadius: 8, 
                       border: "1px solid #FDE68A", fontSize: 12, color: "#92400E"
                     }}>
-                      <div style={{ fontWeight: 600, marginBottom: 4 }}>Link to Risk Manager</div>
-                      <div>3 open risks related to commercial growth in EMEA and scaling operations.</div>
+                      <div style={{ fontWeight: 600, marginBottom: 4 }}>Related from Last Meeting</div>
+                      <div>Board asked for APAC growth analysis and Europe regulatory impact assessment.</div>
                       <button style={{ 
                         marginTop: 8, fontSize: 11, color: "#B45309", background: "none", 
                         border: "none", cursor: "pointer", textDecoration: "underline"
                       }}>
-                        View in Risk Manager →
+                        View action items →
                       </button>
                     </div>
                   </div>
@@ -672,7 +740,7 @@ export default function BoardGovernancePage() {
               )}
             </div>
 
-            {/* Panel Footer - AI Prompt */}
+            {/* Panel Footer - AI Prompt (Prep mode only) */}
             <div style={{ padding: 12, borderTop: "1px solid #E5E7EB" }}>
               <div style={{ 
                 display: "flex", alignItems: "center", gap: 8, padding: "10px 12px",
@@ -681,7 +749,7 @@ export default function BoardGovernancePage() {
                 <span style={{ fontSize: 14 }}>✨</span>
                 <input 
                   type="text" 
-                  placeholder="Ask GovernAI about this meeting..."
+                  placeholder="Ask about this meeting..."
                   style={{ 
                     flex: 1, background: "none", border: "none", outline: "none",
                     fontSize: 13, color: "#5B21B6"
@@ -695,6 +763,8 @@ export default function BoardGovernancePage() {
                 </button>
               </div>
             </div>
+              </>
+            )}
           </aside>
         )}
       </div>
