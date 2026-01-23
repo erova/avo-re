@@ -224,11 +224,26 @@ export default function GovernanceDashboardPage() {
             </div>
           </div>
           
-          <nav style={{ display: "flex", alignItems: "center", gap: 24 }}>
-            <a href="#" style={{ fontSize: 13, color: "#fff", textDecoration: "none", fontWeight: 500 }}>Dashboard</a>
-            <a href="#" style={{ fontSize: 13, color: "#94A3B8", textDecoration: "none" }}>Actions</a>
-            <a href="#" style={{ fontSize: 13, color: "#94A3B8", textDecoration: "none" }}>Reports</a>
-          </nav>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {[
+              { id: "quarter" as const, label: "This Quarter" },
+              { id: "year" as const, label: "This Year" },
+              { id: "all" as const, label: "All Time" },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTimeRange(t.id)}
+                style={{ 
+                  padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer",
+                  background: timeRange === t.id ? "rgba(255,255,255,0.15)" : "transparent",
+                  border: timeRange === t.id ? "1px solid rgba(255,255,255,0.3)" : "1px solid transparent",
+                  color: timeRange === t.id ? "#fff" : "#94A3B8",
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
           
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <button style={{ background: "none", border: "none", color: "#94A3B8", cursor: "pointer", fontSize: 18 }}>🔔</button>
@@ -245,37 +260,52 @@ export default function GovernanceDashboardPage() {
       </header>
 
       {/* ================================================================ */}
-      {/* SUB-HEADER WITH CONTEXT */}
+      {/* PROTOTYPE EXPLAINER PANEL */}
       {/* ================================================================ */}
       
-      <div style={{ background: "#fff", borderBottom: "1px solid #E5E7EB" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <span style={{ fontSize: 11, color: "#7C3AED", fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px", background: "#F3E8FF", padding: "4px 8px", borderRadius: 4 }}>
-              Prototype
-            </span>
-            <h1 style={{ fontSize: 18, fontWeight: 600, color: "#111827", margin: 0 }}>Governance Dashboard</h1>
-          </div>
-          
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {[
-              { id: "quarter" as const, label: "This Quarter" },
-              { id: "year" as const, label: "This Year" },
-              { id: "all" as const, label: "All Time" },
-            ].map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTimeRange(t.id)}
-                style={{ 
-                  padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer",
-                  background: timeRange === t.id ? "#1E3A5F" : "#fff",
-                  border: timeRange === t.id ? "1px solid #1E3A5F" : "1px solid #E5E7EB",
-                  color: timeRange === t.id ? "#fff" : "#6B7280",
-                }}
-              >
-                {t.label}
-              </button>
-            ))}
+      <div style={{ marginTop: 24 }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ 
+            background: "#fff", 
+            borderRadius: 12, 
+            border: "1px solid #E5E7EB",
+            padding: 20,
+            marginBottom: 24,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <span style={{ fontSize: 10, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", background: "#F3E8FF", padding: "4px 10px", borderRadius: 4 }}>
+                Prototype
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>GovernAI Effectiveness Dashboard</span>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>
+                  What you're seeing
+                </div>
+                <div style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>
+                  A real-time view of governance effectiveness — overdue commitments, blind spots, upcoming prep tasks, and how your board compares to peers.
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>
+                  What you can do
+                </div>
+                <div style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>
+                  Take action on any item with the ⚡ button — create an AI agent task, assign for review, or delegate. Ask GovernAI questions in the prompt below.
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>
+                  Why it matters
+                </div>
+                <div style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>
+                  Boards that proactively address gaps and track follow-through outperform peers. This dashboard surfaces what needs attention before it becomes a problem.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -285,7 +315,7 @@ export default function GovernanceDashboardPage() {
       {/* ================================================================ */}
       
       <main style={{ flex: 1, overflowY: "auto", paddingBottom: 120 }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "24px" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
           
           {/* ============================================================ */}
           {/* TIER 1: URGENT - What needs attention RIGHT NOW */}
