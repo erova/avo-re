@@ -198,112 +198,44 @@ export default function GovernanceDashboardPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F3F4F6", display: "flex", flexDirection: "column" }}>
+    <div style={{ height: "100vh", background: "#0D0D0F", display: "flex", flexDirection: "column", overflow: "hidden" }}>
       
       {/* ================================================================ */}
-      {/* APP SHELL HEADER */}
+      {/* PROTOTYPE CONTEXT BANNER (above app UI) */}
       {/* ================================================================ */}
       
-      <header style={{ 
-        background: "#1E3A5F", 
-        borderBottom: "1px solid rgba(255,255,255,0.1)",
-        position: "sticky",
-        top: 0,
-        zIndex: 50
-      }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <DiligentLogo height={32} />
-            <div style={{ borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: 12, marginLeft: 4 }}>
-              <div style={{ fontSize: 15, fontWeight: 600, color: "#fff", letterSpacing: "-0.3px" }}>
-                GovernAI
-              </div>
-              <div style={{ fontSize: 9, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "1px" }}>
-                Effective Intelligence
-              </div>
-            </div>
-          </div>
-          
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {[
-              { id: "quarter" as const, label: "This Quarter" },
-              { id: "year" as const, label: "This Year" },
-              { id: "all" as const, label: "All Time" },
-            ].map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTimeRange(t.id)}
-                style={{ 
-                  padding: "6px 14px", borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer",
-                  background: timeRange === t.id ? "rgba(255,255,255,0.15)" : "transparent",
-                  border: timeRange === t.id ? "1px solid rgba(255,255,255,0.3)" : "1px solid transparent",
-                  color: timeRange === t.id ? "#fff" : "#94A3B8",
-                }}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-          
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <button style={{ background: "none", border: "none", color: "#94A3B8", cursor: "pointer", fontSize: 18 }}>🔔</button>
-            <div style={{ 
-              width: 32, height: 32, borderRadius: "50%", 
-              background: "linear-gradient(135deg, #7C3AED, #4F46E5)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 12, fontWeight: 600, color: "#fff"
-            }}>
-              JD
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* ================================================================ */}
-      {/* PROTOTYPE EXPLAINER PANEL */}
-      {/* ================================================================ */}
-      
-      <div style={{ marginTop: 24 }}>
+      <div style={{ flexShrink: 0, padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
-          <div style={{ 
-            background: "#fff", 
-            borderRadius: 12, 
-            border: "1px solid #E5E7EB",
-            padding: 20,
-            marginBottom: 24,
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-              <span style={{ fontSize: 10, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", background: "#F3E8FF", padding: "4px 10px", borderRadius: 4 }}>
-                Prototype
-              </span>
-              <span style={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>GovernAI Effectiveness Dashboard</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <span style={{ fontSize: 10, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", background: "rgba(124,58,237,0.15)", padding: "4px 10px", borderRadius: 4 }}>
+              Prototype
+            </span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#F9FAFB" }}>GovernAI Effectiveness Dashboard</span>
+          </div>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 4 }}>
+                What you're seeing
+              </div>
+              <div style={{ fontSize: 12, color: "#9CA3AF", lineHeight: 1.5 }}>
+                A real-time view of governance effectiveness — overdue commitments, blind spots, upcoming prep tasks, and how your board compares to peers.
+              </div>
             </div>
-            
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>
-                  What you're seeing
-                </div>
-                <div style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>
-                  A real-time view of governance effectiveness — overdue commitments, blind spots, upcoming prep tasks, and how your board compares to peers.
-                </div>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 4 }}>
+                What you can do
               </div>
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>
-                  What you can do
-                </div>
-                <div style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>
-                  Take action on any item with the ⚡ button — create an AI agent task, assign for review, or delegate. Ask GovernAI questions in the prompt below.
-                </div>
+              <div style={{ fontSize: 12, color: "#9CA3AF", lineHeight: 1.5 }}>
+                Take action on any item with the ⚡ button — create an AI agent task, assign for review, or delegate. Ask GovernAI questions in the prompt below.
               </div>
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>
-                  Why it matters
-                </div>
-                <div style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>
-                  Boards that proactively address gaps and track follow-through outperform peers. This dashboard surfaces what needs attention before it becomes a problem.
-                </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 4 }}>
+                Why it matters
+              </div>
+              <div style={{ fontSize: 12, color: "#9CA3AF", lineHeight: 1.5 }}>
+                Boards that proactively address gaps and track follow-through outperform peers. This dashboard surfaces what needs attention before it becomes a problem.
               </div>
             </div>
           </div>
@@ -311,11 +243,64 @@ export default function GovernanceDashboardPage() {
       </div>
 
       {/* ================================================================ */}
-      {/* MAIN CONTENT */}
+      {/* APP CHROME WRAPPER */}
       {/* ================================================================ */}
       
-      <main style={{ flex: 1, overflowY: "auto", paddingBottom: 120 }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
+      <div style={{ 
+        flex: 1, 
+        display: "flex", 
+        flexDirection: "column",
+        maxWidth: 1400, 
+        margin: "24px auto 0 auto", 
+        width: "calc(100% - 48px)",
+        background: "#fff",
+        borderRadius: "12px 12px 0 0",
+        boxShadow: "0 -4px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05)",
+        overflow: "hidden",
+        minHeight: 0
+      }}>
+        
+        {/* GOVERNAI APP HEADER with drop shadow */}
+        <header style={{ 
+          flexShrink: 0,
+          background: "#1E3A5F", 
+          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+          position: "relative",
+          zIndex: 10
+        }}>
+          <div style={{ padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <DiligentLogo height={32} />
+              <div style={{ borderLeft: "1px solid rgba(255,255,255,0.2)", paddingLeft: 12, marginLeft: 4 }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: "#fff", letterSpacing: "-0.3px" }}>
+                  GovernAI
+                </div>
+                <div style={{ fontSize: 9, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "1px" }}>
+                  Effective Intelligence
+                </div>
+              </div>
+            </div>
+            
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <button style={{ background: "none", border: "none", color: "#94A3B8", cursor: "pointer", fontSize: 18 }}>🔔</button>
+              <div style={{ 
+                width: 32, height: 32, borderRadius: "50%", 
+                background: "linear-gradient(135deg, #7C3AED, #4F46E5)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 12, fontWeight: 600, color: "#fff"
+              }}>
+                JD
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* ================================================================ */}
+        {/* MAIN CONTENT */}
+        {/* ================================================================ */}
+        
+        <main style={{ flex: 1, overflowY: "auto", background: "#F3F4F6", minHeight: 0 }}>
+          <div style={{ padding: "24px", paddingBottom: 24 }}>
           
           {/* ============================================================ */}
           {/* TIER 1: URGENT - What needs attention RIGHT NOW */}
@@ -796,25 +781,26 @@ export default function GovernanceDashboardPage() {
           </section>
 
         </div>
-      </main>
-
-      {/* ================================================================ */}
-      {/* STICKY PROMPT BAR */}
-      {/* ================================================================ */}
-      
-      <div style={{ 
-        position: "fixed", bottom: 0, left: 0, right: 0,
-        background: "linear-gradient(180deg, transparent 0%, #F3F4F6 30%)",
-        padding: "40px 0 20px 0"
-      }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}>
+        </main>
+        
+        {/* ================================================================ */}
+        {/* PROMPT BAR - Fixed at bottom of app chrome */}
+        {/* ================================================================ */}
+        
+        <div style={{ 
+          flexShrink: 0,
+          background: "#F3F4F6",
+          padding: "16px 24px 24px 24px",
+          borderTop: "1px solid #E5E7EB",
+          boxShadow: "0 -4px 12px rgba(0,0,0,0.05)"
+        }}>
           <div style={{ 
             display: "flex", alignItems: "center", gap: 12,
             padding: "12px 16px",
             background: "#fff", 
             borderRadius: 12,
             border: "1px solid #E5E7EB",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.1)"
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
           }}>
             <span style={{ fontSize: 18 }}>✨</span>
             <input
