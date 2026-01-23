@@ -263,7 +263,7 @@ export default function BoardGovernancePage() {
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontSize: 13, color: "#374151", fontWeight: 500 }}>SLT Meeting (December...</span>
+            <span style={{ fontSize: 13, color: "#374151", fontWeight: 500 }}>Q2 2026 Board Meeting</span>
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
