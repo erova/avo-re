@@ -7,6 +7,7 @@ import React, { useState } from "react";
 // ============================================================================
 
 type TimeRange = "quarter" | "year" | "all";
+type PeerGroup = "industry" | "cloud" | "ai";
 
 // ============================================================================
 // Sample Data
@@ -35,10 +36,16 @@ const DOGS_NOT_BARKING = [
   { topic: "Climate Risk Disclosure", lastDiscussed: "Q2 2024", externalSignal: "SEC rules effective 2026; peers avg 2 sessions/year", riskLevel: "medium" },
 ];
 
+const PEER_GROUPS = [
+  { id: "industry" as const, label: "Mega-cap Software", count: 8, isPrimary: true },
+  { id: "cloud" as const, label: "Cloud Platforms", count: 5, isPrimary: false },
+  { id: "ai" as const, label: "AI Infra", count: 6, isPrimary: false },
+];
+
 const PEER_SIGNALS = [
-  { company: "Competitor A", topic: "AI Governance", context: "Board-level AI oversight committee formed", source: "Q3 Earnings", date: "Oct 15" },
-  { company: "Competitor B", topic: "Cyber Training", context: "$2.3M board cyber training investment", source: "Press Release", date: "Oct 8" },
-  { company: "Competitor C", topic: "Succession", context: "CEO succession timeline announced", source: "8-K Filing", date: "Sep 22" },
+  { company: "Peer A", topic: "AI Governance", context: "Board-level AI oversight committee formed", source: "Q3 Earnings", date: "Oct 15" },
+  { company: "Peer B", topic: "Cyber Training", context: "$2.3M board cyber training investment", source: "Press Release", date: "Oct 8" },
+  { company: "Peer C", topic: "Succession", context: "CEO succession timeline announced", source: "8-K Filing", date: "Sep 22" },
 ];
 
 const TOPIC_ALLOCATION = [
@@ -208,6 +215,7 @@ function ActionButton({
 
 export default function GovernanceDashboardPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("quarter");
+  const [peerGroup, setPeerGroup] = useState<PeerGroup>("industry");
   const [promptValue, setPromptValue] = useState("");
   const [showAgentModal, setShowAgentModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -249,7 +257,7 @@ export default function GovernanceDashboardPage() {
             <span style={{ fontSize: 10, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", background: "rgba(124,58,237,0.15)", padding: "4px 10px", borderRadius: 4 }}>
               Prototype
             </span>
-            <span style={{ fontSize: 14, fontWeight: 600, color: "#F9FAFB" }}>GovernAI Effectiveness Dashboard</span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#F9FAFB" }}>GovernAI Effectiveness Dashboard: Microsoft</span>
           </div>
           
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
@@ -570,6 +578,27 @@ export default function GovernanceDashboardPage() {
                   <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Peer Governance Signals</h3>
                   <ActionButton onAction={(type) => handleAction(type, "Peer benchmarking")} />
                 </div>
+                {/* Peer Group Selector */}
+                <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 12 }}>
+                  {PEER_GROUPS.map((pg) => (
+                    <div key={pg.id} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      {pg.isPrimary && (
+                        <span style={{ fontSize: 9, color: "#6B7280", marginRight: 2 }}>Primary peer group:</span>
+                      )}
+                      <button
+                        onClick={() => setPeerGroup(pg.id)}
+                        style={{
+                          padding: "4px 8px", borderRadius: 4, fontSize: 10, fontWeight: 500, cursor: "pointer",
+                          background: peerGroup === pg.id ? "#1E3A5F" : "#F3F4F6",
+                          border: "none",
+                          color: peerGroup === pg.id ? "#fff" : "#6B7280",
+                        }}
+                      >
+                        {pg.label} ({pg.count})
+                      </button>
+                    </div>
+                  ))}
+                </div>
                 <div style={{ display: "grid", gap: 8 }}>
                   {PEER_SIGNALS.map((p, i) => (
                     <div key={i} style={{ padding: 10, borderRadius: 6, background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
@@ -728,6 +757,79 @@ export default function GovernanceDashboardPage() {
           </section>
 
           {/* ============================================================ */}
+          {/* EXECUTION TRACKING */}
+          {/* ============================================================ */}
+          
+          <section style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <span style={{ fontSize: 16 }}>📊</span>
+              <h2 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Execution Tracking</h2>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              {/* Promises vs Delivery */}
+              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Promises vs Delivery</h3>
+                  <ActionButton onAction={(type) => handleAction(type, "Execution report")} />
+                </div>
+                <div style={{ display: "grid", gap: 6 }}>
+                  {PROMISES_VS_DELIVERY.map((p, i) => (
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: i < PROMISES_VS_DELIVERY.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+                      <div>
+                        <div style={{ fontSize: 12, color: "#111827" }}>{p.promise}</div>
+                        <div style={{ fontSize: 10, color: "#6B7280" }}>Promised: {p.promisedQ}</div>
+                      </div>
+                      <span style={{
+                        fontSize: 10, padding: "3px 8px", borderRadius: 4, fontWeight: 600,
+                        background: p.status === "delivered" ? "#ECFDF5" : p.status === "in-progress" ? "#FEF3C7" : "#FEE2E2",
+                        color: p.status === "delivered" ? "#047857" : p.status === "in-progress" ? "#B45309" : "#DC2626"
+                      }}>
+                        {p.status === "delivered" ? "✓ Delivered" : p.status === "in-progress" ? "In Progress" : `${p.days}d late`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Topic Allocation */}
+              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Board Attention vs Peer Benchmark</h3>
+                  <ActionButton onAction={(type) => handleAction(type, "Attention analysis")} />
+                </div>
+                <div style={{ fontSize: 10, color: "#6B7280", marginBottom: 12 }}>
+                  Comparing to: {PEER_GROUPS.find(pg => pg.id === peerGroup)?.label} ({PEER_GROUPS.find(pg => pg.id === peerGroup)?.count} companies)
+                </div>
+                <div style={{ display: "grid", gap: 10 }}>
+                  {TOPIC_ALLOCATION.map((t, i) => (
+                    <div key={i}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
+                        <span style={{ color: "#374151", fontWeight: 500 }}>{t.topic}</span>
+                        <span style={{ color: t.status === "below" ? "#DC2626" : "#059669", fontWeight: 600 }}>
+                          {t.pct}% {t.status === "below" ? "↓" : "↑"} (peer: {t.benchmark}%)
+                        </span>
+                      </div>
+                      <div style={{ height: 6, background: "#E5E7EB", borderRadius: 3, position: "relative" }}>
+                        <div style={{ 
+                          height: "100%", borderRadius: 3,
+                          width: `${t.pct}%`,
+                          background: t.status === "below" ? "#F87171" : "#4ADE80"
+                        }} />
+                        {/* Benchmark marker */}
+                        <div style={{ 
+                          position: "absolute", top: -2, left: `${t.benchmark}%`,
+                          width: 2, height: 10, background: "#374151", borderRadius: 1
+                        }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ============================================================ */}
           {/* GOVERNANCE MATURITY - FULL WIDTH */}
           {/* ============================================================ */}
           
@@ -831,76 +933,6 @@ export default function GovernanceDashboardPage() {
                     </div>
                   );
                 })}
-              </div>
-            </div>
-          </section>
-
-          {/* ============================================================ */}
-          {/* TIER 3: TRACKING - Execution */}
-          {/* ============================================================ */}
-          
-          <section style={{ marginBottom: 24 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-              <span style={{ fontSize: 16 }}>📊</span>
-              <h2 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Execution Tracking</h2>
-            </div>
-            
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              {/* Promises vs Delivery */}
-              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Promises vs Delivery</h3>
-                  <ActionButton onAction={(type) => handleAction(type, "Execution report")} />
-                </div>
-                <div style={{ display: "grid", gap: 6 }}>
-                  {PROMISES_VS_DELIVERY.map((p, i) => (
-                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: i < PROMISES_VS_DELIVERY.length - 1 ? "1px solid #F3F4F6" : "none" }}>
-                      <div>
-                        <div style={{ fontSize: 12, color: "#111827" }}>{p.promise}</div>
-                        <div style={{ fontSize: 10, color: "#6B7280" }}>Promised: {p.promisedQ}</div>
-                      </div>
-                      <span style={{
-                        fontSize: 10, padding: "3px 8px", borderRadius: 4, fontWeight: 600,
-                        background: p.status === "delivered" ? "#ECFDF5" : p.status === "in-progress" ? "#FEF3C7" : "#FEE2E2",
-                        color: p.status === "delivered" ? "#047857" : p.status === "in-progress" ? "#B45309" : "#DC2626"
-                      }}>
-                        {p.status === "delivered" ? "✓ Delivered" : p.status === "in-progress" ? "In Progress" : `${p.days}d late`}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Topic Allocation */}
-              <div style={{ background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <h3 style={{ fontSize: 13, fontWeight: 600, color: "#111827", margin: 0 }}>Board Attention vs Benchmark</h3>
-                  <ActionButton onAction={(type) => handleAction(type, "Attention analysis")} />
-                </div>
-                <div style={{ display: "grid", gap: 10 }}>
-                  {TOPIC_ALLOCATION.map((t, i) => (
-                    <div key={i}>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
-                        <span style={{ color: "#374151", fontWeight: 500 }}>{t.topic}</span>
-                        <span style={{ color: t.status === "below" ? "#DC2626" : "#059669", fontWeight: 600 }}>
-                          {t.pct}% {t.status === "below" ? "↓" : "↑"} (peer: {t.benchmark}%)
-                        </span>
-                      </div>
-                      <div style={{ height: 6, background: "#E5E7EB", borderRadius: 3, position: "relative" }}>
-                        <div style={{ 
-                          height: "100%", borderRadius: 3,
-                          width: `${t.pct}%`,
-                          background: t.status === "below" ? "#F87171" : "#4ADE80"
-                        }} />
-                        {/* Benchmark marker */}
-                        <div style={{ 
-                          position: "absolute", top: -2, left: `${t.benchmark}%`,
-                          width: 2, height: 10, background: "#374151", borderRadius: 1
-                        }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           </section>
