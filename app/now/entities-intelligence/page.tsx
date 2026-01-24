@@ -8,7 +8,17 @@ import React, { useState, useRef, useEffect } from "react";
 
 type ViewMode = "structure" | "analysis";
 type UserRole = "gc" | "paralegal";
-type InsightPanelTab = "structure" | "risks" | "actions";
+type InsightPanelTab = "structure" | "risks" | "actions" | "activity";
+
+type ChangeItem = {
+  id: string;
+  date: string;
+  type: "ownership" | "director" | "filing" | "compliance" | "structure";
+  entity: string;
+  description: string;
+  impact: "high" | "medium" | "low";
+  user?: string;
+};
 
 type Entity = {
   id: string;
@@ -89,6 +99,15 @@ const QUESTIONS_TO_ASK = [
   "How do similar organisations structure themselves?",
   "Which entities have compliance gaps?",
 ];
+
+// Changes since last visit (for "What's changed" feature)
+const CHANGES_SINCE_LAST_VISIT: ChangeItem[] = [
+  { id: "c1", date: "Jan 22, 2026", type: "ownership", entity: "Bradax Florida Inc", description: "Ownership increased from 50% to 60%", impact: "high", user: "J. Martinez" },
+  { id: "c2", date: "Jan 20, 2026", type: "director", entity: "Bradax UK Group", description: "Sarah Chen appointed as Non-Executive Director", impact: "medium" },
+  { id: "c3", date: "Jan 18, 2026", type: "filing", entity: "Bradax Americas Inc.", description: "Annual return filed with Delaware DoS", impact: "low", user: "M. Thompson" },
+];
+
+const LAST_VISIT_DATE = "Jan 15, 2026";
 
 // Entity-specific action data for popovers
 const ENTITY_ACTIONS: Record<string, EntityAction> = {
@@ -205,6 +224,147 @@ const ENTITY_ACTIONS: Record<string, EntityAction> = {
 };
 
 // ============================================================================
+// Icon Components (Grayscale Line Icons)
+// ============================================================================
+
+function IconDashboard({ size = 20, color = "#9CA3AF" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
+
+function IconBuilding({ size = 20, color = "#9CA3AF" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 21h18" />
+      <path d="M5 21V7l8-4v18" />
+      <path d="M19 21V11l-6-4" />
+      <path d="M9 9v.01" />
+      <path d="M9 12v.01" />
+      <path d="M9 15v.01" />
+      <path d="M9 18v.01" />
+    </svg>
+  );
+}
+
+function IconSearch({ size = 20, color = "#9CA3AF" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
+    </svg>
+  );
+}
+
+function IconStar({ size = 20, color = "#9CA3AF" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+function IconSparkles({ size = 20, color = "#9CA3AF" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+      <path d="M5 3v4" />
+      <path d="M19 17v4" />
+      <path d="M3 5h4" />
+      <path d="M17 19h4" />
+    </svg>
+  );
+}
+
+function IconClock({ size = 20, color = "#9CA3AF" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+
+function IconClose({ size = 20, color = "#9CA3AF" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function IconChevronDown({ size = 16, color = "#9CA3AF" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+function IconChevronUp({ size = 16, color = "#9CA3AF" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  );
+}
+
+function IconDownload({ size = 16, color = "#6B7280" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  );
+}
+
+function IconEdit({ size = 16, color = "#6B7280" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
+  );
+}
+
+function IconBot({ size = 16, color = "#166534" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="10" rx="2" />
+      <circle cx="12" cy="5" r="2" />
+      <path d="M12 7v4" />
+      <line x1="8" y1="16" x2="8" y2="16" />
+      <line x1="16" y1="16" x2="16" y2="16" />
+    </svg>
+  );
+}
+
+function IconChart({ size = 16, color = "#374151" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  );
+}
+
+function IconSend({ size = 16, color = "#5B21B6" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="22" y1="2" x2="11" y2="13" />
+      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+    </svg>
+  );
+}
+
+// ============================================================================
 // Diligent Logo Component
 // ============================================================================
 
@@ -304,7 +464,7 @@ function EntityPopover({
           borderRadius: 8,
           border: "1px solid #D1FAE5"
         }}>
-          <span style={{ fontSize: 16 }}>🤖</span>
+          <IconBot size={16} color="#166534" />
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 12, fontWeight: 500, color: "#166534" }}>{action.nextBestAction}</div>
           </div>
@@ -333,7 +493,7 @@ function EntityPopover({
           alignItems: "center",
           gap: 8
         }}>
-          <span style={{ fontSize: 14 }}>📊</span>
+          <IconChart size={14} color="#374151" />
           <span>{action.peerComparison}</span>
         </div>
         <button 
@@ -406,7 +566,21 @@ function EntityPopover({
           alignItems: "flex-start",
           gap: 8
         }}>
-          <span style={{ fontSize: 16 }}>{action.worthIt ? "✅" : "⏸️"}</span>
+          <div style={{ 
+            width: 18, 
+            height: 18, 
+            borderRadius: "50%", 
+            background: action.worthIt ? "#059669" : "#D97706",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            marginTop: 1
+          }}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              {action.worthIt ? <polyline points="20 6 9 17 4 12" /> : <line x1="5" y1="12" x2="19" y2="12" />}
+            </svg>
+          </div>
           <div>
             <div style={{ 
               fontSize: 12, 
@@ -647,6 +821,8 @@ export default function EntitiesIntelligencePage() {
   const [promptValue, setPromptValue] = useState("");
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareEntity, setShareEntity] = useState<Entity | null>(null);
+  const [showChangeBanner, setShowChangeBanner] = useState(true);
+  const [changeBannerExpanded, setChangeBannerExpanded] = useState(false);
 
   const selectedEntityData = ENTITIES.find(e => e.id === selectedEntity);
 
@@ -815,12 +991,6 @@ export default function EntitiesIntelligencePage() {
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button style={{ padding: "5px 10px", background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 4, fontSize: 12, color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
-              <span style={{ fontSize: 12 }}>📊</span> Reports
-            </button>
-            <button style={{ padding: "5px 10px", background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 4, fontSize: 12, color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
-              <span style={{ fontSize: 12 }}>📁</span> Documents
-            </button>
             <button 
               style={{ 
                 padding: "5px 10px", 
@@ -833,7 +1003,7 @@ export default function EntitiesIntelligencePage() {
               }}
               onClick={() => setAiPanelOpen(!aiPanelOpen)}
             >
-              <span style={{ fontSize: 10 }}>✦</span> EntitiesAI
+              <IconSparkles size={14} color="#fff" /> EntitiesAI
             </button>
             <div style={{ 
               width: 28, height: 28, borderRadius: "50%", 
@@ -856,17 +1026,124 @@ export default function EntitiesIntelligencePage() {
           </div>
           
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button style={{ padding: "4px 8px", background: "none", border: "1px solid #E5E7EB", borderRadius: 4, fontSize: 11, color: "#6B7280", cursor: "pointer" }}>
-              ⬇ Export
+            <button style={{ padding: "4px 8px", background: "none", border: "1px solid #E5E7EB", borderRadius: 4, fontSize: 11, color: "#6B7280", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+              <IconDownload size={14} color="#6B7280" /> Export
             </button>
-            <button style={{ padding: "4px 8px", background: "none", border: "1px solid #E5E7EB", borderRadius: 4, fontSize: 11, color: "#6B7280", cursor: "pointer" }}>
-              🔍 Search
+            <button style={{ padding: "4px 8px", background: "none", border: "1px solid #E5E7EB", borderRadius: 4, fontSize: 11, color: "#6B7280", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+              <IconSearch size={14} color="#6B7280" /> Search
             </button>
-            <button style={{ padding: "4px 8px", background: "none", border: "1px solid #E5E7EB", borderRadius: 4, fontSize: 11, color: "#6B7280", cursor: "pointer" }}>
-              ✏️ Edit
+            <button style={{ padding: "4px 8px", background: "none", border: "1px solid #E5E7EB", borderRadius: 4, fontSize: 11, color: "#6B7280", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+              <IconEdit size={14} color="#6B7280" /> Edit
             </button>
           </div>
         </div>
+
+        {/* "Since You Were Here" Banner */}
+        {showChangeBanner && CHANGES_SINCE_LAST_VISIT.length > 0 && (
+          <div style={{ 
+            background: "linear-gradient(90deg, #EEF2FF 0%, #F5F3FF 100%)", 
+            borderBottom: "1px solid #DDD6FE",
+          }}>
+            {/* Collapsed view */}
+            <div 
+              style={{ 
+                padding: "10px 16px", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "space-between",
+                cursor: "pointer"
+              }}
+              onClick={() => setChangeBannerExpanded(!changeBannerExpanded)}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <IconClock size={16} color="#6366F1" />
+                <span style={{ fontSize: 13, fontWeight: 600, color: "#4338CA" }}>
+                  {CHANGES_SINCE_LAST_VISIT.length} change{CHANGES_SINCE_LAST_VISIT.length > 1 ? "s" : ""} since {LAST_VISIT_DATE}
+                </span>
+                <span style={{ fontSize: 11, color: "#6366F1" }}>
+                  {CHANGES_SINCE_LAST_VISIT.filter(c => c.impact === "high").length > 0 && (
+                    <span style={{ 
+                      background: "#FEE2E2", 
+                      color: "#DC2626", 
+                      padding: "2px 6px", 
+                      borderRadius: 4, 
+                      fontWeight: 600,
+                      marginRight: 6
+                    }}>
+                      {CHANGES_SINCE_LAST_VISIT.filter(c => c.impact === "high").length} high impact
+                    </span>
+                  )}
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setInsightPanelTab("activity"); setAiPanelOpen(true); }}
+                  style={{ 
+                    padding: "4px 10px", 
+                    background: "#6366F1", 
+                    color: "#fff", 
+                    border: "none", 
+                    borderRadius: 4, 
+                    fontSize: 11, 
+                    fontWeight: 500, 
+                    cursor: "pointer" 
+                  }}
+                >
+                  View all
+                </button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setShowChangeBanner(false); }}
+                  style={{ 
+                    background: "none", 
+                    border: "none", 
+                    cursor: "pointer", 
+                    display: "flex", 
+                    alignItems: "center",
+                    padding: 4
+                  }}
+                >
+                  <IconClose size={16} color="#6366F1" />
+                </button>
+                {changeBannerExpanded ? <IconChevronUp size={16} color="#6366F1" /> : <IconChevronDown size={16} color="#6366F1" />}
+              </div>
+            </div>
+
+            {/* Expanded view */}
+            {changeBannerExpanded && (
+              <div style={{ padding: "0 16px 12px 16px" }}>
+                <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
+                  {CHANGES_SINCE_LAST_VISIT.map((change) => (
+                    <div 
+                      key={change.id}
+                      style={{ 
+                        background: "#fff", 
+                        borderRadius: 8, 
+                        padding: "10px 14px", 
+                        minWidth: 260,
+                        border: change.impact === "high" ? "1px solid #FECACA" : "1px solid #E5E7EB",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                        <span style={{ 
+                          fontSize: 10, 
+                          fontWeight: 600, 
+                          color: change.impact === "high" ? "#DC2626" : change.impact === "medium" ? "#D97706" : "#6B7280",
+                          textTransform: "uppercase"
+                        }}>
+                          {change.type}
+                        </span>
+                        <span style={{ fontSize: 10, color: "#9CA3AF" }}>{change.date}</span>
+                      </div>
+                      <div style={{ fontSize: 12, fontWeight: 500, color: "#111827", marginBottom: 4 }}>{change.entity}</div>
+                      <div style={{ fontSize: 11, color: "#6B7280" }}>{change.description}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Main Content Area */}
         <div style={{ flex: 1, display: "flex", overflow: "hidden", minHeight: 0 }}>
@@ -874,12 +1151,10 @@ export default function EntitiesIntelligencePage() {
           {/* Left Sidebar - Navigation */}
           <aside style={{ width: 56, background: "#1E3A5F", display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 12, gap: 4 }}>
             {[
-              { icon: "📊", label: "Dashboard", active: false },
-              { icon: "🏢", label: "Entities", active: true },
-              { icon: "🔍", label: "Search", active: false },
-              { icon: "⭐", label: "Favorites", active: false },
-              { icon: "📋", label: "Reports", active: false },
-              { icon: "📁", label: "Docs", active: false },
+              { icon: <IconDashboard size={20} color="#9CA3AF" />, label: "Dashboard", active: false },
+              { icon: <IconBuilding size={20} color="#fff" />, label: "Entities", active: true },
+              { icon: <IconSearch size={20} color="#9CA3AF" />, label: "Search", active: false },
+              { icon: <IconStar size={20} color="#9CA3AF" />, label: "Favorites", active: false },
             ].map((item, i) => (
               <button
                 key={i}
@@ -890,7 +1165,6 @@ export default function EntitiesIntelligencePage() {
                   background: item.active ? "rgba(255,255,255,0.15)" : "transparent",
                   border: "none",
                   cursor: "pointer",
-                  fontSize: 16,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center"
@@ -1112,7 +1386,7 @@ export default function EntitiesIntelligencePage() {
                 background: "#F5F3FF"
               }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontSize: 16 }}>✨</span>
+                  <IconSparkles size={16} color="#7C3AED" />
                   <span style={{ fontSize: 14, fontWeight: 600, color: "#5B21B6" }}>
                     {userRole === "gc" ? "Structure Intel" : "Data Quality"}
                   </span>
@@ -1139,6 +1413,7 @@ export default function EntitiesIntelligencePage() {
                   { id: "structure" as const, label: "Structure" },
                   { id: "risks" as const, label: "Risks", count: STRUCTURAL_RISKS.length },
                   { id: "actions" as const, label: "Actions" },
+                  { id: "activity" as const, label: "Activity", count: CHANGES_SINCE_LAST_VISIT.length },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -1259,7 +1534,21 @@ export default function EntitiesIntelligencePage() {
                     {/* Risk Summary */}
                     <div style={{ marginBottom: 16, padding: 12, background: "#FEF2F2", borderRadius: 8, border: "1px solid #FECACA" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ fontSize: 16 }}>⚠️</span>
+                        <div style={{ 
+                          width: 24, 
+                          height: 24, 
+                          borderRadius: "50%", 
+                          background: "#DC2626",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                            <line x1="12" y1="9" x2="12" y2="13" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                          </svg>
+                        </div>
                         <div>
                           <div style={{ fontSize: 13, fontWeight: 600, color: "#DC2626" }}>{STRUCTURAL_RISKS.length} structural risks detected</div>
                           <div style={{ fontSize: 11, color: "#991B1B" }}>Across {STRUCTURE_METRICS.riskEntities} entities</div>
@@ -1299,7 +1588,7 @@ export default function EntitiesIntelligencePage() {
                             padding: 8, background: "#F0FDF4", borderRadius: 6,
                             border: "1px solid #D1FAE5", display: "flex", alignItems: "center", gap: 8
                           }}>
-                            <span style={{ fontSize: 11 }}>🤖</span>
+                            <IconBot size={12} color="#166534" />
                             <span style={{ fontSize: 11, color: "#166534", flex: 1 }}>{risk.suggestedAction}</span>
                             <button style={{
                               padding: "4px 10px", background: "#15803D", color: "#fff",
@@ -1422,6 +1711,132 @@ export default function EntitiesIntelligencePage() {
                     </div>
                   </div>
                 )}
+
+                {/* ACTIVITY TAB */}
+                {insightPanelTab === "activity" && (
+                  <div>
+                    {/* Header with last visit info */}
+                    <div style={{ 
+                      marginBottom: 20, 
+                      padding: 14, 
+                      background: "linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%)", 
+                      borderRadius: 10,
+                      border: "1px solid #DDD6FE"
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                        <IconClock size={18} color="#6366F1" />
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "#4338CA" }}>What&apos;s changed</span>
+                      </div>
+                      <div style={{ fontSize: 12, color: "#6366F1" }}>
+                        Since your last visit on <strong>{LAST_VISIT_DATE}</strong>
+                      </div>
+                    </div>
+
+                    {/* Change Summary Stats */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
+                      <div style={{ padding: 12, background: "#FEF2F2", borderRadius: 8, textAlign: "center" }}>
+                        <div style={{ fontSize: 20, fontWeight: 700, color: "#DC2626" }}>
+                          {CHANGES_SINCE_LAST_VISIT.filter(c => c.impact === "high").length}
+                        </div>
+                        <div style={{ fontSize: 10, color: "#991B1B" }}>High Impact</div>
+                      </div>
+                      <div style={{ padding: 12, background: "#FEF3C7", borderRadius: 8, textAlign: "center" }}>
+                        <div style={{ fontSize: 20, fontWeight: 700, color: "#D97706" }}>
+                          {CHANGES_SINCE_LAST_VISIT.filter(c => c.impact === "medium").length}
+                        </div>
+                        <div style={{ fontSize: 10, color: "#92400E" }}>Medium</div>
+                      </div>
+                      <div style={{ padding: 12, background: "#F3F4F6", borderRadius: 8, textAlign: "center" }}>
+                        <div style={{ fontSize: 20, fontWeight: 700, color: "#6B7280" }}>
+                          {CHANGES_SINCE_LAST_VISIT.filter(c => c.impact === "low").length}
+                        </div>
+                        <div style={{ fontSize: 10, color: "#6B7280" }}>Low</div>
+                      </div>
+                    </div>
+
+                    {/* Change Timeline */}
+                    <div style={{ marginBottom: 20 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", marginBottom: 12 }}>CHANGE LOG</div>
+                      <div style={{ position: "relative" }}>
+                        {/* Timeline line */}
+                        <div style={{ 
+                          position: "absolute", 
+                          left: 7, 
+                          top: 8, 
+                          bottom: 8, 
+                          width: 2, 
+                          background: "#E5E7EB" 
+                        }} />
+                        
+                        <div style={{ display: "grid", gap: 16 }}>
+                          {CHANGES_SINCE_LAST_VISIT.map((change, i) => (
+                            <div key={change.id} style={{ display: "flex", gap: 12 }}>
+                              {/* Timeline dot */}
+                              <div style={{ 
+                                width: 16, 
+                                height: 16, 
+                                borderRadius: "50%", 
+                                background: change.impact === "high" ? "#DC2626" : change.impact === "medium" ? "#D97706" : "#9CA3AF",
+                                border: "3px solid #fff",
+                                boxShadow: "0 0 0 2px " + (change.impact === "high" ? "#FECACA" : change.impact === "medium" ? "#FDE68A" : "#E5E7EB"),
+                                flexShrink: 0,
+                                marginTop: 2
+                              }} />
+                              
+                              {/* Content */}
+                              <div style={{ 
+                                flex: 1, 
+                                padding: 12, 
+                                background: "#fff", 
+                                borderRadius: 8,
+                                border: change.impact === "high" ? "1px solid #FECACA" : "1px solid #E5E7EB"
+                              }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+                                  <span style={{ 
+                                    fontSize: 10, 
+                                    fontWeight: 600, 
+                                    color: change.impact === "high" ? "#DC2626" : change.impact === "medium" ? "#D97706" : "#6B7280",
+                                    textTransform: "uppercase",
+                                    background: change.impact === "high" ? "#FEF2F2" : change.impact === "medium" ? "#FEF3C7" : "#F3F4F6",
+                                    padding: "2px 6px",
+                                    borderRadius: 4
+                                  }}>
+                                    {change.type}
+                                  </span>
+                                  <span style={{ fontSize: 10, color: "#9CA3AF" }}>{change.date}</span>
+                                </div>
+                                <div style={{ fontSize: 13, fontWeight: 500, color: "#111827", marginBottom: 4 }}>{change.entity}</div>
+                                <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 8 }}>{change.description}</div>
+                                {change.user && (
+                                  <div style={{ fontSize: 10, color: "#9CA3AF" }}>by {change.user}</div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Extended History */}
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: "#6B7280", marginBottom: 8 }}>EARLIER ACTIVITY</div>
+                      <div style={{ display: "grid", gap: 6 }}>
+                        {RECENT_ACTIVITY.slice(0, 3).map((activity, i) => (
+                          <div key={i} style={{ 
+                            padding: 10, background: "#F9FAFB", borderRadius: 6, 
+                            border: "1px solid #E5E7EB", fontSize: 11
+                          }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                              <span style={{ fontWeight: 500, color: "#374151" }}>{activity.action}</span>
+                              <span style={{ color: "#9CA3AF" }}>{activity.date}</span>
+                            </div>
+                            <div style={{ color: "#6B7280" }}>{activity.entity}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* AI Prompt Input */}
@@ -1448,7 +1863,7 @@ export default function EntitiesIntelligencePage() {
                   display: "flex", alignItems: "center", gap: 8, padding: "10px 12px",
                   background: "#F5F3FF", borderRadius: 8, border: "1px solid #DDD6FE"
                 }}>
-                  <span style={{ fontSize: 14 }}>✨</span>
+                  <IconSparkles size={14} color="#7C3AED" />
                   <input 
                     type="text" 
                     value={promptValue}
@@ -1461,9 +1876,10 @@ export default function EntitiesIntelligencePage() {
                   />
                   <button style={{ 
                     padding: "4px 10px", background: "#7C3AED", color: "#fff",
-                    border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer"
+                    border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                    display: "flex", alignItems: "center", gap: 4
                   }}>
-                    Ask
+                    <IconSend size={12} color="#fff" /> Ask
                   </button>
                 </div>
               </div>
