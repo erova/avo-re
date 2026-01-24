@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { 
   AlertCircle, 
@@ -18,7 +18,10 @@ import {
   Users,
   Radio,
   Sun,
-  Moon
+  Moon,
+  Rocket,
+  Check,
+  PartyPopper
 } from "lucide-react";
 
 // ============================================================================
@@ -62,6 +65,435 @@ const colors = {
     purple: "#7C3AED",
   }
 };
+
+// ============================================================================
+// Delight Components - Saluting Robot & Confetti
+// ============================================================================
+
+// Confetti particle configuration
+const CONFETTI_COLORS = ['#22C55E', '#3B82F6', '#F59E0B', '#EF4444', '#7C3AED', '#EC4899'];
+const CONFETTI_SHAPES = ['●', '■', '▲', '★', '♦', '◆'];
+
+interface ConfettiParticle {
+  id: number;
+  x: number;
+  y: number;
+  color: string;
+  shape: string;
+  rotation: number;
+  scale: number;
+  delay: number;
+}
+
+// Diligent Robot - Adobe Stock inspired design with lavender/navy colors
+function SalutingRobot({ phase }: { phase: 'enter' | 'salute' | 'nod' | 'celebrate' }) {
+  // Colors from the Adobe Stock robot
+  const bodyLight = "#d9d5e3"; // lavender gray body
+  const bodyMid = "#9CA3AF";   // mid gray
+  const bodyDark = "#1a2443";  // dark navy
+  const eyeYellow = "#FFCE5F"; // yellow eye
+  const eyeOrange = "#FFB27A"; // orange highlight
+  
+  return (
+    <svg width="200" height="220" viewBox="0 0 200 220" fill="none" style={{ overflow: 'visible' }}>
+      <defs>
+        <linearGradient id="robotBody" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#e2dfe8"/>
+          <stop offset="50%" stopColor="#d9d5e3"/>
+          <stop offset="100%" stopColor="#ccc8d7"/>
+        </linearGradient>
+        <linearGradient id="robotBodyDark" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#1f2937"/>
+          <stop offset="100%" stopColor="#1a2443"/>
+        </linearGradient>
+        <linearGradient id="robotArmGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#d9d5e3"/>
+          <stop offset="100%" stopColor="#b0adc0"/>
+        </linearGradient>
+        <filter id="robotShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#000" floodOpacity="0.35"/>
+        </filter>
+      </defs>
+      
+      {/* Antenna with ball */}
+      <g style={{
+        transformOrigin: '100px 15px',
+        animation: phase === 'celebrate' ? 'antenna-wiggle 0.25s ease-in-out infinite' : 'none'
+      }}>
+        <rect x="96" y="8" width="8" height="18" rx="4" fill={bodyLight}/>
+        <circle cx="100" cy="6" r="9" fill={phase === 'celebrate' ? "#22C55E" : "#EE312E"} style={{
+          animation: phase === 'celebrate' ? 'glow-pulse 0.4s ease-in-out infinite' : 'none'
+        }}/>
+        <circle cx="98" cy="4" r="3" fill="#fff" opacity="0.4"/>
+      </g>
+      
+      {/* Head */}
+      <g style={{
+        transformOrigin: '100px 55px',
+        animation: phase === 'nod' ? 'head-nod 0.35s ease-in-out' : 'none'
+      }} filter="url(#robotShadow)">
+        {/* Main head - boxy rounded rectangle like original */}
+        <rect x="40" y="24" width="120" height="75" rx="18" fill="url(#robotBody)"/>
+        
+        {/* Face screen */}
+        <rect x="50" y="32" width="100" height="58" rx="12" fill="url(#robotBodyDark)"/>
+        
+        {/* Eyes */}
+        <g style={{
+          transformOrigin: '100px 55px',
+          animation: phase === 'celebrate' ? 'eyes-squint 0.25s ease-out forwards' : 'none'
+        }}>
+          {/* Left eye - golden yellow like original */}
+          <ellipse cx="72" cy="55" rx="15" ry="16" fill={phase === 'celebrate' ? "#22C55E" : eyeYellow} style={{
+            animation: phase === 'celebrate' ? 'eye-bright 0.3s ease-in-out infinite' : 'none'
+          }}/>
+          <ellipse cx="69" cy="52" rx="6" ry="7" fill={eyeOrange} opacity="0.6"/>
+          <circle cx="68" cy="50" r="4" fill="#fff" opacity="0.8"/>
+          
+          {/* Right eye - matching golden */}
+          <ellipse cx="128" cy="55" rx="15" ry="16" fill={phase === 'celebrate' ? "#22C55E" : eyeYellow} style={{
+            animation: phase === 'celebrate' ? 'eye-bright 0.3s ease-in-out 0.1s infinite' : 'none'
+          }}/>
+          <ellipse cx="125" cy="52" rx="6" ry="7" fill={eyeOrange} opacity="0.6"/>
+          <circle cx="124" cy="50" r="4" fill="#fff" opacity="0.8"/>
+        </g>
+        
+        {/* Mouth - horizontal line or smile */}
+        {phase === 'celebrate' ? (
+          <path d="M80 78 Q100 90 120 78" stroke="#22C55E" strokeWidth="4" fill="none" strokeLinecap="round"/>
+        ) : (
+          <rect x="82" y="78" width="36" height="5" rx="2.5" fill="#374151"/>
+        )}
+      </g>
+      
+      {/* Body */}
+      <g filter="url(#robotShadow)">
+        {/* Main body - rounded box */}
+        <rect x="45" y="102" width="110" height="85" rx="14" fill="url(#robotBody)"/>
+        
+        {/* Chest panel */}
+        <rect x="55" y="112" width="90" height="60" rx="10" fill="url(#robotBodyDark)"/>
+        
+        {/* Diligent D Logo on chest - larger and more prominent */}
+        <g transform="translate(70, 118) scale(0.22)" style={{
+          animation: phase === 'celebrate' ? 'logo-glow 0.5s ease-in-out infinite' : 'none'
+        }}>
+          <path fill={phase === 'celebrate' ? "#22C55E" : "#EE312E"} d="M200.87,110.85c0,33.96-12.19,61.94-33.03,81.28c-0.24,0.21-0.42,0.43-0.66,0.64c-15.5,14.13-35.71,23.52-59.24,27.11l-1.59-1.62l35.07-201.75l1.32-3.69C178.64,30.36,200.87,65.37,200.87,110.85z"/>
+          <path fill={phase === 'celebrate' ? "#16A34A" : "#AF292E"} d="M142.75,12.83l-0.99,1.47L0.74,119.34L0,118.65c0,0,0-0.03,0-0.06V0.45h85.63c5.91,0,11.64,0.34,17.19,1.01h0.21c14.02,1.66,26.93,5.31,38.48,10.78C141.97,12.46,142.75,12.83,142.75,12.83z"/>
+          <path fill={phase === 'celebrate' ? "#15803D" : "#D3222A"} d="M142.75,12.83L0,118.65v99.27v3.62h85.96c7.61,0,14.94-0.58,21.99-1.66C107.95,219.89,142.75,12.83,142.75,12.83z"/>
+        </g>
+      </g>
+      
+      {/* Left arm (static, resting) */}
+      <g>
+        {/* Shoulder joint */}
+        <ellipse cx="35" cy="115" rx="12" ry="14" fill={bodyLight}/>
+        {/* Upper arm */}
+        <rect x="20" y="118" width="26" height="50" rx="10" fill="url(#robotArmGrad)"/>
+        {/* Lower arm / hand */}
+        <rect x="16" y="165" width="34" height="22" rx="8" fill={bodyLight}/>
+        {/* Fingers */}
+        <rect x="14" y="182" width="10" height="12" rx="4" fill={bodyLight}/>
+        <rect x="26" y="184" width="8" height="10" rx="4" fill={bodyLight}/>
+        <rect x="36" y="182" width="10" height="12" rx="4" fill={bodyLight}/>
+      </g>
+      
+      {/* Right arm (saluting) */}
+      <g 
+        style={{ 
+          transformOrigin: '165px 115px',
+          animation: phase === 'salute' || phase === 'nod' || phase === 'celebrate'
+            ? 'arm-raise 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' 
+            : 'none'
+        }}
+      >
+        {/* Shoulder joint */}
+        <ellipse cx="165" cy="115" rx="12" ry="14" fill={bodyLight}/>
+        {/* Upper arm */}
+        <rect x="154" y="118" width="26" height="50" rx="10" fill="url(#robotArmGrad)"/>
+        {/* Forearm + hand - bends toward temple */}
+        <g style={{
+          transformOrigin: '167px 168px',
+          animation: phase === 'salute' || phase === 'nod' || phase === 'celebrate'
+            ? 'forearm-bend 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' 
+            : 'none'
+        }}>
+          {/* Lower arm / hand */}
+          <rect x="150" y="165" width="34" height="22" rx="8" fill={bodyLight}/>
+          {/* Fingers (grouped together for salute) */}
+          <rect x="152" y="182" width="28" height="14" rx="5" fill={bodyLight}/>
+        </g>
+      </g>
+      
+      {/* Legs */}
+      <g>
+        {/* Left leg */}
+        <rect x="58" y="185" width="32" height="32" rx="8" fill="url(#robotArmGrad)"/>
+        {/* Right leg */}
+        <rect x="110" y="185" width="32" height="32" rx="8" fill="url(#robotArmGrad)"/>
+      </g>
+      
+      {/* Sparkles during celebrate */}
+      {phase === 'celebrate' && (
+        <>
+          <text x="0" y="30" fontSize="22" style={{ animation: 'sparkle-burst 0.5s ease-out infinite' }}>✨</text>
+          <text x="180" y="25" fontSize="22" style={{ animation: 'sparkle-burst 0.5s ease-out 0.1s infinite' }}>✨</text>
+          <text x="-10" y="120" fontSize="20" style={{ animation: 'sparkle-burst 0.5s ease-out 0.2s infinite' }}>✨</text>
+          <text x="190" y="115" fontSize="20" style={{ animation: 'sparkle-burst 0.5s ease-out 0.15s infinite' }}>✨</text>
+          <text x="15" y="200" fontSize="18" style={{ animation: 'sparkle-burst 0.5s ease-out 0.25s infinite' }}>✨</text>
+          <text x="175" y="195" fontSize="18" style={{ animation: 'sparkle-burst 0.5s ease-out 0.3s infinite' }}>✨</text>
+        </>
+      )}
+      
+      <style>{`
+        @keyframes arm-raise {
+          0% { transform: rotate(0deg) translateX(0) translateY(0); }
+          100% { transform: rotate(-100deg) translateX(-55px) translateY(-65px); }
+        }
+        @keyframes forearm-bend {
+          0% { transform: rotate(0deg) translateX(0) translateY(0); }
+          100% { transform: rotate(-55deg) translateX(-18px) translateY(-8px); }
+        }
+        @keyframes head-nod {
+          0%, 100% { transform: rotate(0deg); }
+          50% { transform: rotate(6deg); }
+        }
+        @keyframes eyes-squint {
+          0% { transform: scaleY(1); }
+          100% { transform: scaleY(0.35); }
+        }
+        @keyframes eye-bright {
+          0%, 100% { fill: #22C55E; }
+          50% { fill: #4ADE80; }
+        }
+        @keyframes glow-pulse {
+          0%, 100% { fill: #22C55E; filter: drop-shadow(0 0 5px #22C55E); }
+          50% { fill: #4ADE80; filter: drop-shadow(0 0 14px #4ADE80); }
+        }
+        @keyframes antenna-wiggle {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-10deg); }
+          75% { transform: rotate(10deg); }
+        }
+        @keyframes logo-glow {
+          0%, 100% { filter: drop-shadow(0 0 3px #22C55E); }
+          50% { filter: drop-shadow(0 0 10px #4ADE80); }
+        }
+        @keyframes sparkle-burst {
+          0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+          50% { opacity: 0.6; transform: scale(1.5) rotate(20deg); }
+        }
+      `}</style>
+    </svg>
+  );
+}
+
+function RobotConfettiBurst({ onComplete }: { onComplete: () => void }) {
+  const [particles, setParticles] = useState<ConfettiParticle[]>([]);
+  const [showRobot, setShowRobot] = useState(true);
+  const [robotPhase, setRobotPhase] = useState<'enter' | 'salute' | 'nod' | 'celebrate'>('enter');
+  
+  useEffect(() => {
+    // Robot animation sequence
+    const saluteTimer = setTimeout(() => setRobotPhase('salute'), 300);
+    const nodTimer = setTimeout(() => setRobotPhase('nod'), 700);
+    const celebrateTimer = setTimeout(() => {
+      setRobotPhase('celebrate');
+      // Generate confetti when robot celebrates
+      const newParticles: ConfettiParticle[] = [];
+      for (let i = 0; i < 45; i++) {
+        newParticles.push({
+          id: i,
+          x: 50 + (Math.random() - 0.5) * 40,
+          y: 30 + (Math.random() - 0.5) * 10,
+          color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+          shape: CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)],
+          rotation: Math.random() * 360,
+          scale: 0.6 + Math.random() * 0.6,
+          delay: Math.random() * 0.2,
+        });
+      }
+      setParticles(newParticles);
+    }, 1000);
+    const hideRobotTimer = setTimeout(() => setShowRobot(false), 2200);
+    const completeTimer = setTimeout(onComplete, 2800);
+    
+    return () => {
+      clearTimeout(saluteTimer);
+      clearTimeout(nodTimer);
+      clearTimeout(celebrateTimer);
+      clearTimeout(hideRobotTimer);
+      clearTimeout(completeTimer);
+    };
+  }, [onComplete]);
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      pointerEvents: 'none',
+      zIndex: 1000,
+      overflow: 'hidden',
+    }}>
+      {/* Robot character */}
+      {showRobot && (
+        <div style={{
+          position: 'absolute',
+          left: '50%',
+          top: '32%',
+          transform: 'translate(-50%, -50%)',
+          animation: robotPhase === 'enter' 
+            ? 'robot-pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards'
+            : robotPhase === 'celebrate'
+              ? 'robot-wiggle 0.4s ease-in-out 2'
+              : 'none',
+          zIndex: 1001,
+          filter: 'drop-shadow(0 12px 40px rgba(59, 130, 246, 0.5))',
+        }}>
+          <SalutingRobot phase={robotPhase} />
+        </div>
+      )}
+      
+      {/* Confetti particles */}
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          style={{
+            position: 'absolute',
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            color: p.color,
+            fontSize: `${18 * p.scale}px`,
+            animation: `confetti-burst-${p.id % 8} 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${p.delay}s forwards`,
+            opacity: 0,
+          }}
+        >
+          {p.shape}
+        </div>
+      ))}
+      
+      <style>{`
+        @keyframes robot-pop-in {
+          0% { transform: translate(-50%, -50%) scale(0) rotate(-15deg); opacity: 0; }
+          70% { transform: translate(-50%, -50%) scale(1.1) rotate(3deg); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes robot-wiggle {
+          0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+          25% { transform: translate(-50%, -50%) rotate(-4deg) scale(1.02); }
+          75% { transform: translate(-50%, -50%) rotate(4deg) scale(1.02); }
+        }
+        @keyframes confetti-burst-0 {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(350px) translateX(-140px) rotate(720deg); opacity: 0; }
+        }
+        @keyframes confetti-burst-1 {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(400px) translateX(120px) rotate(-540deg); opacity: 0; }
+        }
+        @keyframes confetti-burst-2 {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(320px) translateX(-80px) rotate(480deg); opacity: 0; }
+        }
+        @keyframes confetti-burst-3 {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(380px) translateX(160px) rotate(-600deg); opacity: 0; }
+        }
+        @keyframes confetti-burst-4 {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(360px) translateX(-120px) rotate(360deg); opacity: 0; }
+        }
+        @keyframes confetti-burst-5 {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(340px) translateX(100px) rotate(-420deg); opacity: 0; }
+        }
+        @keyframes confetti-burst-6 {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(390px) translateX(-60px) rotate(540deg); opacity: 0; }
+        }
+        @keyframes confetti-burst-7 {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(350px) translateX(80px) rotate(-480deg); opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function SuccessToast({ 
+  message, 
+  subMessage,
+  onClose 
+}: { 
+  message: string; 
+  subMessage?: string;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3500);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: 100,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: 1001,
+      animation: 'toast-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        padding: '14px 20px',
+        background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
+        borderRadius: 12,
+        boxShadow: '0 8px 32px rgba(34, 197, 94, 0.4), 0 0 0 1px rgba(255,255,255,0.1)',
+      }}>
+        <div style={{
+          width: 32,
+          height: 32,
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          animation: 'check-bounce 0.5s ease-out 0.2s forwards',
+        }}>
+          <Rocket size={18} style={{ color: '#fff' }} />
+        </div>
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>{message}</div>
+          {subMessage && (
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 2 }}>{subMessage}</div>
+          )}
+        </div>
+      </div>
+      <style>{`
+        @keyframes toast-in {
+          0% { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.9); }
+          100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        }
+        @keyframes check-bounce {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.2); }
+          100% { transform: scale(1); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// Fun messages for agent deployment
+const AGENT_SUCCESS_MESSAGES = [
+  { message: "Agent deployed!", subMessage: "It's already getting to work 🚀" },
+  { message: "Nice one!", subMessage: "Your AI assistant is on the case" },
+  { message: "Mission accepted!", subMessage: "Agent dispatched and working" },
+  { message: "You've got help!", subMessage: "The agent will report back soon" },
+  { message: "Boom! Agent launched", subMessage: "Sit back, it's handling this" },
+];
 
 // ============================================================================
 // Sample Data
@@ -285,11 +717,31 @@ export default function GovernanceDashboardV2DarkPage() {
   const [expandedCountdownWeek, setExpandedCountdownWeek] = useState<number | null>(2);
   const [showAllDirectors, setShowAllDirectors] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("external");
+  
+  // Delight state
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [successToast, setSuccessToast] = useState<{ message: string; subMessage?: string } | null>(null);
 
   const handleAction = (type: string, item?: string) => {
     setSelectedItem(item || null);
     if (type === "agent") setShowAgentModal(true);
   };
+  
+  // Handle agent deployment with delight!
+  const handleDeployAgent = useCallback((taskDescription?: string) => {
+    // Pick a random success message
+    const msg = AGENT_SUCCESS_MESSAGES[Math.floor(Math.random() * AGENT_SUCCESS_MESSAGES.length)];
+    
+    // Trigger the celebration
+    setShowConfetti(true);
+    setSuccessToast(msg);
+    
+    // If there's a modal open, close it
+    setShowAgentModal(false);
+    
+    // Log for demo purposes
+    console.log('🤖 Agent deployed for:', taskDescription || 'general task');
+  }, []);
 
   const overallScores = MATURITY_QUARTERS.map((_, qIdx) => 
     Math.round(MATURITY_COMPONENTS.reduce((sum, comp) => sum + (comp.scores[qIdx] * comp.weight / 100), 0))
@@ -371,7 +823,7 @@ export default function GovernanceDashboardV2DarkPage() {
                     </span>
                     <span style={{ fontSize: 12, fontWeight: 600, color: colors.text.primary }}>{item.title}</span>
                   </div>
-                  <button onClick={() => handleAction("agent", item.suggestedAction)} style={{ padding: "4px 10px", background: colors.accent.green, color: "#fff", border: "none", borderRadius: 4, fontSize: 10, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                  <button onClick={() => handleAction("agent", item.suggestedAction)} style={{ padding: "4px 10px", background: colors.accent.green, color: "#fff", border: "none", borderRadius: 4, fontSize: 10, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4, transition: "transform 0.1s ease" }} onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.95)")} onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")} onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}>
                     <Bot size={12} /> Deploy Agent
                   </button>
                 </div>
@@ -657,7 +1109,7 @@ export default function GovernanceDashboardV2DarkPage() {
                       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: colors.bg.card, borderRadius: 6, border: `1px solid ${colors.border.default}` }}>
                         <Bot size={14} style={{ color: colors.text.secondary }} />
                         <span style={{ fontSize: 11, color: colors.text.secondary }}>{signal.type === "positive" ? "Share with stakeholders" : signal.text.includes("succession") ? "Schedule succession review" : signal.text.includes("sales") || signal.text.includes("budget") ? "Request deep-dive analysis" : signal.text.includes("churn") ? "Generate churn report" : "Add to next agenda"}</span>
-                        <button onClick={() => handleAction("agent", signal.text)} style={{ padding: "4px 10px", background: colors.accent.blue, color: "#fff", border: "none", borderRadius: 4, fontSize: 10, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>Deploy</button>
+                        <button onClick={() => handleAction("agent", signal.type === "positive" ? "Share with stakeholders" : signal.text.includes("succession") ? "Schedule succession review" : signal.text.includes("sales") || signal.text.includes("budget") ? "Request deep-dive analysis" : signal.text.includes("churn") ? "Generate churn report" : "Add to next agenda")} style={{ padding: "4px 10px", background: colors.accent.blue, color: "#fff", border: "none", borderRadius: 4, fontSize: 10, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "transform 0.1s ease" }} onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.95)")} onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")} onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}>Deploy</button>
                       </div>
                     </div>
                   ))}
@@ -950,10 +1402,26 @@ export default function GovernanceDashboardV2DarkPage() {
             </div>
             <div style={{ display: "flex", gap: 12 }}>
               <button onClick={() => setShowAgentModal(false)} style={{ flex: 1, padding: "10px", background: colors.bg.elevated, border: "none", borderRadius: 8, fontSize: 13, cursor: "pointer", color: colors.text.secondary }}>Cancel</button>
-              <button onClick={() => setShowAgentModal(false)} style={{ flex: 1, padding: "10px", background: colors.accent.blue, color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Create Agent Task</button>
+              <button onClick={() => handleDeployAgent(selectedItem || undefined)} style={{ flex: 1, padding: "10px", background: colors.accent.blue, color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "transform 0.1s ease" }} onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.95)")} onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}>Create Agent Task</button>
             </div>
           </div>
         </div>
+      )}
+      
+      {/* ================================================================ */}
+      {/* CELEBRATION / DELIGHT LAYER */}
+      {/* ================================================================ */}
+      
+      {showConfetti && (
+        <RobotConfettiBurst onComplete={() => setShowConfetti(false)} />
+      )}
+      
+      {successToast && (
+        <SuccessToast 
+          message={successToast.message} 
+          subMessage={successToast.subMessage}
+          onClose={() => setSuccessToast(null)} 
+        />
       )}
     </div>
   );
