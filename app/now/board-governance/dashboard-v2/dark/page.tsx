@@ -115,14 +115,14 @@ function SalutingRobot({ phase }: { phase: 'enter' | 'salute' | 'nod' | 'celebra
         </filter>
       </defs>
       
-      {/* Antenna with ball */}
+      {/* Antenna with ball - stays red */}
       <g style={{
         transformOrigin: '100px 15px',
         animation: phase === 'celebrate' ? 'antenna-wiggle 0.25s ease-in-out infinite' : 'none'
       }}>
         <rect x="96" y="8" width="8" height="18" rx="4" fill={bodyLight}/>
-        <circle cx="100" cy="6" r="9" fill={phase === 'celebrate' ? "#22C55E" : "#EE312E"} style={{
-          animation: phase === 'celebrate' ? 'glow-pulse 0.4s ease-in-out infinite' : 'none'
+        <circle cx="100" cy="6" r="9" fill="#EE312E" style={{
+          animation: phase === 'celebrate' ? 'antenna-glow 0.4s ease-in-out infinite' : 'none'
         }}/>
         <circle cx="98" cy="4" r="3" fill="#fff" opacity="0.4"/>
       </g>
@@ -174,13 +174,11 @@ function SalutingRobot({ phase }: { phase: 'enter' | 'salute' | 'nod' | 'celebra
         {/* Chest panel */}
         <rect x="55" y="112" width="90" height="60" rx="10" fill="url(#robotBodyDark)"/>
         
-        {/* Diligent D Logo on chest - larger and more prominent */}
-        <g transform="translate(70, 118) scale(0.22)" style={{
-          animation: phase === 'celebrate' ? 'logo-glow 0.5s ease-in-out infinite' : 'none'
-        }}>
-          <path fill={phase === 'celebrate' ? "#22C55E" : "#EE312E"} d="M200.87,110.85c0,33.96-12.19,61.94-33.03,81.28c-0.24,0.21-0.42,0.43-0.66,0.64c-15.5,14.13-35.71,23.52-59.24,27.11l-1.59-1.62l35.07-201.75l1.32-3.69C178.64,30.36,200.87,65.37,200.87,110.85z"/>
-          <path fill={phase === 'celebrate' ? "#16A34A" : "#AF292E"} d="M142.75,12.83l-0.99,1.47L0.74,119.34L0,118.65c0,0,0-0.03,0-0.06V0.45h85.63c5.91,0,11.64,0.34,17.19,1.01h0.21c14.02,1.66,26.93,5.31,38.48,10.78C141.97,12.46,142.75,12.83,142.75,12.83z"/>
-          <path fill={phase === 'celebrate' ? "#15803D" : "#D3222A"} d="M142.75,12.83L0,118.65v99.27v3.62h85.96c7.61,0,14.94-0.58,21.99-1.66C107.95,219.89,142.75,12.83,142.75,12.83z"/>
+        {/* Diligent D Logo on chest - stays red always */}
+        <g transform="translate(70, 118) scale(0.22)">
+          <path fill="#EE312E" d="M200.87,110.85c0,33.96-12.19,61.94-33.03,81.28c-0.24,0.21-0.42,0.43-0.66,0.64c-15.5,14.13-35.71,23.52-59.24,27.11l-1.59-1.62l35.07-201.75l1.32-3.69C178.64,30.36,200.87,65.37,200.87,110.85z"/>
+          <path fill="#AF292E" d="M142.75,12.83l-0.99,1.47L0.74,119.34L0,118.65c0,0,0-0.03,0-0.06V0.45h85.63c5.91,0,11.64,0.34,17.19,1.01h0.21c14.02,1.66,26.93,5.31,38.48,10.78C141.97,12.46,142.75,12.83,142.75,12.83z"/>
+          <path fill="#D3222A" d="M142.75,12.83L0,118.65v99.27v3.62h85.96c7.61,0,14.94-0.58,21.99-1.66C107.95,219.89,142.75,12.83,142.75,12.83z"/>
         </g>
       </g>
       
@@ -198,10 +196,10 @@ function SalutingRobot({ phase }: { phase: 'enter' | 'salute' | 'nod' | 'celebra
         <rect x="36" y="182" width="10" height="12" rx="4" fill={bodyLight}/>
       </g>
       
-      {/* Right arm (saluting) */}
+      {/* Right arm (saluting) - proper military salute: arm up, hand to temple */}
       <g 
         style={{ 
-          transformOrigin: '165px 115px',
+          transformOrigin: '155px 118px', // shoulder pivot
           animation: phase === 'salute' || phase === 'nod' || phase === 'celebrate'
             ? 'arm-raise 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' 
             : 'none'
@@ -209,11 +207,11 @@ function SalutingRobot({ phase }: { phase: 'enter' | 'salute' | 'nod' | 'celebra
       >
         {/* Shoulder joint */}
         <ellipse cx="165" cy="115" rx="12" ry="14" fill={bodyLight}/>
-        {/* Upper arm */}
+        {/* Upper arm - positioned to rotate outward */}
         <rect x="154" y="118" width="26" height="50" rx="10" fill="url(#robotArmGrad)"/>
-        {/* Forearm + hand - bends toward temple */}
+        {/* Forearm + hand - bends UP toward head */}
         <g style={{
-          transformOrigin: '167px 168px',
+          transformOrigin: '167px 168px', // elbow pivot
           animation: phase === 'salute' || phase === 'nod' || phase === 'celebrate'
             ? 'forearm-bend 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' 
             : 'none'
@@ -246,13 +244,19 @@ function SalutingRobot({ phase }: { phase: 'enter' | 'salute' | 'nod' | 'celebra
       )}
       
       <style>{`
+        /* 
+         * PROPER MILITARY SALUTE:
+         * 1. Upper arm lifts to side
+         * 2. Forearm bends UP at elbow 
+         * 3. Hand ends at temple/brow level
+         */
         @keyframes arm-raise {
-          0% { transform: rotate(0deg) translateX(0) translateY(0); }
-          100% { transform: rotate(-100deg) translateX(-55px) translateY(-65px); }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(-70deg); } /* arm lifts up and slightly out */
         }
         @keyframes forearm-bend {
-          0% { transform: rotate(0deg) translateX(0) translateY(0); }
-          100% { transform: rotate(-55deg) translateX(-18px) translateY(-8px); }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(-110deg); } /* forearm bends back toward head */
         }
         @keyframes head-nod {
           0%, 100% { transform: rotate(0deg); }
@@ -266,18 +270,14 @@ function SalutingRobot({ phase }: { phase: 'enter' | 'salute' | 'nod' | 'celebra
           0%, 100% { fill: #22C55E; }
           50% { fill: #4ADE80; }
         }
-        @keyframes glow-pulse {
-          0%, 100% { fill: #22C55E; filter: drop-shadow(0 0 5px #22C55E); }
-          50% { fill: #4ADE80; filter: drop-shadow(0 0 14px #4ADE80); }
+        @keyframes antenna-glow {
+          0%, 100% { filter: drop-shadow(0 0 4px #EE312E); }
+          50% { filter: drop-shadow(0 0 12px #FF6B6B); }
         }
         @keyframes antenna-wiggle {
           0%, 100% { transform: rotate(0deg); }
           25% { transform: rotate(-10deg); }
           75% { transform: rotate(10deg); }
-        }
-        @keyframes logo-glow {
-          0%, 100% { filter: drop-shadow(0 0 3px #22C55E); }
-          50% { filter: drop-shadow(0 0 10px #4ADE80); }
         }
         @keyframes sparkle-burst {
           0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
