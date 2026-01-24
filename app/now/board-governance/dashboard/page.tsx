@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 // ============================================================================
 // Types
@@ -253,11 +254,20 @@ export default function GovernanceDashboardPage() {
       
       <div style={{ flexShrink: 0, padding: "16px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div style={{ maxWidth: 1152, margin: "0 auto", padding: "0 24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-            <span style={{ fontSize: 10, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", background: "rgba(124,58,237,0.15)", padding: "4px 10px", borderRadius: 4 }}>
-              Prototype
-            </span>
-            <span style={{ fontSize: 14, fontWeight: 600, color: "#F9FAFB" }}>GovernAI Effectiveness Dashboard: Microsoft</span>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 10, color: "#7C3AED", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", background: "rgba(124,58,237,0.15)", padding: "4px 10px", borderRadius: 4 }}>
+                Prototype
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: "#F9FAFB" }}>GovernAI Effectiveness Dashboard: Microsoft</span>
+              <span style={{ fontSize: 11, color: "#6B7280" }}>— Detailed view</span>
+            </div>
+            <Link 
+              href="/now/board-governance/dashboard-v2"
+              style={{ fontSize: 11, color: "#7C3AED", textDecoration: "none" }}
+            >
+              View simplified version →
+            </Link>
           </div>
           
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
@@ -328,9 +338,7 @@ export default function GovernanceDashboardPage() {
               </div>
             </div>
             
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <button style={{ background: "none", border: "none", color: "#94A3B8", cursor: "pointer", fontSize: 18 }}>🔔</button>
-              <div style={{ 
+            <div style={{ 
                 width: 32, height: 32, borderRadius: "50%", 
                 background: "linear-gradient(135deg, #7C3AED, #4F46E5)",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -338,7 +346,6 @@ export default function GovernanceDashboardPage() {
               }}>
                 JD
               </div>
-            </div>
           </div>
         </header>
 
