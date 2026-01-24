@@ -20,7 +20,9 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Moon,
+  Sun
 } from "lucide-react";
 
 // ============================================================================
@@ -317,12 +319,20 @@ export default function GovernanceDashboardV2Page() {
               <span style={{ fontSize: 14, fontWeight: 600, color: "#F9FAFB" }}>GovernAI Effectiveness Dashboard: Microsoft</span>
               <span style={{ fontSize: 11, color: "#6B7280" }}>— Tabbed layout (less busy)</span>
             </div>
-            <Link 
-              href="/now/board-governance/dashboard"
-              style={{ fontSize: 11, color: "#7C3AED", textDecoration: "none" }}
-            >
-              ← View detailed version
-            </Link>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <Link 
+                href="/now/board-governance/dashboard-v2/dark"
+                style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#6B7280", textDecoration: "none", padding: "4px 10px", background: "#F3F4F6", borderRadius: 4, border: "1px solid #E5E7EB" }}
+              >
+                <Moon size={12} /> Dark mode
+              </Link>
+              <Link 
+                href="/now/board-governance/dashboard"
+                style={{ fontSize: 11, color: "#7C3AED", textDecoration: "none" }}
+              >
+                ← View detailed version
+              </Link>
+            </div>
           </div>
         </div>
       </div>
