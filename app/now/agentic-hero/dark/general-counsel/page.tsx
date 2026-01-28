@@ -19,6 +19,7 @@ function cn(...classes: Array<string | false | null | undefined>) {
 }
 
 type Vision = "near-term" | "future";
+type DeviceType = "desktop" | "ipad" | "iphone";
 
 type AgentStatus = {
   name: string;
@@ -372,34 +373,157 @@ function VisionToggle({ vision, onChange }: { vision: Vision; onChange: (v: Visi
   );
 }
 
-function PrototypeNav({ vision, onVisionChange }: { vision: Vision; onVisionChange: (v: Vision) => void }) {
+function DeviceToggle({ device, onChange }: { device: DeviceType; onChange: (d: DeviceType) => void }) {
   return (
-    <div className="w-full border-b border-[#30363d] bg-[#0d1117]">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
+    <div className="flex items-center gap-1 rounded-xl border border-[#30363d] bg-[#0d1117] p-1">
+      <button
+        onClick={() => onChange("desktop")}
+        className={cn(
+          "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition",
+          device === "desktop"
+            ? "bg-[#21262d] text-[#f0f6fc]"
+            : "text-[#8b949e] hover:text-[#f0f6fc]"
+        )}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <path d="M8 21h8M12 17v4" />
+        </svg>
+        Desktop
+      </button>
+      <button
+        onClick={() => onChange("ipad")}
+        className={cn(
+          "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition",
+          device === "ipad"
+            ? "bg-[#21262d] text-[#f0f6fc]"
+            : "text-[#8b949e] hover:text-[#f0f6fc]"
+        )}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="4" y="2" width="16" height="20" rx="2" />
+          <path d="M12 18h.01" />
+        </svg>
+        iPad
+      </button>
+      <button
+        onClick={() => onChange("iphone")}
+        className={cn(
+          "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition",
+          device === "iphone"
+            ? "bg-[#21262d] text-[#f0f6fc]"
+            : "text-[#8b949e] hover:text-[#f0f6fc]"
+        )}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="5" y="2" width="14" height="20" rx="3" />
+          <path d="M12 18h.01" />
+        </svg>
+        iPhone
+      </button>
+    </div>
+  );
+}
+
+function DevicePreviewBar({ device, onDeviceChange }: { device: DeviceType; onDeviceChange: (d: DeviceType) => void }) {
+  return (
+    <div className="w-full border-b border-[#30363d] bg-[#161b22]">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-2">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-medium uppercase tracking-[0.2em] text-[#6e7681]">Prototype</span>
-          <span className="text-sm font-semibold text-[#f0f6fc]">General Counsel Dashboard</span>
+          <span className="text-xs text-[#6e7681]">Device Preview</span>
         </div>
-        <div className="flex items-center gap-4">
-          <VisionToggle vision={vision} onChange={onVisionChange} />
-          <span className="text-[#30363d]">|</span>
-          <nav className="flex flex-wrap items-center gap-2">
-            <a
-              href="/now/agentic-hero/dark?context=diligent"
-              className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs font-medium text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]"
-            >
-              GRC Overview
-            </a>
-            <a
-              href="/now/agentic-hero/dark/general-counsel"
-              className="rounded-full border border-[#58a6ff] bg-[#161b22] px-3 py-1 text-xs font-semibold text-[#58a6ff] hover:bg-[#21262d]"
-            >
-              General Counsel
-            </a>
-          </nav>
+        <DeviceToggle device={device} onChange={onDeviceChange} />
+      </div>
+    </div>
+  );
+}
+
+function IPhoneFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-center py-8">
+      <div className="relative">
+        {/* iPhone bezel */}
+        <div className="relative rounded-[3rem] border-[14px] border-[#1c1c1e] bg-[#1c1c1e] shadow-2xl">
+          {/* Dynamic Island */}
+          <div className="absolute left-1/2 top-2 z-20 h-[25px] w-[90px] -translate-x-1/2 rounded-full bg-black" />
+          {/* Screen */}
+          <div className="relative h-[844px] w-[390px] overflow-hidden rounded-[2.5rem] bg-[#0d1117]">
+            <div className="h-full w-full overflow-y-auto">
+              {children}
+            </div>
+          </div>
+        </div>
+        {/* Side button */}
+        <div className="absolute -right-[3px] top-[120px] h-[80px] w-[3px] rounded-r-sm bg-[#2c2c2e]" />
+        <div className="absolute -left-[3px] top-[100px] h-[35px] w-[3px] rounded-l-sm bg-[#2c2c2e]" />
+        <div className="absolute -left-[3px] top-[150px] h-[60px] w-[3px] rounded-l-sm bg-[#2c2c2e]" />
+        <div className="absolute -left-[3px] top-[220px] h-[60px] w-[3px] rounded-l-sm bg-[#2c2c2e]" />
+      </div>
+    </div>
+  );
+}
+
+function IPadFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-center py-8">
+      <div className="relative">
+        {/* iPad bezel */}
+        <div className="relative rounded-[2rem] border-[18px] border-[#1c1c1e] bg-[#1c1c1e] shadow-2xl">
+          {/* Camera */}
+          <div className="absolute left-1/2 top-3 z-20 h-[8px] w-[8px] -translate-x-1/2 rounded-full bg-[#2c2c2e]" />
+          {/* Screen */}
+          <div className="relative h-[700px] w-[980px] overflow-hidden rounded-[1rem] bg-[#0d1117]">
+            <div className="h-full w-full overflow-y-auto">
+              {children}
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function PrototypeNav({ 
+  vision, 
+  onVisionChange,
+  device,
+  onDeviceChange,
+}: { 
+  vision: Vision; 
+  onVisionChange: (v: Vision) => void;
+  device: DeviceType;
+  onDeviceChange: (d: DeviceType) => void;
+}) {
+  return (
+    <>
+      <div className="w-full border-b border-[#30363d] bg-[#0d1117]">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-medium uppercase tracking-[0.2em] text-[#6e7681]">Prototype</span>
+            <span className="text-sm font-semibold text-[#f0f6fc]">General Counsel Dashboard</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <VisionToggle vision={vision} onChange={onVisionChange} />
+            <span className="text-[#30363d]">|</span>
+            <nav className="flex flex-wrap items-center gap-2">
+              <a
+                href="/now/agentic-hero/dark?context=diligent"
+                className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs font-medium text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]"
+              >
+                GRC Overview
+              </a>
+              <a
+                href="/now/agentic-hero/dark/general-counsel"
+                className="rounded-full border border-[#58a6ff] bg-[#161b22] px-3 py-1 text-xs font-semibold text-[#58a6ff] hover:bg-[#21262d]"
+              >
+                General Counsel
+              </a>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <DevicePreviewBar device={device} onDeviceChange={onDeviceChange} />
+    </>
   );
 }
 
@@ -544,8 +668,574 @@ function PromptBox({ vision }: { vision: Vision }) {
   );
 }
 
+// Dashboard content component to allow reuse in device frames
+function DashboardContent({ 
+  vision, 
+  activityOpen, 
+  setActivityOpen, 
+  currentActivityLog,
+  currentNextActions,
+  currentWhatsNew,
+  hoveredAgent,
+  setHoveredAgent,
+  popoverPos,
+  setPopoverPos,
+  popoverHovered,
+  setPopoverHovered,
+  tickerRef,
+  isInDeviceFrame = false,
+}: {
+  vision: Vision;
+  activityOpen: boolean;
+  setActivityOpen: (v: boolean) => void;
+  currentActivityLog: string[];
+  currentNextActions: typeof nextActions["near-term"] | typeof nextActions["future"];
+  currentWhatsNew: typeof whatsNew["near-term"];
+  hoveredAgent: AgentStatus | null;
+  setHoveredAgent: (a: AgentStatus | null) => void;
+  popoverPos: { x: number; y: number };
+  setPopoverPos: (p: { x: number; y: number }) => void;
+  popoverHovered: boolean;
+  setPopoverHovered: (v: boolean) => void;
+  tickerRef: React.RefObject<HTMLDivElement | null>;
+  isInDeviceFrame?: boolean;
+}) {
+  return (
+    <div className={cn(
+      "overflow-hidden rounded-3xl border shadow-sm transition-colors duration-300",
+      vision === "future" 
+        ? "border-[#a371f7]/30 bg-[#161b22]" 
+        : "border-[#30363d] bg-[#161b22]",
+      isInDeviceFrame && "rounded-none border-0"
+    )}>
+      <div className={cn("px-6", isInDeviceFrame && "px-4")}>
+        <TopNav
+          activityOpen={activityOpen}
+          onToggleActivity={() => setActivityOpen(!activityOpen)}
+          activityCount={currentActivityLog.length}
+          vision={vision}
+        />
+        {activityOpen ? (
+          <div className="-mt-4 mb-6">
+            <Card className="p-4">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#6e7681]">Recent activity</p>
+                  {vision === "future" && (
+                    <span className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-2 py-0.5 text-[10px] text-[#a371f7]">AI-Enhanced</span>
+                  )}
+                </div>
+                <button
+                  onClick={() => setActivityOpen(false)}
+                  className="rounded-lg border border-[#30363d] bg-[#161b22] px-2 py-1 text-xs text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]"
+                >
+                  Close
+                </button>
+              </div>
+              <div className="mt-3 space-y-2">
+                {currentActivityLog.map((entry) => (
+                  <div key={entry} className="flex items-start gap-3 rounded-xl border border-[#30363d] bg-[#21262d] px-3 py-2">
+                    <div className={cn(
+                      "mt-1 h-2 w-2 rounded-full",
+                      vision === "future" ? "bg-[#a371f7]" : "bg-[#3fb950]"
+                    )} />
+                    <p className="text-sm text-[#8b949e]">{entry}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        ) : null}
+
+        <header className={cn(
+          "rounded-3xl border p-10 shadow-sm transition-colors duration-300",
+          vision === "future"
+            ? "border-[#a371f7]/30 bg-gradient-to-br from-[#0d1117] to-[#a371f7]/5"
+            : "border-[#30363d] bg-[#0d1117]/80",
+          isInDeviceFrame && "p-6 rounded-2xl"
+        )}>
+          <h1 className={cn(
+            "text-center text-4xl font-semibold tracking-tight text-[#f0f6fc]",
+            isInDeviceFrame && "text-2xl"
+          )}>
+            {vision === "near-term" 
+              ? "Your legal portfolio is in good shape."
+              : "Your AI legal workforce is optimizing outcomes."
+            }
+          </h1>
+          <p className="mt-4 text-center text-sm text-[#8b949e]">
+            {vision === "near-term"
+              ? "All matters on track, contracts monitored, and compliance current. A good time to prepare and review."
+              : "Predictive models are active, autonomous recommendations are ready, and proactive analysis is complete."
+            }
+          </p>
+          {vision === "future" && (
+            <div className={cn("mt-6 flex justify-center gap-4", isInDeviceFrame && "flex-wrap gap-2")}>
+              <div className="rounded-xl border border-[#a371f7]/30 bg-[#a371f7]/10 px-4 py-2 text-center">
+                <p className="text-2xl font-semibold text-[#a371f7]">3</p>
+                <p className="text-xs text-[#8b949e]">AI Actions Pending</p>
+              </div>
+              <div className="rounded-xl border border-[#3fb950]/30 bg-[#3fb950]/10 px-4 py-2 text-center">
+                <p className="text-2xl font-semibold text-[#3fb950]">73%</p>
+                <p className="text-xs text-[#8b949e]">Settlement Confidence</p>
+              </div>
+              <div className="rounded-xl border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-4 py-2 text-center">
+                <p className="text-2xl font-semibold text-[#58a6ff]">$240K</p>
+                <p className="text-xs text-[#8b949e]">Projected Savings</p>
+              </div>
+            </div>
+          )}
+        </header>
+
+        {/* Agent ticker */}
+        <div
+          className={cn(
+            "ticker-strip relative mt-4 rounded-2xl border px-4 py-2 transition-colors duration-300",
+            vision === "future"
+              ? "border-[#a371f7]/30 bg-[#a371f7]/5"
+              : "border-[#30363d] bg-[#21262d]"
+          )}
+          ref={tickerRef}
+          onMouseLeave={() => {
+            if (!popoverHovered) {
+              setHoveredAgent(null);
+            }
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <span className={cn(
+              "shrink-0 text-xs font-medium uppercase tracking-[0.2em]",
+              vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
+            )}>
+              {vision === "future" ? "AI Legal Agents" : "Legal Monitoring Agents"}
+            </span>
+            <div className="relative flex-1 overflow-hidden">
+              <div className="ticker-track flex w-max items-center gap-6">
+                {[...agents, ...agents].map((agent, idx) => (
+                  <div
+                    key={`${agent.name}-${idx}`}
+                    className="whitespace-nowrap text-sm text-[#8b949e]"
+                    onMouseEnter={(event) => {
+                      const bounds = tickerRef.current?.getBoundingClientRect();
+                      if (!bounds) return;
+                      setHoveredAgent(agent);
+                      setPopoverPos({
+                        x: event.clientX - bounds.left,
+                        y: event.clientY - bounds.top,
+                      });
+                    }}
+                  >
+                    <span className="font-medium text-[#f0f6fc]">{agent.name}</span>
+                    <span className="mx-2 text-[#6e7681]">·</span>
+                    <span className="text-[#6e7681]">Last {agent.lastRun}, next {agent.nextRun}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {hoveredAgent && !isInDeviceFrame ? (
+            <div
+              className={cn(
+                "pointer-events-auto absolute z-20 w-80 rounded-2xl border p-4 text-left text-sm shadow-lg transition-colors duration-300",
+                vision === "future"
+                  ? "border-[#a371f7]/30 bg-[#161b22]"
+                  : "border-[#30363d] bg-[#161b22]"
+              )}
+              style={{
+                left: popoverPos.x,
+                top: popoverPos.y + 16,
+                transform: "translateX(-50%)",
+              }}
+              onMouseEnter={() => setPopoverHovered(true)}
+              onMouseLeave={() => {
+                setPopoverHovered(false);
+                setHoveredAgent(null);
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className={cn(
+                  "text-xs uppercase tracking-[0.2em]",
+                  vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
+                )}>
+                  {vision === "future" ? "AI Agent Capabilities" : "Agent Criteria"}
+                </div>
+                {vision === "future" && (
+                  <span className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-2 py-0.5 text-[10px] text-[#a371f7]">Autonomous</span>
+                )}
+              </div>
+              <div className="mt-2 text-base font-semibold text-[#f0f6fc]">{hoveredAgent.name}</div>
+              <p className="mt-1 text-sm text-[#8b949e]">
+                {vision === "future" && hoveredAgent.futureNote ? hoveredAgent.futureNote : hoveredAgent.note}
+              </p>
+              <div className="mt-3 space-y-1 text-xs text-[#8b949e]">
+                {(vision === "future" && hoveredAgent.futureCriteria ? hoveredAgent.futureCriteria : hoveredAgent.criteria).map((item) => (
+                  <div key={item} className="flex items-start gap-2">
+                    <span className={cn(
+                      "mt-1 h-1.5 w-1.5 rounded-full",
+                      vision === "future" ? "bg-[#a371f7]" : "bg-[#6e7681]"
+                    )} />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <a
+                  href="#"
+                  className="inline-flex items-center rounded-full border border-[#30363d] bg-[#161b22] px-3 py-1.5 text-xs font-medium text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]"
+                >
+                  {vision === "future" ? "Configure AI" : "Edit agent"}
+                </a>
+                <a
+                  href="#"
+                  className={cn(
+                    "inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-medium",
+                    vision === "future"
+                      ? "border-[#a371f7] bg-[#a371f7] text-white hover:bg-[#8b5cf6]"
+                      : "border-[#58a6ff] bg-[#58a6ff] text-[#0d1117] hover:bg-[#79b8ff]"
+                  )}
+                >
+                  {vision === "future" ? "Review AI output" : "View activity"}
+                </a>
+              </div>
+            </div>
+          ) : null}
+          <style jsx>{`
+            .ticker-track {
+              animation: ticker 90s linear infinite;
+            }
+            .ticker-strip:hover .ticker-track {
+              animation-play-state: paused;
+            }
+            @keyframes ticker {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            @media (prefers-reduced-motion: reduce) {
+              .ticker-track { animation: none; }
+            }
+          `}</style>
+        </div>
+
+        <div className="mt-8">
+          <PromptBox vision={vision} />
+        </div>
+
+        {/* Near-term: Pending Filings Approval */}
+        {vision === "near-term" && (
+          <section className="mt-8">
+            <Card className="p-0 overflow-hidden">
+              <div className="flex items-center justify-between border-b border-[#30363d] bg-[#0d1117]/50 px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#f0883e]/10">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 12l2 2 4-4" stroke="#f0883e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="#f0883e" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#f0f6fc]">Regulatory filings ready for your approval</h3>
+                    <p className="text-xs text-[#8b949e]">Prepared by Entities · Review and approve to submit</p>
+                  </div>
+                </div>
+                <span className="rounded-full border border-[#f0883e]/30 bg-[#f0883e]/10 px-2 py-0.5 text-xs font-medium text-[#f0883e]">
+                  {pendingFilings.length} pending
+                </span>
+              </div>
+              <div className="divide-y divide-[#30363d]">
+                {pendingFilings.map((filing) => (
+                  <div key={`${filing.entity}-${filing.filing}`} className={cn(
+                    "flex items-center justify-between px-5 py-3 hover:bg-[#21262d]/50",
+                    isInDeviceFrame && "flex-col items-start gap-3"
+                  )}>
+                    <div className="flex items-center gap-4">
+                      <div className="h-2 w-2 rounded-full bg-[#f0883e]" />
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-[#f0f6fc]">{filing.entity}</span>
+                          <span className="text-sm text-[#6e7681]">·</span>
+                          <span className="text-sm text-[#8b949e]">{filing.filing}</span>
+                        </div>
+                        <div className="mt-0.5 flex items-center gap-2 text-xs text-[#6e7681]">
+                          <span>{filing.jurisdiction}</span>
+                          <span>·</span>
+                          <span>Due {filing.dueDate}</span>
+                          <span>·</span>
+                          <span>Fee: {filing.fee}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button className="rounded-lg border border-[#30363d] bg-[#161b22] px-3 py-1.5 text-xs text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]">
+                        Review
+                      </button>
+                      <button className="rounded-lg border border-[#3fb950] bg-[#3fb950]/10 px-3 py-1.5 text-xs font-medium text-[#3fb950] hover:bg-[#3fb950]/20">
+                        Approve & Submit
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="border-t border-[#30363d] bg-[#0d1117]/30 px-5 py-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-[#6e7681]">Total filing fees: $395</span>
+                  <button className="text-xs font-medium text-[#58a6ff] hover:underline">
+                    Approve all filings →
+                  </button>
+                </div>
+              </div>
+            </Card>
+          </section>
+        )}
+
+        {/* Future: Cross-Diligent Risk Signals */}
+        {vision === "future" && (
+          <section className="mt-8">
+            <Card className="p-0 overflow-hidden border-[#a371f7]/20">
+              <div className="flex items-center justify-between border-b border-[#a371f7]/20 bg-gradient-to-r from-[#a371f7]/5 to-transparent px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#a371f7]/10">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="#a371f7" strokeWidth="2"/>
+                      <path d="M12 16v-4M12 8h.01" stroke="#a371f7" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#f0f6fc]">Cross-Diligent risk signals awaiting your input</h3>
+                    <p className="text-xs text-[#8b949e]">Your legal perspective is needed across the enterprise</p>
+                  </div>
+                </div>
+                <span className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-2 py-0.5 text-xs font-medium text-[#a371f7]">
+                  {riskSignals.length} requests
+                </span>
+              </div>
+              <div className="divide-y divide-[#30363d]">
+                {riskSignals.map((signal) => (
+                  <div key={signal.title} className="px-5 py-4 hover:bg-[#a371f7]/5">
+                    <div className={cn(
+                      "flex items-start justify-between gap-4",
+                      isInDeviceFrame && "flex-col"
+                    )}>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-full border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-2 py-0.5 text-[10px] font-medium text-[#58a6ff]">
+                            {signal.source}
+                          </span>
+                          <span className={cn(
+                            "rounded-full border px-2 py-0.5 text-[10px] font-medium",
+                            signal.impact === "High" 
+                              ? "border-[#da3633]/30 bg-[#da3633]/10 text-[#da3633]"
+                              : "border-[#f0883e]/30 bg-[#f0883e]/10 text-[#f0883e]"
+                          )}>
+                            {signal.impact} Impact
+                          </span>
+                        </div>
+                        <h4 className="mt-2 text-sm font-medium text-[#f0f6fc]">{signal.title}</h4>
+                        <p className="mt-1 text-sm text-[#8b949e]">{signal.detail}</p>
+                        <div className="mt-2 flex items-center gap-2 text-xs text-[#6e7681]">
+                          <span>Requested by {signal.requestedBy}</span>
+                          <span>·</span>
+                          <span>Due {signal.dueDate}</span>
+                        </div>
+                      </div>
+                      <button className={cn(
+                        "shrink-0 rounded-xl border border-[#a371f7] bg-[#a371f7]/10 px-3 py-2 text-sm font-medium text-[#a371f7] hover:bg-[#a371f7]/20",
+                        isInDeviceFrame && "w-full mt-3"
+                      )}>
+                        Contribute
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="border-t border-[#a371f7]/20 bg-gradient-to-r from-[#a371f7]/5 to-transparent px-5 py-3">
+                <p className="text-xs text-[#8b949e]">
+                  <span className="text-[#a371f7]">AI Insight:</span> Your legal risk assessments will automatically propagate to Risk Manager, updating the enterprise risk register in real-time.
+                </p>
+              </div>
+            </Card>
+          </section>
+        )}
+
+        <section className="mt-10">
+          <SectionHeader 
+            title={vision === "future" 
+              ? "Your AI workspace at a glance" 
+              : "Pick up where you left off"
+            }
+            description={vision === "near-term" 
+              ? "Continue working in your Diligent applications"
+              : undefined
+            }
+          />
+          <div className={cn("mt-5 grid gap-3", !isInDeviceFrame && "md:grid-cols-2")}>
+            {recentApps[vision].map((app) => (
+              <a
+                key={app.name}
+                href="#"
+                className={cn(
+                  "group block rounded-2xl border px-4 py-3 shadow-sm transition hover:-translate-y-[1px]",
+                  vision === "future"
+                    ? "border-[#a371f7]/20 bg-[#161b22] hover:border-[#a371f7]/40 hover:bg-[#a371f7]/5"
+                    : "border-[#30363d] bg-[#161b22] hover:border-[#58a6ff]/50 hover:bg-[#21262d]"
+                )}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-sm font-semibold text-[#f0f6fc]">{app.name}</h3>
+                      {"tag" in app && (
+                        <span className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-2 py-0.5 text-[10px] font-medium text-[#a371f7]">{app.tag}</span>
+                      )}
+                      <span className="rounded-full border border-[#30363d] bg-[#21262d] px-2 py-0.5 text-[11px] text-[#8b949e]">{app.lastUsed}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-[#8b949e]">{app.description}</p>
+                  </div>
+                  <span className={cn(
+                    "text-xs uppercase tracking-[0.2em] opacity-0 transition group-hover:opacity-100",
+                    vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
+                  )}>
+                    {vision === "future" ? "Review" : "Open"}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-12">
+          <SectionHeader 
+            title={vision === "future" 
+              ? "AI-recommended actions awaiting your approval"
+              : "Since everything's under control, get ahead of a few things"
+            } 
+          />
+          <div className={cn("mt-6 grid gap-6", !isInDeviceFrame && "lg:grid-cols-3")}>
+            <div className={cn(!isInDeviceFrame && "lg:col-span-2")}>
+              <div className="space-y-3">
+                {currentNextActions.map((action) => (
+                  <div
+                    key={action.title}
+                    className={cn(
+                      "rounded-2xl border px-5 py-4 shadow-sm transition-colors duration-300",
+                      vision === "future"
+                        ? "border-[#a371f7]/20 bg-[#161b22]"
+                        : "border-[#30363d] bg-[#161b22]"
+                    )}
+                  >
+                    <div className={cn(
+                      "flex items-start justify-between gap-6",
+                      isInDeviceFrame && "flex-col gap-3"
+                    )}>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-base font-semibold text-[#f0f6fc]">{action.title}</h3>
+                          {"tag" in action && (
+                            <SoftTag variant="ai">{action.tag}</SoftTag>
+                          )}
+                        </div>
+                        <p className="mt-1 text-sm text-[#8b949e]">{action.detail}</p>
+                        <div className="mt-3 flex items-center gap-2 text-xs text-[#6e7681]">
+                          {"app" in action && (
+                            <span className="rounded-full border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-2 py-0.5 text-[11px] text-[#58a6ff]">
+                              {action.app}
+                            </span>
+                          )}
+                          {vision === "near-term" && (
+                            <span className="text-[#6e7681]">Ready to complete</span>
+                          )}
+                        </div>
+                      </div>
+                      <button className={cn(
+                        "shrink-0 rounded-xl border px-3 py-2 text-sm",
+                        vision === "future"
+                          ? "border-[#a371f7] bg-[#a371f7]/10 text-[#a371f7] hover:bg-[#a371f7]/20"
+                          : "border-[#58a6ff] bg-[#58a6ff]/10 text-[#58a6ff] hover:bg-[#58a6ff]/20",
+                        isInDeviceFrame && "w-full"
+                      )}>
+                        {vision === "future" ? "Approve" : "Open in app"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Card className="p-5">
+                <p className={cn(
+                  "text-xs uppercase tracking-[0.2em]",
+                  vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
+                )}>
+                  {vision === "future" ? "Coming Capabilities" : "What's New"}
+                </p>
+                <h3 className="mt-2 text-lg font-semibold text-[#f0f6fc]">
+                  {vision === "future" ? "On the AI Roadmap" : "Good to Know & Good to Go"}
+                </h3>
+                <p className="mt-2 text-sm text-[#8b949e]">
+                  {vision === "future"
+                    ? "Advanced AI capabilities in development for your legal workflow."
+                    : "Learn more about features and capabilities you already have today."
+                  }
+                </p>
+                <div className="mt-4 space-y-3">
+                  {currentWhatsNew.map((item) => (
+                    <a
+                      key={item.title}
+                      href={item.href}
+                      className={cn(
+                        "block rounded-xl border px-4 py-3 transition",
+                        vision === "future"
+                          ? "border-[#a371f7]/20 bg-[#0d1117] hover:border-[#a371f7]/40 hover:bg-[#a371f7]/5"
+                          : "border-[#30363d] bg-[#0d1117] hover:border-[#58a6ff]/50 hover:bg-[#21262d]"
+                      )}
+                    >
+                      <h4 className="text-sm font-semibold text-[#f0f6fc]">{item.title}</h4>
+                      <p className="mt-1 text-sm text-[#8b949e]">{item.detail}</p>
+                      <p className={cn(
+                        "mt-3 text-xs uppercase tracking-[0.2em]",
+                        vision === "future" ? "text-[#a371f7]" : "text-[#58a6ff]"
+                      )}>
+                        {vision === "future" ? "Learn More" : "Open"}
+                      </p>
+                    </a>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        <footer className="mt-14 border-t border-[#30363d] bg-[#0d1117] px-5 py-5">
+          <div className="flex items-center justify-between gap-6">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-[#6e7681]">System log</p>
+              <p className="mt-1 text-sm text-[#8b949e]">
+                {vision === "future" 
+                  ? "AI agent activity (last 24 hours)"
+                  : "Recent system activity (last 24 hours)"
+                }
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2">
+            {currentActivityLog.map((entry) => (
+              <div key={entry} className="flex items-start gap-3 text-sm text-[#8b949e]">
+                <span className={cn(
+                  "mt-2 h-1.5 w-1.5 shrink-0 rounded-full",
+                  vision === "future" ? "bg-[#a371f7]" : "bg-[#3fb950]"
+                )} />
+                <span>{entry}</span>
+              </div>
+            ))}
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
 export default function Page() {
   const [vision, setVision] = React.useState<Vision>("near-term");
+  const [device, setDevice] = React.useState<DeviceType>("desktop");
   const [activityOpen, setActivityOpen] = React.useState(false);
   const [hoveredAgent, setHoveredAgent] = React.useState<AgentStatus | null>(null);
   const [popoverPos, setPopoverPos] = React.useState({ x: 0, y: 0 });
@@ -556,522 +1246,48 @@ export default function Page() {
   const currentNextActions = nextActions[vision];
   const currentWhatsNew = whatsNew[vision];
 
+  const dashboardProps = {
+    vision,
+    activityOpen,
+    setActivityOpen,
+    currentActivityLog,
+    currentNextActions,
+    currentWhatsNew,
+    hoveredAgent,
+    setHoveredAgent,
+    popoverPos,
+    setPopoverPos,
+    popoverHovered,
+    setPopoverHovered,
+    tickerRef,
+  };
+
   return (
     <div className="min-h-screen bg-[#0d1117]">
-      <PrototypeNav vision={vision} onVisionChange={setVision} />
-      <div className="mx-auto w-full max-w-6xl px-6 py-6">
-        <div className={cn(
-          "overflow-hidden rounded-3xl border shadow-sm transition-colors duration-300",
-          vision === "future" 
-            ? "border-[#a371f7]/30 bg-[#161b22]" 
-            : "border-[#30363d] bg-[#161b22]"
-        )}>
-          <div className="px-6">
-            <TopNav
-              activityOpen={activityOpen}
-              onToggleActivity={() => setActivityOpen((v) => !v)}
-              activityCount={currentActivityLog.length}
-              vision={vision}
-            />
-            {activityOpen ? (
-              <div className="-mt-4 mb-6">
-                <Card className="p-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#6e7681]">Recent activity</p>
-                      {vision === "future" && (
-                        <span className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-2 py-0.5 text-[10px] text-[#a371f7]">AI-Enhanced</span>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => setActivityOpen(false)}
-                      className="rounded-lg border border-[#30363d] bg-[#161b22] px-2 py-1 text-xs text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]"
-                    >
-                      Close
-                    </button>
-                  </div>
-                  <div className="mt-3 space-y-2">
-                    {currentActivityLog.map((entry) => (
-                      <div key={entry} className="flex items-start gap-3 rounded-xl border border-[#30363d] bg-[#21262d] px-3 py-2">
-                        <div className={cn(
-                          "mt-1 h-2 w-2 rounded-full",
-                          vision === "future" ? "bg-[#a371f7]" : "bg-[#3fb950]"
-                        )} />
-                        <p className="text-sm text-[#8b949e]">{entry}</p>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-              </div>
-            ) : null}
-
-            <header className={cn(
-              "rounded-3xl border p-10 shadow-sm transition-colors duration-300",
-              vision === "future"
-                ? "border-[#a371f7]/30 bg-gradient-to-br from-[#0d1117] to-[#a371f7]/5"
-                : "border-[#30363d] bg-[#0d1117]/80"
-            )}>
-              <h1 className="text-center text-4xl font-semibold tracking-tight text-[#f0f6fc]">
-                {vision === "near-term" 
-                  ? "Your legal portfolio is in good shape."
-                  : "Your AI legal workforce is optimizing outcomes."
-                }
-              </h1>
-              <p className="mt-4 text-center text-sm text-[#8b949e]">
-                {vision === "near-term"
-                  ? "All matters on track, contracts monitored, and compliance current. A good time to prepare and review."
-                  : "Predictive models are active, autonomous recommendations are ready, and proactive analysis is complete."
-                }
-              </p>
-              {vision === "future" && (
-                <div className="mt-6 flex justify-center gap-4">
-                  <div className="rounded-xl border border-[#a371f7]/30 bg-[#a371f7]/10 px-4 py-2 text-center">
-                    <p className="text-2xl font-semibold text-[#a371f7]">3</p>
-                    <p className="text-xs text-[#8b949e]">AI Actions Pending</p>
-                  </div>
-                  <div className="rounded-xl border border-[#3fb950]/30 bg-[#3fb950]/10 px-4 py-2 text-center">
-                    <p className="text-2xl font-semibold text-[#3fb950]">73%</p>
-                    <p className="text-xs text-[#8b949e]">Settlement Confidence</p>
-                  </div>
-                  <div className="rounded-xl border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-4 py-2 text-center">
-                    <p className="text-2xl font-semibold text-[#58a6ff]">$240K</p>
-                    <p className="text-xs text-[#8b949e]">Projected Savings</p>
-                  </div>
-                </div>
-              )}
-            </header>
-
-            {/* Agent ticker */}
-            <div
-              className={cn(
-                "ticker-strip relative mt-4 rounded-2xl border px-4 py-2 transition-colors duration-300",
-                vision === "future"
-                  ? "border-[#a371f7]/30 bg-[#a371f7]/5"
-                  : "border-[#30363d] bg-[#21262d]"
-              )}
-              ref={tickerRef}
-              onMouseLeave={() => {
-                if (!popoverHovered) {
-                  setHoveredAgent(null);
-                }
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <span className={cn(
-                  "shrink-0 text-xs font-medium uppercase tracking-[0.2em]",
-                  vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
-                )}>
-                  {vision === "future" ? "AI Legal Agents" : "Legal Monitoring Agents"}
-                </span>
-                <div className="relative flex-1 overflow-hidden">
-                  <div className="ticker-track flex w-max items-center gap-6">
-                    {[...agents, ...agents].map((agent, idx) => (
-                      <div
-                        key={`${agent.name}-${idx}`}
-                        className="whitespace-nowrap text-sm text-[#8b949e]"
-                        onMouseEnter={(event) => {
-                          const bounds = tickerRef.current?.getBoundingClientRect();
-                          if (!bounds) return;
-                          setHoveredAgent(agent);
-                          setPopoverPos({
-                            x: event.clientX - bounds.left,
-                            y: event.clientY - bounds.top,
-                          });
-                        }}
-                      >
-                        <span className="font-medium text-[#f0f6fc]">{agent.name}</span>
-                        <span className="mx-2 text-[#6e7681]">·</span>
-                        <span className="text-[#6e7681]">Last {agent.lastRun}, next {agent.nextRun}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              {hoveredAgent ? (
-                <div
-                  className={cn(
-                    "pointer-events-auto absolute z-20 w-80 rounded-2xl border p-4 text-left text-sm shadow-lg transition-colors duration-300",
-                    vision === "future"
-                      ? "border-[#a371f7]/30 bg-[#161b22]"
-                      : "border-[#30363d] bg-[#161b22]"
-                  )}
-                  style={{
-                    left: popoverPos.x,
-                    top: popoverPos.y + 16,
-                    transform: "translateX(-50%)",
-                  }}
-                  onMouseEnter={() => setPopoverHovered(true)}
-                  onMouseLeave={() => {
-                    setPopoverHovered(false);
-                    setHoveredAgent(null);
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className={cn(
-                      "text-xs uppercase tracking-[0.2em]",
-                      vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
-                    )}>
-                      {vision === "future" ? "AI Agent Capabilities" : "Agent Criteria"}
-                    </div>
-                    {vision === "future" && (
-                      <span className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-2 py-0.5 text-[10px] text-[#a371f7]">Autonomous</span>
-                    )}
-                  </div>
-                  <div className="mt-2 text-base font-semibold text-[#f0f6fc]">{hoveredAgent.name}</div>
-                  <p className="mt-1 text-sm text-[#8b949e]">
-                    {vision === "future" && hoveredAgent.futureNote ? hoveredAgent.futureNote : hoveredAgent.note}
-                  </p>
-                  <div className="mt-3 space-y-1 text-xs text-[#8b949e]">
-                    {(vision === "future" && hoveredAgent.futureCriteria ? hoveredAgent.futureCriteria : hoveredAgent.criteria).map((item) => (
-                      <div key={item} className="flex items-start gap-2">
-                        <span className={cn(
-                          "mt-1 h-1.5 w-1.5 rounded-full",
-                          vision === "future" ? "bg-[#a371f7]" : "bg-[#6e7681]"
-                        )} />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex items-center gap-2">
-                    <a
-                      href="#"
-                      className="inline-flex items-center rounded-full border border-[#30363d] bg-[#161b22] px-3 py-1.5 text-xs font-medium text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]"
-                    >
-                      {vision === "future" ? "Configure AI" : "Edit agent"}
-                    </a>
-                    <a
-                      href="#"
-                      className={cn(
-                        "inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-medium",
-                        vision === "future"
-                          ? "border-[#a371f7] bg-[#a371f7] text-white hover:bg-[#8b5cf6]"
-                          : "border-[#58a6ff] bg-[#58a6ff] text-[#0d1117] hover:bg-[#79b8ff]"
-                      )}
-                    >
-                      {vision === "future" ? "Review AI output" : "View activity"}
-                    </a>
-                  </div>
-                </div>
-              ) : null}
-              <style jsx>{`
-                .ticker-track {
-                  animation: ticker 90s linear infinite;
-                }
-                .ticker-strip:hover .ticker-track {
-                  animation-play-state: paused;
-                }
-                @keyframes ticker {
-                  0% { transform: translateX(0); }
-                  100% { transform: translateX(-50%); }
-                }
-                @media (prefers-reduced-motion: reduce) {
-                  .ticker-track { animation: none; }
-                }
-              `}</style>
-            </div>
-
-            <div className="mt-8">
-              <PromptBox vision={vision} />
-            </div>
-
-            {/* Near-term: Pending Filings Approval */}
-            {vision === "near-term" && (
-              <section className="mt-8">
-                <Card className="p-0 overflow-hidden">
-                  <div className="flex items-center justify-between border-b border-[#30363d] bg-[#0d1117]/50 px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#f0883e]/10">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M9 12l2 2 4-4" stroke="#f0883e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="#f0883e" strokeWidth="2"/>
-                        </svg>
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-[#f0f6fc]">Regulatory filings ready for your approval</h3>
-                        <p className="text-xs text-[#8b949e]">Prepared by Entities · Review and approve to submit</p>
-                      </div>
-                    </div>
-                    <span className="rounded-full border border-[#f0883e]/30 bg-[#f0883e]/10 px-2 py-0.5 text-xs font-medium text-[#f0883e]">
-                      {pendingFilings.length} pending
-                    </span>
-                  </div>
-                  <div className="divide-y divide-[#30363d]">
-                    {pendingFilings.map((filing) => (
-                      <div key={`${filing.entity}-${filing.filing}`} className="flex items-center justify-between px-5 py-3 hover:bg-[#21262d]/50">
-                        <div className="flex items-center gap-4">
-                          <div className="h-2 w-2 rounded-full bg-[#f0883e]" />
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-[#f0f6fc]">{filing.entity}</span>
-                              <span className="text-sm text-[#6e7681]">·</span>
-                              <span className="text-sm text-[#8b949e]">{filing.filing}</span>
-                            </div>
-                            <div className="mt-0.5 flex items-center gap-2 text-xs text-[#6e7681]">
-                              <span>{filing.jurisdiction}</span>
-                              <span>·</span>
-                              <span>Due {filing.dueDate}</span>
-                              <span>·</span>
-                              <span>Fee: {filing.fee}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button className="rounded-lg border border-[#30363d] bg-[#161b22] px-3 py-1.5 text-xs text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]">
-                            Review
-                          </button>
-                          <button className="rounded-lg border border-[#3fb950] bg-[#3fb950]/10 px-3 py-1.5 text-xs font-medium text-[#3fb950] hover:bg-[#3fb950]/20">
-                            Approve & Submit
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="border-t border-[#30363d] bg-[#0d1117]/30 px-5 py-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-[#6e7681]">Total filing fees: $395</span>
-                      <button className="text-xs font-medium text-[#58a6ff] hover:underline">
-                        Approve all filings →
-                      </button>
-                    </div>
-                  </div>
-                </Card>
-              </section>
-            )}
-
-            {/* Future: Cross-Diligent Risk Signals */}
-            {vision === "future" && (
-              <section className="mt-8">
-                <Card className="p-0 overflow-hidden border-[#a371f7]/20">
-                  <div className="flex items-center justify-between border-b border-[#a371f7]/20 bg-gradient-to-r from-[#a371f7]/5 to-transparent px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#a371f7]/10">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="#a371f7" strokeWidth="2"/>
-                          <path d="M12 16v-4M12 8h.01" stroke="#a371f7" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-[#f0f6fc]">Cross-Diligent risk signals awaiting your input</h3>
-                        <p className="text-xs text-[#8b949e]">Your legal perspective is needed across the enterprise</p>
-                      </div>
-                    </div>
-                    <span className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-2 py-0.5 text-xs font-medium text-[#a371f7]">
-                      {riskSignals.length} requests
-                    </span>
-                  </div>
-                  <div className="divide-y divide-[#30363d]">
-                    {riskSignals.map((signal) => (
-                      <div key={signal.title} className="px-5 py-4 hover:bg-[#a371f7]/5">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="rounded-full border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-2 py-0.5 text-[10px] font-medium text-[#58a6ff]">
-                                {signal.source}
-                              </span>
-                              <span className={cn(
-                                "rounded-full border px-2 py-0.5 text-[10px] font-medium",
-                                signal.impact === "High" 
-                                  ? "border-[#da3633]/30 bg-[#da3633]/10 text-[#da3633]"
-                                  : "border-[#f0883e]/30 bg-[#f0883e]/10 text-[#f0883e]"
-                              )}>
-                                {signal.impact} Impact
-                              </span>
-                            </div>
-                            <h4 className="mt-2 text-sm font-medium text-[#f0f6fc]">{signal.title}</h4>
-                            <p className="mt-1 text-sm text-[#8b949e]">{signal.detail}</p>
-                            <div className="mt-2 flex items-center gap-2 text-xs text-[#6e7681]">
-                              <span>Requested by {signal.requestedBy}</span>
-                              <span>·</span>
-                              <span>Due {signal.dueDate}</span>
-                            </div>
-                          </div>
-                          <button className="shrink-0 rounded-xl border border-[#a371f7] bg-[#a371f7]/10 px-3 py-2 text-sm font-medium text-[#a371f7] hover:bg-[#a371f7]/20">
-                            Contribute
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="border-t border-[#a371f7]/20 bg-gradient-to-r from-[#a371f7]/5 to-transparent px-5 py-3">
-                    <p className="text-xs text-[#8b949e]">
-                      <span className="text-[#a371f7]">AI Insight:</span> Your legal risk assessments will automatically propagate to Risk Manager, updating the enterprise risk register in real-time.
-                    </p>
-                  </div>
-                </Card>
-              </section>
-            )}
-
-            <section className="mt-10">
-              <SectionHeader 
-                title={vision === "future" 
-                  ? "Your AI workspace at a glance" 
-                  : "Pick up where you left off"
-                }
-                description={vision === "near-term" 
-                  ? "Continue working in your Diligent applications"
-                  : undefined
-                }
-              />
-              <div className="mt-5 grid gap-3 md:grid-cols-2">
-                {recentApps[vision].map((app) => (
-                  <a
-                    key={app.name}
-                    href="#"
-                    className={cn(
-                      "group block rounded-2xl border px-4 py-3 shadow-sm transition hover:-translate-y-[1px]",
-                      vision === "future"
-                        ? "border-[#a371f7]/20 bg-[#161b22] hover:border-[#a371f7]/40 hover:bg-[#a371f7]/5"
-                        : "border-[#30363d] bg-[#161b22] hover:border-[#58a6ff]/50 hover:bg-[#21262d]"
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-semibold text-[#f0f6fc]">{app.name}</h3>
-                          {"tag" in app && (
-                            <span className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-2 py-0.5 text-[10px] font-medium text-[#a371f7]">{app.tag}</span>
-                          )}
-                          <span className="rounded-full border border-[#30363d] bg-[#21262d] px-2 py-0.5 text-[11px] text-[#8b949e]">{app.lastUsed}</span>
-                        </div>
-                        <p className="mt-1 text-sm text-[#8b949e]">{app.description}</p>
-                      </div>
-                      <span className={cn(
-                        "text-xs uppercase tracking-[0.2em] opacity-0 transition group-hover:opacity-100",
-                        vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
-                      )}>
-                        {vision === "future" ? "Review" : "Open"}
-                      </span>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </section>
-
-            <section className="mt-12">
-              <SectionHeader 
-                title={vision === "future" 
-                  ? "AI-recommended actions awaiting your approval"
-                  : "Since everything's under control, get ahead of a few things"
-                } 
-              />
-              <div className="mt-6 grid gap-6 lg:grid-cols-3">
-                <div className="lg:col-span-2">
-                  <div className="space-y-3">
-                    {currentNextActions.map((action) => (
-                      <div
-                        key={action.title}
-                        className={cn(
-                          "rounded-2xl border px-5 py-4 shadow-sm transition-colors duration-300",
-                          vision === "future"
-                            ? "border-[#a371f7]/20 bg-[#161b22]"
-                            : "border-[#30363d] bg-[#161b22]"
-                        )}
-                      >
-                        <div className="flex items-start justify-between gap-6">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="text-base font-semibold text-[#f0f6fc]">{action.title}</h3>
-                              {"tag" in action && (
-                                <SoftTag variant="ai">{action.tag}</SoftTag>
-                              )}
-                            </div>
-                            <p className="mt-1 text-sm text-[#8b949e]">{action.detail}</p>
-                            <div className="mt-3 flex items-center gap-2 text-xs text-[#6e7681]">
-                              {"app" in action && (
-                                <span className="rounded-full border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-2 py-0.5 text-[11px] text-[#58a6ff]">
-                                  {action.app}
-                                </span>
-                              )}
-                              {vision === "near-term" && (
-                                <span className="text-[#6e7681]">Ready to complete</span>
-                              )}
-                            </div>
-                          </div>
-                          <button className={cn(
-                            "shrink-0 rounded-xl border px-3 py-2 text-sm",
-                            vision === "future"
-                              ? "border-[#a371f7] bg-[#a371f7]/10 text-[#a371f7] hover:bg-[#a371f7]/20"
-                              : "border-[#58a6ff] bg-[#58a6ff]/10 text-[#58a6ff] hover:bg-[#58a6ff]/20"
-                          )}>
-                            {vision === "future" ? "Approve" : "Open in app"}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <Card className="p-5">
-                    <p className={cn(
-                      "text-xs uppercase tracking-[0.2em]",
-                      vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
-                    )}>
-                      {vision === "future" ? "Coming Capabilities" : "What's New"}
-                    </p>
-                    <h3 className="mt-2 text-lg font-semibold text-[#f0f6fc]">
-                      {vision === "future" ? "On the AI Roadmap" : "Good to Know & Good to Go"}
-                    </h3>
-                    <p className="mt-2 text-sm text-[#8b949e]">
-                      {vision === "future"
-                        ? "Advanced AI capabilities in development for your legal workflow."
-                        : "Learn more about features and capabilities you already have today."
-                      }
-                    </p>
-                    <div className="mt-4 space-y-3">
-                      {currentWhatsNew.map((item) => (
-                        <a
-                          key={item.title}
-                          href={item.href}
-                          className={cn(
-                            "block rounded-xl border px-4 py-3 transition",
-                            vision === "future"
-                              ? "border-[#a371f7]/20 bg-[#0d1117] hover:border-[#a371f7]/40 hover:bg-[#a371f7]/5"
-                              : "border-[#30363d] bg-[#0d1117] hover:border-[#58a6ff]/50 hover:bg-[#21262d]"
-                          )}
-                        >
-                          <h4 className="text-sm font-semibold text-[#f0f6fc]">{item.title}</h4>
-                          <p className="mt-1 text-sm text-[#8b949e]">{item.detail}</p>
-                          <p className={cn(
-                            "mt-3 text-xs uppercase tracking-[0.2em]",
-                            vision === "future" ? "text-[#a371f7]" : "text-[#58a6ff]"
-                          )}>
-                            {vision === "future" ? "Learn More" : "Open"}
-                          </p>
-                        </a>
-                      ))}
-                    </div>
-                  </Card>
-                </div>
-              </div>
-            </section>
-
-            <footer className="mt-14 border-t border-[#30363d] bg-[#0d1117] px-5 py-5">
-              <div className="flex items-center justify-between gap-6">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#6e7681]">System log</p>
-                  <p className="mt-1 text-sm text-[#8b949e]">
-                    {vision === "future" 
-                      ? "AI agent activity (last 24 hours)"
-                      : "Recent system activity (last 24 hours)"
-                    }
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 grid gap-2">
-                {currentActivityLog.map((entry) => (
-                  <div key={entry} className="flex items-start gap-3 text-sm text-[#8b949e]">
-                    <span className={cn(
-                      "mt-2 h-1.5 w-1.5 shrink-0 rounded-full",
-                      vision === "future" ? "bg-[#a371f7]" : "bg-[#3fb950]"
-                    )} />
-                    <span>{entry}</span>
-                  </div>
-                ))}
-              </div>
-            </footer>
-          </div>
+      <PrototypeNav 
+        vision={vision} 
+        onVisionChange={setVision} 
+        device={device}
+        onDeviceChange={setDevice}
+      />
+      
+      {device === "desktop" ? (
+        <div className="mx-auto w-full max-w-6xl px-6 py-6">
+          <DashboardContent {...dashboardProps} isInDeviceFrame={false} />
         </div>
-      </div>
+      ) : device === "ipad" ? (
+        <div className="flex justify-center overflow-x-auto bg-[#0d1117] px-4">
+          <IPadFrame>
+            <DashboardContent {...dashboardProps} isInDeviceFrame={true} />
+          </IPadFrame>
+        </div>
+      ) : (
+        <div className="flex justify-center overflow-x-auto bg-[#0d1117] px-4">
+          <IPhoneFrame>
+            <DashboardContent {...dashboardProps} isInDeviceFrame={true} />
+          </IPhoneFrame>
+        </div>
+      )}
     </div>
   );
 }
