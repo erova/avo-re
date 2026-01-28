@@ -214,6 +214,12 @@ function PrototypeNav() {
           >
             Steady State
           </a>
+          <a
+            href="/now/agentic-hero/dark/general-counsel"
+            className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-3 py-1 text-xs font-medium text-[#a371f7] hover:bg-[#a371f7]/20"
+          >
+            General Counsel
+          </a>
         </nav>
       </div>
     </div>
