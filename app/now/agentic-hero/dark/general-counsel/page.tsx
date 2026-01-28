@@ -227,20 +227,79 @@ const whatsNew = {
   ],
 };
 
+// Near-term: Pending regulatory filings awaiting approval
+const pendingFilings = [
+  {
+    entity: "Acme Holdings, Inc.",
+    filing: "Delaware Annual Report",
+    jurisdiction: "Delaware",
+    dueDate: "Mar 1, 2025",
+    status: "Ready to file",
+    fee: "$225",
+    preparedBy: "Entities",
+  },
+  {
+    entity: "Acme West LLC",
+    filing: "Statement of Information",
+    jurisdiction: "California",
+    dueDate: "Feb 15, 2025",
+    status: "Ready to file",
+    fee: "$20",
+    preparedBy: "Entities",
+  },
+  {
+    entity: "Acme Services Corp.",
+    filing: "Annual Report",
+    jurisdiction: "Nevada",
+    dueDate: "Feb 28, 2025",
+    status: "Ready to file",
+    fee: "$150",
+    preparedBy: "Entities",
+  },
+];
+
+// Future: Cross-Diligent risk signals requesting GC input
+const riskSignals = [
+  {
+    source: "Risk Manager",
+    title: "Litigation exposure assessment needed",
+    detail: "Q1 risk register update requires your input on active matter reserves and potential new claims.",
+    impact: "High",
+    requestedBy: "Chief Risk Officer",
+    dueDate: "Jan 24",
+  },
+  {
+    source: "Contract Intelligence",
+    title: "Vendor concentration risk identified",
+    detail: "3 critical vendors account for 40% of spend. Legal review needed for contingency planning.",
+    impact: "Medium",
+    requestedBy: "Procurement",
+    dueDate: "Jan 28",
+  },
+  {
+    source: "Regulatory Watch",
+    title: "SEC rule impact on disclosure obligations",
+    detail: "Pending climate disclosure rule may affect 10-K filings. Legal interpretation requested.",
+    impact: "High",
+    requestedBy: "CFO",
+    dueDate: "Feb 1",
+  },
+];
+
 const activityLog = {
   "near-term": [
     "Boards: Q1 board book updated—3 new documents added by CFO.",
     "Entities: Annual report reminder sent for Delaware subsidiaries (due Feb 28).",
+    "Entities: 3 filings prepared and ready for your approval.",
     "Policy Manager: Code of Conduct attestation at 94%—6 employees pending.",
     "AI Reporting: Weekly governance digest generated and emailed to you.",
-    "Entities: Registered agent confirmation received for Nevada entity.",
   ],
   "future": [
+    "Risk Manager → Legal: Litigation exposure input requested for Q1 risk register.",
     "Matter Monitor: Predictive model updated—Smith v. Acme settlement probability now 73%.",
-    "Contract Intelligence: Auto-drafted counter-proposal for vendor renewal (awaiting approval).",
-    "Regulatory Watch: Proactive impact analysis complete for pending SEC rule.",
-    "Corporate Governance: AI-generated board presentation ready for review.",
-    "Legal Hold Manager: Predictive hold trigger identified for emerging product issue.",
+    "Contract Intelligence → Risk Manager: Vendor concentration flagged for enterprise risk review.",
+    "Your risk input auto-synced to enterprise risk register (3 items updated).",
+    "Regulatory Watch: SEC rule impact analysis shared with CFO and Compliance.",
   ],
 };
 
@@ -714,6 +773,133 @@ export default function Page() {
             <div className="mt-8">
               <PromptBox vision={vision} />
             </div>
+
+            {/* Near-term: Pending Filings Approval */}
+            {vision === "near-term" && (
+              <section className="mt-8">
+                <Card className="p-0 overflow-hidden">
+                  <div className="flex items-center justify-between border-b border-[#30363d] bg-[#0d1117]/50 px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#f0883e]/10">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9 12l2 2 4-4" stroke="#f0883e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="#f0883e" strokeWidth="2"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-[#f0f6fc]">Regulatory filings ready for your approval</h3>
+                        <p className="text-xs text-[#8b949e]">Prepared by Entities · Review and approve to submit</p>
+                      </div>
+                    </div>
+                    <span className="rounded-full border border-[#f0883e]/30 bg-[#f0883e]/10 px-2 py-0.5 text-xs font-medium text-[#f0883e]">
+                      {pendingFilings.length} pending
+                    </span>
+                  </div>
+                  <div className="divide-y divide-[#30363d]">
+                    {pendingFilings.map((filing) => (
+                      <div key={`${filing.entity}-${filing.filing}`} className="flex items-center justify-between px-5 py-3 hover:bg-[#21262d]/50">
+                        <div className="flex items-center gap-4">
+                          <div className="h-2 w-2 rounded-full bg-[#f0883e]" />
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-[#f0f6fc]">{filing.entity}</span>
+                              <span className="text-sm text-[#6e7681]">·</span>
+                              <span className="text-sm text-[#8b949e]">{filing.filing}</span>
+                            </div>
+                            <div className="mt-0.5 flex items-center gap-2 text-xs text-[#6e7681]">
+                              <span>{filing.jurisdiction}</span>
+                              <span>·</span>
+                              <span>Due {filing.dueDate}</span>
+                              <span>·</span>
+                              <span>Fee: {filing.fee}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button className="rounded-lg border border-[#30363d] bg-[#161b22] px-3 py-1.5 text-xs text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]">
+                            Review
+                          </button>
+                          <button className="rounded-lg border border-[#3fb950] bg-[#3fb950]/10 px-3 py-1.5 text-xs font-medium text-[#3fb950] hover:bg-[#3fb950]/20">
+                            Approve & Submit
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-[#30363d] bg-[#0d1117]/30 px-5 py-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-[#6e7681]">Total filing fees: $395</span>
+                      <button className="text-xs font-medium text-[#58a6ff] hover:underline">
+                        Approve all filings →
+                      </button>
+                    </div>
+                  </div>
+                </Card>
+              </section>
+            )}
+
+            {/* Future: Cross-Diligent Risk Signals */}
+            {vision === "future" && (
+              <section className="mt-8">
+                <Card className="p-0 overflow-hidden border-[#a371f7]/20">
+                  <div className="flex items-center justify-between border-b border-[#a371f7]/20 bg-gradient-to-r from-[#a371f7]/5 to-transparent px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#a371f7]/10">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="#a371f7" strokeWidth="2"/>
+                          <path d="M12 16v-4M12 8h.01" stroke="#a371f7" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-[#f0f6fc]">Cross-Diligent risk signals awaiting your input</h3>
+                        <p className="text-xs text-[#8b949e]">Your legal perspective is needed across the enterprise</p>
+                      </div>
+                    </div>
+                    <span className="rounded-full border border-[#a371f7]/40 bg-[#a371f7]/10 px-2 py-0.5 text-xs font-medium text-[#a371f7]">
+                      {riskSignals.length} requests
+                    </span>
+                  </div>
+                  <div className="divide-y divide-[#30363d]">
+                    {riskSignals.map((signal) => (
+                      <div key={signal.title} className="px-5 py-4 hover:bg-[#a371f7]/5">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="rounded-full border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-2 py-0.5 text-[10px] font-medium text-[#58a6ff]">
+                                {signal.source}
+                              </span>
+                              <span className={cn(
+                                "rounded-full border px-2 py-0.5 text-[10px] font-medium",
+                                signal.impact === "High" 
+                                  ? "border-[#da3633]/30 bg-[#da3633]/10 text-[#da3633]"
+                                  : "border-[#f0883e]/30 bg-[#f0883e]/10 text-[#f0883e]"
+                              )}>
+                                {signal.impact} Impact
+                              </span>
+                            </div>
+                            <h4 className="mt-2 text-sm font-medium text-[#f0f6fc]">{signal.title}</h4>
+                            <p className="mt-1 text-sm text-[#8b949e]">{signal.detail}</p>
+                            <div className="mt-2 flex items-center gap-2 text-xs text-[#6e7681]">
+                              <span>Requested by {signal.requestedBy}</span>
+                              <span>·</span>
+                              <span>Due {signal.dueDate}</span>
+                            </div>
+                          </div>
+                          <button className="shrink-0 rounded-xl border border-[#a371f7] bg-[#a371f7]/10 px-3 py-2 text-sm font-medium text-[#a371f7] hover:bg-[#a371f7]/20">
+                            Contribute
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-[#a371f7]/20 bg-gradient-to-r from-[#a371f7]/5 to-transparent px-5 py-3">
+                    <p className="text-xs text-[#8b949e]">
+                      <span className="text-[#a371f7]">AI Insight:</span> Your legal risk assessments will automatically propagate to Risk Manager, updating the enterprise risk register in real-time.
+                    </p>
+                  </div>
+                </Card>
+              </section>
+            )}
 
             <section className="mt-10">
               <SectionHeader 
