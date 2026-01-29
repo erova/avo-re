@@ -14,7 +14,7 @@ import {
 // Types
 // ============================================================================
 
-type ViewMode = "3x3" | "5x5" | "compare" | "gaussian" | "cost" | "trend" | "bubble";
+type ViewMode = "3x3" | "5x5" | "compare" | "gaussian" | "cost" | "trend" | "bubble" | "materiality";
 type RiskLevel5 = "Very Low" | "Low" | "Medium" | "High" | "Very High";
 
 type ClusterContext = {
@@ -106,6 +106,18 @@ const TREND_DATA = [
   { month: "Nov 25", total: 86, high: 15, medium: 45, low: 26, opened: 6, closed: 4 },
   { month: "Dec 25", total: 82, high: 14, medium: 43, low: 25, opened: 3, closed: 7 },
   { month: "Jan 26", total: 82, high: 14, medium: 47, low: 21, opened: 5, closed: 5 },
+];
+
+// Materiality Distribution data - by department, comparing last quarter vs this quarter
+const MATERIALITY_DATA = [
+  { dept: "CEO Office", lastQtr: { red: 1, yellow: 1, green: 1 }, thisQtr: { red: 1, yellow: 1, green: 2 } },
+  { dept: "C&D", lastQtr: { red: 2, yellow: 3, green: 6 }, thisQtr: { red: 2, yellow: 4, green: 6 } },
+  { dept: "Investments", lastQtr: { red: 2, yellow: 3, green: 6 }, thisQtr: { red: 2, yellow: 3, green: 4 } },
+  { dept: "COO", lastQtr: { red: 2, yellow: 3, green: 1 }, thisQtr: { red: 3, yellow: 3, green: 5 } },
+  { dept: "International", lastQtr: { red: 5, yellow: 7, green: 8 }, thisQtr: { red: 8, yellow: 5, green: 2 } },
+  { dept: "Finance", lastQtr: { red: 2, yellow: 5, green: 9 }, thisQtr: { red: 2, yellow: 2, green: 5 } },
+  { dept: "HR", lastQtr: { red: 1, yellow: 3, green: 4 }, thisQtr: { red: 1, yellow: 2, green: 3 } },
+  { dept: "Legal", lastQtr: { red: 2, yellow: 1, green: 0 }, thisQtr: { red: 1, yellow: 1, green: 1 } },
 ];
 
 // Bubble chart data - individual risks with likelihood, impact, and size (cost/age)
@@ -1114,6 +1126,245 @@ function BubbleChart({
 }
 
 // ============================================================================
+// Materiality Distribution Chart
+// ============================================================================
+
+function MaterialityChart({
+  onBarClick,
+  onBarHover,
+  onBarLeave,
+}: {
+  onBarClick?: (dept: string, period: "lastQtr" | "thisQtr") => void;
+  onBarHover?: (ctx: ClusterContext | null, rect: DOMRect | null) => void;
+  onBarLeave?: () => void;
+}) {
+  const maxValue = Math.max(
+    ...MATERIALITY_DATA.flatMap(d => [
+      d.lastQtr.red + d.lastQtr.yellow + d.lastQtr.green,
+      d.thisQtr.red + d.thisQtr.yellow + d.thisQtr.green,
+    ])
+  );
+  const chartHeight = 240;
+  const barWidth = 28;
+  const groupGap = 16;
+  const barGap = 4;
+
+  const getBarHeight = (value: number) => (value / maxValue) * chartHeight;
+
+  return (
+    <div style={{ padding: "8px 0" }}>
+      {/* Y-axis labels */}
+      <div style={{ display: "flex", gap: 12 }}>
+        <div style={{ width: 24, display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-end", height: chartHeight, paddingBottom: 4 }}>
+          {[25, 20, 15, 10, 5, 0].map(v => (
+            <span key={v} style={{ fontSize: 10, color: "#6B7280" }}>{v}</span>
+          ))}
+        </div>
+
+        {/* Chart area */}
+        <div style={{ flex: 1, position: "relative" }}>
+          {/* Grid lines */}
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: chartHeight }}>
+            {[0, 1, 2, 3, 4, 5].map(i => (
+              <div 
+                key={i} 
+                style={{ 
+                  position: "absolute", 
+                  top: `${(i / 5) * 100}%`, 
+                  left: 0, 
+                  right: 0, 
+                  borderTop: "1px solid #E5E7EB" 
+                }} 
+              />
+            ))}
+          </div>
+
+          {/* Bars */}
+          <div style={{ display: "flex", justifyContent: "space-around", height: chartHeight, alignItems: "flex-end", position: "relative" }}>
+            {MATERIALITY_DATA.map((dept, idx) => {
+              const lastTotal = dept.lastQtr.red + dept.lastQtr.yellow + dept.lastQtr.green;
+              const thisTotal = dept.thisQtr.red + dept.thisQtr.yellow + dept.thisQtr.green;
+
+              return (
+                <div key={dept.dept} style={{ display: "flex", gap: barGap, alignItems: "flex-end" }}>
+                  {/* Last Quarter Bar */}
+                  <div
+                    style={{ 
+                      width: barWidth, 
+                      display: "flex", 
+                      flexDirection: "column",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => onBarClick?.(dept.dept, "lastQtr")}
+                    onMouseEnter={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      onBarHover?.({
+                        likelihood: dept.dept,
+                        impact: "Last Qtr",
+                        count: lastTotal,
+                        delta: thisTotal - lastTotal,
+                        signals: [`Red: ${dept.lastQtr.red}`, `Yellow: ${dept.lastQtr.yellow}`, `Green: ${dept.lastQtr.green}`],
+                        title: `${dept.dept} - Last Quarter`,
+                        subtitle: `${lastTotal} total residual risks`,
+                      }, rect);
+                    }}
+                    onMouseLeave={() => onBarLeave?.()}
+                  >
+                    {/* Green segment */}
+                    <div style={{ 
+                      width: "100%", 
+                      height: getBarHeight(dept.lastQtr.green), 
+                      background: "#22C55E",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                      {dept.lastQtr.green > 0 && (
+                        <span style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dept.lastQtr.green}</span>
+                      )}
+                    </div>
+                    {/* Yellow segment */}
+                    <div style={{ 
+                      width: "100%", 
+                      height: getBarHeight(dept.lastQtr.yellow), 
+                      background: "#FBBF24",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                      {dept.lastQtr.yellow > 0 && (
+                        <span style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dept.lastQtr.yellow}</span>
+                      )}
+                    </div>
+                    {/* Red segment */}
+                    <div style={{ 
+                      width: "100%", 
+                      height: getBarHeight(dept.lastQtr.red), 
+                      background: "#DC2626",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                      {dept.lastQtr.red > 0 && (
+                        <span style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dept.lastQtr.red}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* This Quarter Bar */}
+                  <div
+                    style={{ 
+                      width: barWidth, 
+                      display: "flex", 
+                      flexDirection: "column",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => onBarClick?.(dept.dept, "thisQtr")}
+                    onMouseEnter={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      onBarHover?.({
+                        likelihood: dept.dept,
+                        impact: "This Qtr",
+                        count: thisTotal,
+                        delta: thisTotal - lastTotal,
+                        signals: [`Red: ${dept.thisQtr.red}`, `Yellow: ${dept.thisQtr.yellow}`, `Green: ${dept.thisQtr.green}`],
+                        title: `${dept.dept} - This Quarter`,
+                        subtitle: `${thisTotal} total residual risks`,
+                      }, rect);
+                    }}
+                    onMouseLeave={() => onBarLeave?.()}
+                  >
+                    {/* Green segment */}
+                    <div style={{ 
+                      width: "100%", 
+                      height: getBarHeight(dept.thisQtr.green), 
+                      background: "#22C55E",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                      {dept.thisQtr.green > 0 && (
+                        <span style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dept.thisQtr.green}</span>
+                      )}
+                    </div>
+                    {/* Yellow segment */}
+                    <div style={{ 
+                      width: "100%", 
+                      height: getBarHeight(dept.thisQtr.yellow), 
+                      background: "#FBBF24",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                      {dept.thisQtr.yellow > 0 && (
+                        <span style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dept.thisQtr.yellow}</span>
+                      )}
+                    </div>
+                    {/* Red segment */}
+                    <div style={{ 
+                      width: "100%", 
+                      height: getBarHeight(dept.thisQtr.red), 
+                      background: "#DC2626",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                      {dept.thisQtr.red > 0 && (
+                        <span style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dept.thisQtr.red}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* X-axis labels */}
+          <div style={{ display: "flex", justifyContent: "space-around", marginTop: 8 }}>
+            {MATERIALITY_DATA.map((dept) => (
+              <div key={dept.dept} style={{ textAlign: "center", width: barWidth * 2 + barGap }}>
+                <div style={{ fontSize: 8, color: "#9CA3AF", marginBottom: 2 }}>
+                  <span>Last Qtr</span>
+                  <span style={{ margin: "0 4px" }}></span>
+                  <span>This Qtr</span>
+                </div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: "#374151" }}>{dept.dept}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Legend */}
+      <div style={{ marginTop: 16, display: "flex", justifyContent: "center", gap: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 14, height: 14, background: "#DC2626", borderRadius: 2 }} />
+          <span style={{ fontSize: 11, color: "#374151" }}>High Risk</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 14, height: 14, background: "#FBBF24", borderRadius: 2 }} />
+          <span style={{ fontSize: 11, color: "#374151" }}>Medium Risk</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 14, height: 14, background: "#22C55E", borderRadius: 2 }} />
+          <span style={{ fontSize: 11, color: "#374151" }}>Low Risk</span>
+        </div>
+      </div>
+
+      {/* Summary callout */}
+      <div style={{ marginTop: 16, padding: 12, borderRadius: 10, background: "#FEF3C7", border: "1px solid #FCD34D" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#92400E", marginBottom: 6 }}>Key Observations</div>
+        <div style={{ display: "grid", gap: 4, fontSize: 11, color: "#78350F" }}>
+          <div>• <strong>International</strong> shows highest red risk increase (+3 this quarter)</div>
+          <div>• <strong>Finance</strong> improved significantly (green risks down but overall profile better)</div>
+          <div>• <strong>COO</strong> added more low-risk items while maintaining high-risk count</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // Popover Panel
 // ============================================================================
 
@@ -1364,6 +1615,7 @@ export default function RiskManagerExperimentsPage() {
     { id: "3x3" as ViewMode, label: "3×3 Heatmap" },
     { id: "5x5" as ViewMode, label: "5×5 Heatmap" },
     { id: "compare" as ViewMode, label: "Year Compare" },
+    { id: "materiality" as ViewMode, label: "Materiality" },
     { id: "gaussian" as ViewMode, label: "Gaussian" },
     { id: "cost" as ViewMode, label: "Cost × Notion" },
     { id: "trend" as ViewMode, label: "Trend Line" },
@@ -1435,6 +1687,7 @@ export default function RiskManagerExperimentsPage() {
                     {viewMode === "3x3" && "Risk Heatmap (3×3)"}
                     {viewMode === "5x5" && "Risk Heatmap (5×5)"}
                     {viewMode === "compare" && "Year-over-Year Comparison"}
+                    {viewMode === "materiality" && "Materiality Distribution of Residual Risk"}
                     {viewMode === "gaussian" && "Risk Score Distribution"}
                     {viewMode === "cost" && "Cost × Notion Matrix"}
                     {viewMode === "trend" && "Risk Trend Over Time"}
@@ -1511,6 +1764,17 @@ export default function RiskManagerExperimentsPage() {
                       />
                     </div>
                   </div>
+                )}
+
+                {viewMode === "materiality" && (
+                  <MaterialityChart
+                    onBarClick={(dept, period) => {
+                      // Could filter by department
+                      setTableVersion((v) => v + 1);
+                    }}
+                    onBarHover={handleCellHover}
+                    onBarLeave={() => {}}
+                  />
                 )}
 
                 {viewMode === "gaussian" && (

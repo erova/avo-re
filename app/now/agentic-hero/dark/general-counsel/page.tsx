@@ -668,6 +668,95 @@ function PromptBox({ vision }: { vision: Vision }) {
   );
 }
 
+// Mobile-optimized prompt button for iPhone
+function MobilePromptButton({ vision }: { vision: Vision }) {
+  return (
+    <button className={cn(
+      "w-full rounded-2xl border p-4 text-left transition",
+      vision === "future"
+        ? "border-[#a371f7]/30 bg-[#a371f7]/5 hover:bg-[#a371f7]/10"
+        : "border-[#30363d] bg-[#21262d] hover:bg-[#30363d]"
+    )}>
+      <div className="flex items-center gap-3">
+        <div className={cn(
+          "flex h-10 w-10 items-center justify-center rounded-xl",
+          vision === "future" ? "bg-[#a371f7]/20" : "bg-[#58a6ff]/20"
+        )}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={vision === "future" ? "#a371f7" : "#58a6ff"} strokeWidth="2">
+            <path d="M12 2a10 10 0 1 0 10 10H12V2Z" />
+            <path d="M12 12 2.1 9.1" />
+            <path d="m12 12 3.9 7.8" />
+            <path d="m12 12 7.8-3.9" />
+          </svg>
+        </div>
+        <div className="flex-1">
+          <p className={cn(
+            "text-sm font-semibold",
+            vision === "future" ? "text-[#a371f7]" : "text-[#f0f6fc]"
+          )}>
+            {vision === "future" ? "Direct AI Workforce" : "Ask Diligent AI"}
+          </p>
+          <p className="text-xs text-[#8b949e]">Tap to start</p>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6e7681" strokeWidth="2">
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </div>
+    </button>
+  );
+}
+
+// Compact filings card for iPhone
+function MobileFilingsCard() {
+  return (
+    <div className="rounded-2xl border border-[#f0883e]/30 bg-[#f0883e]/5 p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0883e]/20">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f0883e" strokeWidth="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <path d="M14 2v6h6" />
+              <path d="M9 15l2 2 4-4" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[#f0f6fc]">3 filings ready</p>
+            <p className="text-xs text-[#8b949e]">$395 total fees</p>
+          </div>
+        </div>
+        <button className="rounded-xl border border-[#3fb950] bg-[#3fb950]/10 px-3 py-2 text-xs font-medium text-[#3fb950]">
+          Review
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Compact risk signals card for iPhone
+function MobileRiskSignalsCard() {
+  return (
+    <div className="rounded-2xl border border-[#a371f7]/30 bg-[#a371f7]/5 p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#a371f7]/20">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a371f7" strokeWidth="2">
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+              <path d="M12 16v-4M12 8h.01" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[#f0f6fc]">3 risk signals</p>
+            <p className="text-xs text-[#8b949e]">Your input needed</p>
+          </div>
+        </div>
+        <button className="rounded-xl border border-[#a371f7] bg-[#a371f7]/10 px-3 py-2 text-xs font-medium text-[#a371f7]">
+          Review
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // Dashboard content component to allow reuse in device frames
 function DashboardContent({ 
   vision, 
@@ -683,7 +772,7 @@ function DashboardContent({
   popoverHovered,
   setPopoverHovered,
   tickerRef,
-  isInDeviceFrame = false,
+  device = "desktop",
 }: {
   vision: Vision;
   activityOpen: boolean;
@@ -698,17 +787,20 @@ function DashboardContent({
   popoverHovered: boolean;
   setPopoverHovered: (v: boolean) => void;
   tickerRef: React.RefObject<HTMLDivElement | null>;
-  isInDeviceFrame?: boolean;
+  device?: DeviceType;
 }) {
+  const isIphone = device === "iphone";
+  const isIpad = device === "ipad";
+  const isMobile = isIphone || isIpad;
   return (
     <div className={cn(
       "overflow-hidden rounded-3xl border shadow-sm transition-colors duration-300",
       vision === "future" 
         ? "border-[#a371f7]/30 bg-[#161b22]" 
         : "border-[#30363d] bg-[#161b22]",
-      isInDeviceFrame && "rounded-none border-0"
+      isMobile && "rounded-none border-0"
     )}>
-      <div className={cn("px-6", isInDeviceFrame && "px-4")}>
+      <div className={cn("px-6", isIphone && "px-4", isIpad && "px-5")}>
         <TopNav
           activityOpen={activityOpen}
           onToggleActivity={() => setActivityOpen(!activityOpen)}
@@ -752,11 +844,13 @@ function DashboardContent({
           vision === "future"
             ? "border-[#a371f7]/30 bg-gradient-to-br from-[#0d1117] to-[#a371f7]/5"
             : "border-[#30363d] bg-[#0d1117]/80",
-          isInDeviceFrame && "p-6 rounded-2xl"
+          isIphone && "p-5 rounded-2xl",
+          isIpad && "p-6 rounded-2xl"
         )}>
           <h1 className={cn(
             "text-center text-4xl font-semibold tracking-tight text-[#f0f6fc]",
-            isInDeviceFrame && "text-2xl"
+            isIphone && "text-xl",
+            isIpad && "text-2xl"
           )}>
             {vision === "near-term" 
               ? "Your legal portfolio is in good shape."
@@ -770,70 +864,84 @@ function DashboardContent({
             }
           </p>
           {vision === "future" && (
-            <div className={cn("mt-6 flex justify-center gap-4", isInDeviceFrame && "flex-wrap gap-2")}>
-              <div className="rounded-xl border border-[#a371f7]/30 bg-[#a371f7]/10 px-4 py-2 text-center">
-                <p className="text-2xl font-semibold text-[#a371f7]">3</p>
-                <p className="text-xs text-[#8b949e]">AI Actions Pending</p>
+            <div className={cn(
+              "mt-6 flex justify-center gap-4",
+              isIphone && "mt-4 flex-wrap gap-2",
+              isIpad && "gap-3"
+            )}>
+              <div className={cn(
+                "rounded-xl border border-[#a371f7]/30 bg-[#a371f7]/10 px-4 py-2 text-center",
+                isIphone && "flex-1 min-w-[90px] px-2"
+              )}>
+                <p className={cn("text-2xl font-semibold text-[#a371f7]", isIphone && "text-xl")}>3</p>
+                <p className={cn("text-xs text-[#8b949e]", isIphone && "text-[10px]")}>AI Actions</p>
               </div>
-              <div className="rounded-xl border border-[#3fb950]/30 bg-[#3fb950]/10 px-4 py-2 text-center">
-                <p className="text-2xl font-semibold text-[#3fb950]">73%</p>
-                <p className="text-xs text-[#8b949e]">Settlement Confidence</p>
+              <div className={cn(
+                "rounded-xl border border-[#3fb950]/30 bg-[#3fb950]/10 px-4 py-2 text-center",
+                isIphone && "flex-1 min-w-[90px] px-2"
+              )}>
+                <p className={cn("text-2xl font-semibold text-[#3fb950]", isIphone && "text-xl")}>73%</p>
+                <p className={cn("text-xs text-[#8b949e]", isIphone && "text-[10px]")}>Confidence</p>
               </div>
-              <div className="rounded-xl border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-4 py-2 text-center">
-                <p className="text-2xl font-semibold text-[#58a6ff]">$240K</p>
-                <p className="text-xs text-[#8b949e]">Projected Savings</p>
+              <div className={cn(
+                "rounded-xl border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-4 py-2 text-center",
+                isIphone && "flex-1 min-w-[90px] px-2"
+              )}>
+                <p className={cn("text-2xl font-semibold text-[#58a6ff]", isIphone && "text-xl")}>$240K</p>
+                <p className={cn("text-xs text-[#8b949e]", isIphone && "text-[10px]")}>Savings</p>
               </div>
             </div>
           )}
         </header>
 
-        {/* Agent ticker */}
-        <div
-          className={cn(
-            "ticker-strip relative mt-4 rounded-2xl border px-4 py-2 transition-colors duration-300",
-            vision === "future"
-              ? "border-[#a371f7]/30 bg-[#a371f7]/5"
-              : "border-[#30363d] bg-[#21262d]"
-          )}
-          ref={tickerRef}
-          onMouseLeave={() => {
-            if (!popoverHovered) {
-              setHoveredAgent(null);
-            }
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <span className={cn(
-              "shrink-0 text-xs font-medium uppercase tracking-[0.2em]",
-              vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
-            )}>
-              {vision === "future" ? "AI Legal Agents" : "Legal Monitoring Agents"}
-            </span>
-            <div className="relative flex-1 overflow-hidden">
-              <div className="ticker-track flex w-max items-center gap-6">
-                {[...agents, ...agents].map((agent, idx) => (
-                  <div
-                    key={`${agent.name}-${idx}`}
-                    className="whitespace-nowrap text-sm text-[#8b949e]"
-                    onMouseEnter={(event) => {
-                      const bounds = tickerRef.current?.getBoundingClientRect();
-                      if (!bounds) return;
-                      setHoveredAgent(agent);
-                      setPopoverPos({
-                        x: event.clientX - bounds.left,
-                        y: event.clientY - bounds.top,
-                      });
-                    }}
-                  >
-                    <span className="font-medium text-[#f0f6fc]">{agent.name}</span>
-                    <span className="mx-2 text-[#6e7681]">·</span>
-                    <span className="text-[#6e7681]">Last {agent.lastRun}, next {agent.nextRun}</span>
-                  </div>
-                ))}
+        {/* Agent ticker - hidden on iPhone */}
+        {!isIphone && (
+          <div
+            className={cn(
+              "ticker-strip relative mt-4 rounded-2xl border px-4 py-2 transition-colors duration-300",
+              vision === "future"
+                ? "border-[#a371f7]/30 bg-[#a371f7]/5"
+                : "border-[#30363d] bg-[#21262d]"
+            )}
+            ref={tickerRef}
+            onMouseLeave={() => {
+              if (!popoverHovered) {
+                setHoveredAgent(null);
+              }
+            }}
+          >
+            <div className="flex items-center gap-3">
+              <span className={cn(
+                "shrink-0 text-xs font-medium uppercase tracking-[0.2em]",
+                vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
+              )}>
+                {vision === "future" ? "AI Legal Agents" : "Legal Monitoring Agents"}
+              </span>
+              <div className="relative flex-1 overflow-hidden">
+                <div className="ticker-track flex w-max items-center gap-6">
+                  {[...agents, ...agents].map((agent, idx) => (
+                    <div
+                      key={`${agent.name}-${idx}`}
+                      className="whitespace-nowrap text-sm text-[#8b949e]"
+                      onMouseEnter={(event) => {
+                        const bounds = tickerRef.current?.getBoundingClientRect();
+                        if (!bounds) return;
+                        setHoveredAgent(agent);
+                        setPopoverPos({
+                          x: event.clientX - bounds.left,
+                          y: event.clientY - bounds.top,
+                        });
+                      }}
+                    >
+                      <span className="font-medium text-[#f0f6fc]">{agent.name}</span>
+                      <span className="mx-2 text-[#6e7681]">·</span>
+                      <span className="text-[#6e7681]">Last {agent.lastRun}, next {agent.nextRun}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-          {hoveredAgent && !isInDeviceFrame ? (
+            {hoveredAgent && !isMobile ? (
             <div
               className={cn(
                 "pointer-events-auto absolute z-20 w-80 rounded-2xl border p-4 text-left text-sm shadow-lg transition-colors duration-300",
@@ -913,15 +1021,21 @@ function DashboardContent({
             @media (prefers-reduced-motion: reduce) {
               .ticker-track { animation: none; }
             }
-          `}</style>
-        </div>
+            `}</style>
+          </div>
+        )}
 
+        {/* Prompt box - full on desktop/iPad, compact button on iPhone */}
         <div className="mt-8">
-          <PromptBox vision={vision} />
+          {isIphone ? (
+            <MobilePromptButton vision={vision} />
+          ) : (
+            <PromptBox vision={vision} />
+          )}
         </div>
 
-        {/* Near-term: Pending Filings Approval */}
-        {vision === "near-term" && (
+        {/* Near-term: Pending Filings Approval - compact on iPhone */}
+        {vision === "near-term" && !isIphone && (
           <section className="mt-8">
             <Card className="p-0 overflow-hidden">
               <div className="flex items-center justify-between border-b border-[#30363d] bg-[#0d1117]/50 px-5 py-4">
@@ -945,7 +1059,7 @@ function DashboardContent({
                 {pendingFilings.map((filing) => (
                   <div key={`${filing.entity}-${filing.filing}`} className={cn(
                     "flex items-center justify-between px-5 py-3 hover:bg-[#21262d]/50",
-                    isInDeviceFrame && "flex-col items-start gap-3"
+                    isIpad && "flex-col items-start gap-3"
                   )}>
                     <div className="flex items-center gap-4">
                       <div className="h-2 w-2 rounded-full bg-[#f0883e]" />
@@ -986,9 +1100,16 @@ function DashboardContent({
             </Card>
           </section>
         )}
+        
+        {/* Near-term: Compact filings for iPhone */}
+        {vision === "near-term" && isIphone && (
+          <section className="mt-6">
+            <MobileFilingsCard />
+          </section>
+        )}
 
-        {/* Future: Cross-Diligent Risk Signals */}
-        {vision === "future" && (
+        {/* Future: Cross-Diligent Risk Signals - full on desktop/iPad */}
+        {vision === "future" && !isIphone && (
           <section className="mt-8">
             <Card className="p-0 overflow-hidden border-[#a371f7]/20">
               <div className="flex items-center justify-between border-b border-[#a371f7]/20 bg-gradient-to-r from-[#a371f7]/5 to-transparent px-5 py-4">
@@ -1013,7 +1134,7 @@ function DashboardContent({
                   <div key={signal.title} className="px-5 py-4 hover:bg-[#a371f7]/5">
                     <div className={cn(
                       "flex items-start justify-between gap-4",
-                      isInDeviceFrame && "flex-col"
+                      isIpad && "flex-col"
                     )}>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
@@ -1039,7 +1160,7 @@ function DashboardContent({
                       </div>
                       <button className={cn(
                         "shrink-0 rounded-xl border border-[#a371f7] bg-[#a371f7]/10 px-3 py-2 text-sm font-medium text-[#a371f7] hover:bg-[#a371f7]/20",
-                        isInDeviceFrame && "w-full mt-3"
+                        isIpad && "w-full mt-3"
                       )}>
                         Contribute
                       </button>
@@ -1056,6 +1177,13 @@ function DashboardContent({
           </section>
         )}
 
+        {/* Future: Compact risk signals for iPhone */}
+        {vision === "future" && isIphone && (
+          <section className="mt-6">
+            <MobileRiskSignalsCard />
+          </section>
+        )}
+
         <section className="mt-10">
           <SectionHeader 
             title={vision === "future" 
@@ -1067,7 +1195,11 @@ function DashboardContent({
               : undefined
             }
           />
-          <div className={cn("mt-5 grid gap-3", !isInDeviceFrame && "md:grid-cols-2")}>
+          <div className={cn(
+            "mt-5 grid gap-3",
+            device === "desktop" && "md:grid-cols-2",
+            isIpad && "grid-cols-2"
+          )}>
             {recentApps[vision].map((app) => (
               <a
                 key={app.name}
@@ -1106,41 +1238,55 @@ function DashboardContent({
           <SectionHeader 
             title={vision === "future" 
               ? "AI-recommended actions awaiting your approval"
-              : "Since everything's under control, get ahead of a few things"
+              : isIphone 
+                ? "Get ahead"
+                : "Since everything's under control, get ahead of a few things"
             } 
           />
-          <div className={cn("mt-6 grid gap-6", !isInDeviceFrame && "lg:grid-cols-3")}>
-            <div className={cn(!isInDeviceFrame && "lg:col-span-2")}>
+          <div className={cn(
+            "mt-6 grid gap-6",
+            device === "desktop" && "lg:grid-cols-3",
+            isIpad && "grid-cols-1"
+          )}>
+            <div className={cn(device === "desktop" && "lg:col-span-2")}>
               <div className="space-y-3">
-                {currentNextActions.map((action) => (
+                {/* Show only first 2 actions on iPhone */}
+                {(isIphone ? currentNextActions.slice(0, 2) : currentNextActions).map((action) => (
                   <div
                     key={action.title}
                     className={cn(
                       "rounded-2xl border px-5 py-4 shadow-sm transition-colors duration-300",
                       vision === "future"
                         ? "border-[#a371f7]/20 bg-[#161b22]"
-                        : "border-[#30363d] bg-[#161b22]"
+                        : "border-[#30363d] bg-[#161b22]",
+                      isIphone && "px-4 py-3"
                     )}
                   >
                     <div className={cn(
                       "flex items-start justify-between gap-6",
-                      isInDeviceFrame && "flex-col gap-3"
+                      isMobile && "flex-col gap-3"
                     )}>
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-base font-semibold text-[#f0f6fc]">{action.title}</h3>
+                          <h3 className={cn(
+                            "text-base font-semibold text-[#f0f6fc]",
+                            isIphone && "text-sm"
+                          )}>{action.title}</h3>
                           {"tag" in action && (
                             <SoftTag variant="ai">{action.tag}</SoftTag>
                           )}
                         </div>
-                        <p className="mt-1 text-sm text-[#8b949e]">{action.detail}</p>
+                        <p className={cn(
+                          "mt-1 text-sm text-[#8b949e]",
+                          isIphone && "text-xs"
+                        )}>{action.detail}</p>
                         <div className="mt-3 flex items-center gap-2 text-xs text-[#6e7681]">
                           {"app" in action && (
                             <span className="rounded-full border border-[#58a6ff]/30 bg-[#58a6ff]/10 px-2 py-0.5 text-[11px] text-[#58a6ff]">
                               {action.app}
                             </span>
                           )}
-                          {vision === "near-term" && (
+                          {vision === "near-term" && !isIphone && (
                             <span className="text-[#6e7681]">Ready to complete</span>
                           )}
                         </div>
@@ -1150,75 +1296,93 @@ function DashboardContent({
                         vision === "future"
                           ? "border-[#a371f7] bg-[#a371f7]/10 text-[#a371f7] hover:bg-[#a371f7]/20"
                           : "border-[#58a6ff] bg-[#58a6ff]/10 text-[#58a6ff] hover:bg-[#58a6ff]/20",
-                        isInDeviceFrame && "w-full"
+                        isMobile && "w-full"
                       )}>
                         {vision === "future" ? "Approve" : "Open in app"}
                       </button>
                     </div>
                   </div>
                 ))}
+                {isIphone && currentNextActions.length > 2 && (
+                  <button className="w-full rounded-xl border border-[#30363d] bg-[#21262d] px-4 py-3 text-sm text-[#8b949e]">
+                    View {currentNextActions.length - 2} more actions
+                  </button>
+                )}
               </div>
             </div>
-            <div>
-              <Card className="p-5">
-                <p className={cn(
-                  "text-xs uppercase tracking-[0.2em]",
-                  vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
-                )}>
-                  {vision === "future" ? "Coming Capabilities" : "What's New"}
-                </p>
-                <h3 className="mt-2 text-lg font-semibold text-[#f0f6fc]">
-                  {vision === "future" ? "On the AI Roadmap" : "Good to Know & Good to Go"}
-                </h3>
-                <p className="mt-2 text-sm text-[#8b949e]">
-                  {vision === "future"
-                    ? "Advanced AI capabilities in development for your legal workflow."
-                    : "Learn more about features and capabilities you already have today."
-                  }
-                </p>
-                <div className="mt-4 space-y-3">
-                  {currentWhatsNew.map((item) => (
-                    <a
-                      key={item.title}
-                      href={item.href}
-                      className={cn(
-                        "block rounded-xl border px-4 py-3 transition",
-                        vision === "future"
-                          ? "border-[#a371f7]/20 bg-[#0d1117] hover:border-[#a371f7]/40 hover:bg-[#a371f7]/5"
-                          : "border-[#30363d] bg-[#0d1117] hover:border-[#58a6ff]/50 hover:bg-[#21262d]"
-                      )}
-                    >
-                      <h4 className="text-sm font-semibold text-[#f0f6fc]">{item.title}</h4>
-                      <p className="mt-1 text-sm text-[#8b949e]">{item.detail}</p>
-                      <p className={cn(
-                        "mt-3 text-xs uppercase tracking-[0.2em]",
-                        vision === "future" ? "text-[#a371f7]" : "text-[#58a6ff]"
-                      )}>
-                        {vision === "future" ? "Learn More" : "Open"}
-                      </p>
-                    </a>
-                  ))}
-                </div>
-              </Card>
-            </div>
+            {/* What's New sidebar - hidden on iPhone */}
+            {!isIphone && (
+              <div>
+                <Card className="p-5">
+                  <p className={cn(
+                    "text-xs uppercase tracking-[0.2em]",
+                    vision === "future" ? "text-[#a371f7]" : "text-[#6e7681]"
+                  )}>
+                    {vision === "future" ? "Coming Capabilities" : "What's New"}
+                  </p>
+                  <h3 className="mt-2 text-lg font-semibold text-[#f0f6fc]">
+                    {vision === "future" ? "On the AI Roadmap" : "Good to Know & Good to Go"}
+                  </h3>
+                  <p className="mt-2 text-sm text-[#8b949e]">
+                    {vision === "future"
+                      ? "Advanced AI capabilities in development for your legal workflow."
+                      : "Learn more about features and capabilities you already have today."
+                    }
+                  </p>
+                  <div className="mt-4 space-y-3">
+                    {currentWhatsNew.map((item) => (
+                      <a
+                        key={item.title}
+                        href={item.href}
+                        className={cn(
+                          "block rounded-xl border px-4 py-3 transition",
+                          vision === "future"
+                            ? "border-[#a371f7]/20 bg-[#0d1117] hover:border-[#a371f7]/40 hover:bg-[#a371f7]/5"
+                            : "border-[#30363d] bg-[#0d1117] hover:border-[#58a6ff]/50 hover:bg-[#21262d]"
+                        )}
+                      >
+                        <h4 className="text-sm font-semibold text-[#f0f6fc]">{item.title}</h4>
+                        <p className="mt-1 text-sm text-[#8b949e]">{item.detail}</p>
+                        <p className={cn(
+                          "mt-3 text-xs uppercase tracking-[0.2em]",
+                          vision === "future" ? "text-[#a371f7]" : "text-[#58a6ff]"
+                        )}>
+                          {vision === "future" ? "Learn More" : "Open"}
+                        </p>
+                      </a>
+                    ))}
+                  </div>
+                </Card>
+              </div>
+            )}
           </div>
         </section>
 
-        <footer className="mt-14 border-t border-[#30363d] bg-[#0d1117] px-5 py-5">
+        {/* Footer - simplified on iPhone */}
+        <footer className={cn(
+          "mt-14 border-t border-[#30363d] bg-[#0d1117] px-5 py-5",
+          isIphone && "mt-8 px-4 py-4"
+        )}>
           <div className="flex items-center justify-between gap-6">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-[#6e7681]">System log</p>
-              <p className="mt-1 text-sm text-[#8b949e]">
-                {vision === "future" 
-                  ? "AI agent activity (last 24 hours)"
-                  : "Recent system activity (last 24 hours)"
-                }
-              </p>
+              {!isIphone && (
+                <p className="mt-1 text-sm text-[#8b949e]">
+                  {vision === "future" 
+                    ? "AI agent activity (last 24 hours)"
+                    : "Recent system activity (last 24 hours)"
+                  }
+                </p>
+              )}
             </div>
           </div>
           <div className="mt-4 grid gap-2">
-            {currentActivityLog.map((entry) => (
-              <div key={entry} className="flex items-start gap-3 text-sm text-[#8b949e]">
+            {/* Show only 3 entries on iPhone */}
+            {(isIphone ? currentActivityLog.slice(0, 3) : currentActivityLog).map((entry) => (
+              <div key={entry} className={cn(
+                "flex items-start gap-3 text-sm text-[#8b949e]",
+                isIphone && "text-xs"
+              )}>
                 <span className={cn(
                   "mt-2 h-1.5 w-1.5 shrink-0 rounded-full",
                   vision === "future" ? "bg-[#a371f7]" : "bg-[#3fb950]"
@@ -1273,18 +1437,18 @@ export default function Page() {
       
       {device === "desktop" ? (
         <div className="mx-auto w-full max-w-6xl px-6 py-6">
-          <DashboardContent {...dashboardProps} isInDeviceFrame={false} />
+          <DashboardContent {...dashboardProps} device="desktop" />
         </div>
       ) : device === "ipad" ? (
         <div className="flex justify-center overflow-x-auto bg-[#0d1117] px-4">
           <IPadFrame>
-            <DashboardContent {...dashboardProps} isInDeviceFrame={true} />
+            <DashboardContent {...dashboardProps} device="ipad" />
           </IPadFrame>
         </div>
       ) : (
         <div className="flex justify-center overflow-x-auto bg-[#0d1117] px-4">
           <IPhoneFrame>
-            <DashboardContent {...dashboardProps} isInDeviceFrame={true} />
+            <DashboardContent {...dashboardProps} device="iphone" />
           </IPhoneFrame>
         </div>
       )}
