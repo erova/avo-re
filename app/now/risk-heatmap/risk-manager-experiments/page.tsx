@@ -14,7 +14,7 @@ import {
 // Types
 // ============================================================================
 
-type ViewMode = "3x3" | "5x5" | "compare" | "gaussian" | "cost" | "trend" | "bubble" | "materiality";
+type ViewMode = "3x3" | "5x5" | "compare" | "gaussian" | "cost" | "trend" | "bubble" | "materiality" | "rollup";
 type RiskLevel5 = "Very Low" | "Low" | "Medium" | "High" | "Very High";
 
 type ClusterContext = {
@@ -1365,6 +1365,524 @@ function MaterialityChart({
 }
 
 // ============================================================================
+// Risk Type Rollup Chart
+// ============================================================================
+
+type RiskTypeRollup = {
+  type: string;
+  total: number;
+  high: number;
+  medium: number;
+  low: number;
+  derivedRating: "High" | "Medium" | "Low";
+  trend: "up" | "down" | "stable";
+};
+
+// Calculate derived rating based on distribution
+function deriveRating(high: number, medium: number, low: number): "High" | "Medium" | "Low" {
+  const total = high + medium + low;
+  if (total === 0) return "Low";
+  
+  // If >30% are high, overall is High
+  // If >50% are medium+high, overall is Medium
+  // Otherwise Low
+  const highPct = high / total;
+  const medHighPct = (high + medium) / total;
+  
+  if (highPct > 0.3 || high >= 3) return "High";
+  if (medHighPct > 0.5) return "Medium";
+  return "Low";
+}
+
+// Generate rollup data from RISK_ROWS
+function generateRollupData(): RiskTypeRollup[] {
+  const typeMap: Record<string, { high: number; medium: number; low: number }> = {};
+  
+  RISK_ROWS.forEach(row => {
+    if (!typeMap[row.riskType]) {
+      typeMap[row.riskType] = { high: 0, medium: 0, low: 0 };
+    }
+    // Use residual rating for the distribution
+    const level = row.residual;
+    if (level === "High") typeMap[row.riskType].high++;
+    else if (level === "Medium") typeMap[row.riskType].medium++;
+    else typeMap[row.riskType].low++;
+  });
+
+  // Predefined trend data (in real app, compare to previous period)
+  const trends: Record<string, "up" | "down" | "stable"> = {
+    "Cyber": "up",
+    "Compliance": "stable",
+    "Privacy": "down",
+    "Operational": "up",
+    "Audit": "stable",
+    "Resilience": "down",
+    "Governance": "stable",
+    "Third-party": "up",
+  };
+
+  return Object.entries(typeMap)
+    .map(([type, counts]) => ({
+      type,
+      total: counts.high + counts.medium + counts.low,
+      ...counts,
+      derivedRating: deriveRating(counts.high, counts.medium, counts.low),
+      trend: trends[type] ?? "stable",
+    }))
+    .sort((a, b) => b.total - a.total);
+}
+
+type AssignedRating = {
+  rating: "High" | "Medium" | "Low";
+  assignedBy?: string;
+  assignedAt?: string;
+  notes?: string;
+};
+
+function RiskTypeRollupChart({
+  onTypeClick,
+  onTypeHover,
+  onTypeLeave,
+  selectedType,
+}: {
+  onTypeClick?: (type: string) => void;
+  onTypeHover?: (ctx: ClusterContext | null, rect: DOMRect | null) => void;
+  onTypeLeave?: () => void;
+  selectedType?: string | null;
+}) {
+  const rollupData = useMemo(() => generateRollupData(), []);
+  const maxTotal = Math.max(...rollupData.map(r => r.total));
+
+  // Track user-assigned ratings (in real app, this would be persisted)
+  const [assignedRatings, setAssignedRatings] = useState<Record<string, AssignedRating>>({});
+  const [editingType, setEditingType] = useState<string | null>(null);
+  const [editNotes, setEditNotes] = useState("");
+
+  const ratingColors = {
+    High: { bg: "#FEE2E2", border: "#FECACA", text: "#991B1B" },
+    Medium: { bg: "#FEF3C7", border: "#FCD34D", text: "#92400E" },
+    Low: { bg: "#D1FAE5", border: "#6EE7B7", text: "#065F46" },
+  };
+
+  const trendIcons = {
+    up: { icon: "↑", color: "#DC2626" },
+    down: { icon: "↓", color: "#059669" },
+    stable: { icon: "→", color: "#6B7280" },
+  };
+
+  const handleAssignRating = (type: string, rating: "High" | "Medium" | "Low") => {
+    setAssignedRatings(prev => ({
+      ...prev,
+      [type]: {
+        rating,
+        assignedBy: "Jane Smith",
+        assignedAt: new Date().toLocaleDateString(),
+        notes: editNotes || undefined,
+      }
+    }));
+    setEditingType(null);
+    setEditNotes("");
+  };
+
+  const handleClearRating = (type: string) => {
+    setAssignedRatings(prev => {
+      const next = { ...prev };
+      delete next[type];
+      return next;
+    });
+  };
+
+  return (
+    <div style={{ padding: "8px 0" }}>
+      {/* Header */}
+      <div style={{ display: "grid", gridTemplateColumns: "140px 1fr 90px 130px 60px", gap: 12, marginBottom: 12, padding: "0 8px" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>Risk Type</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase" }}>Rating Distribution</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", textAlign: "center" }}>Suggested</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", textAlign: "center" }}>Your Rating</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", textAlign: "center" }}>Trend</div>
+      </div>
+
+      {/* Rows */}
+      <div style={{ display: "grid", gap: 8 }}>
+        {rollupData.map((item) => {
+          const isSelected = selectedType === item.type;
+          const isEditing = editingType === item.type;
+          const suggestedRating = ratingColors[item.derivedRating];
+          const assigned = assignedRatings[item.type];
+          const assignedRating = assigned ? ratingColors[assigned.rating] : null;
+          const trend = trendIcons[item.trend];
+          const barWidth = (item.total / maxTotal) * 100;
+
+          return (
+            <div key={item.type}>
+              <div
+                onMouseEnter={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  onTypeHover?.({
+                    likelihood: item.type,
+                    impact: item.derivedRating,
+                    count: item.total,
+                    delta: item.trend === "up" ? 2 : item.trend === "down" ? -1 : 0,
+                    signals: [
+                      `High: ${item.high} risks (${Math.round(item.high/item.total*100)}%)`,
+                      `Medium: ${item.medium} risks (${Math.round(item.medium/item.total*100)}%)`,
+                      `Low: ${item.low} risks (${Math.round(item.low/item.total*100)}%)`,
+                    ],
+                    title: `${item.type} Risk`,
+                    subtitle: `${item.total} total risks · Suggested: ${item.derivedRating}${assigned ? ` · Assigned: ${assigned.rating}` : ""}`,
+                  }, rect);
+                }}
+                onMouseLeave={() => onTypeLeave?.()}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "140px 1fr 90px 130px 60px",
+                  gap: 12,
+                  padding: "12px 8px",
+                  borderRadius: isEditing ? "10px 10px 0 0" : 10,
+                  border: isEditing ? "2px solid #6366F1" : isSelected ? "2px solid #111827" : "1px solid #E5E7EB",
+                  borderBottom: isEditing ? "none" : undefined,
+                  background: isEditing ? "#EEF2FF" : isSelected ? "#F9FAFB" : "#FFFFFF",
+                  transition: "all 150ms ease",
+                }}
+              >
+                {/* Type name */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{item.type}</div>
+                  <div style={{ fontSize: 12, color: "#6B7280" }}>({item.total})</div>
+                </div>
+
+                {/* Distribution bar */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ 
+                    flex: 1, 
+                    height: 24, 
+                    background: "#F3F4F6", 
+                    borderRadius: 6, 
+                    overflow: "hidden",
+                    display: "flex",
+                  }}>
+                    <div style={{ 
+                      width: `${barWidth}%`, 
+                      display: "flex",
+                      height: "100%",
+                    }}>
+                      {item.high > 0 && (
+                        <div style={{ 
+                          width: `${(item.high / item.total) * 100}%`, 
+                          background: "#DC2626",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                          {item.high >= 2 && <span style={{ fontSize: 10, fontWeight: 700, color: "#fff" }}>{item.high}</span>}
+                        </div>
+                      )}
+                      {item.medium > 0 && (
+                        <div style={{ 
+                          width: `${(item.medium / item.total) * 100}%`, 
+                          background: "#FBBF24",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                          {item.medium >= 2 && <span style={{ fontSize: 10, fontWeight: 700, color: "#fff" }}>{item.medium}</span>}
+                        </div>
+                      )}
+                      {item.low > 0 && (
+                        <div style={{ 
+                          width: `${(item.low / item.total) * 100}%`, 
+                          background: "#22C55E",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                          {item.low >= 2 && <span style={{ fontSize: 10, fontWeight: 700, color: "#fff" }}>{item.low}</span>}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Suggested rating (system-derived) */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{
+                    padding: "4px 10px",
+                    borderRadius: 999,
+                    background: suggestedRating.bg,
+                    border: `1px solid ${suggestedRating.border}`,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: suggestedRating.text,
+                    opacity: assigned ? 0.6 : 1,
+                  }}>
+                    {item.derivedRating}
+                  </div>
+                </div>
+
+                {/* User's assigned rating */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                  {assigned ? (
+                    <>
+                      <div style={{
+                        padding: "4px 10px",
+                        borderRadius: 999,
+                        background: assignedRating!.bg,
+                        border: `2px solid ${assignedRating!.border}`,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: assignedRating!.text,
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                      }}>
+                        {assigned.rating}
+                      </div>
+                      <button
+                        onClick={() => setEditingType(item.type)}
+                        style={{
+                          padding: "2px 6px",
+                          borderRadius: 4,
+                          border: "1px solid #D1D5DB",
+                          background: "#fff",
+                          fontSize: 10,
+                          color: "#6B7280",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => setEditingType(item.type)}
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: 6,
+                        border: "1px dashed #9CA3AF",
+                        background: "#F9FAFB",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: "#6366F1",
+                        cursor: "pointer",
+                        transition: "all 150ms ease",
+                      }}
+                    >
+                      + Assign
+                    </button>
+                  )}
+                </div>
+
+                {/* Trend indicator */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: trend.color }}>{trend.icon}</span>
+                </div>
+              </div>
+
+              {/* Inline assignment panel */}
+              {isEditing && (
+                <div style={{
+                  padding: "16px",
+                  borderRadius: "0 0 10px 10px",
+                  border: "2px solid #6366F1",
+                  borderTop: "1px solid #E0E7FF",
+                  background: "#EEF2FF",
+                }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+                    {/* Rating selection */}
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#4338CA", marginBottom: 8 }}>
+                        Assign Rating for {item.type}
+                      </div>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        {(["Low", "Medium", "High"] as const).map((r) => {
+                          const colors = ratingColors[r];
+                          const isCurrentAssigned = assigned?.rating === r;
+                          return (
+                            <button
+                              key={r}
+                              onClick={() => handleAssignRating(item.type, r)}
+                              style={{
+                                padding: "8px 16px",
+                                borderRadius: 8,
+                                border: isCurrentAssigned ? `2px solid ${colors.text}` : `1px solid ${colors.border}`,
+                                background: colors.bg,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                color: colors.text,
+                                cursor: "pointer",
+                                boxShadow: isCurrentAssigned ? "0 2px 4px rgba(0,0,0,0.1)" : "none",
+                              }}
+                            >
+                              {r}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Notes */}
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#4338CA", marginBottom: 8 }}>
+                        Notes (optional)
+                      </div>
+                      <input
+                        type="text"
+                        value={editNotes}
+                        onChange={(e) => setEditNotes(e.target.value)}
+                        placeholder="Rationale for this rating..."
+                        style={{
+                          width: "100%",
+                          padding: "8px 12px",
+                          borderRadius: 6,
+                          border: "1px solid #C7D2FE",
+                          fontSize: 12,
+                          background: "#fff",
+                        }}
+                      />
+                    </div>
+
+                    {/* Actions */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 20 }}>
+                      <button
+                        onClick={() => {
+                          setEditingType(null);
+                          setEditNotes("");
+                        }}
+                        style={{
+                          padding: "6px 12px",
+                          borderRadius: 6,
+                          border: "1px solid #D1D5DB",
+                          background: "#fff",
+                          fontSize: 11,
+                          color: "#6B7280",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      {assigned && (
+                        <button
+                          onClick={() => {
+                            handleClearRating(item.type);
+                            setEditingType(null);
+                          }}
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: 6,
+                            border: "1px solid #FECACA",
+                            background: "#FEF2F2",
+                            fontSize: 11,
+                            color: "#DC2626",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Show suggestion rationale */}
+                  <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 6, background: "#fff", border: "1px solid #C7D2FE" }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", marginBottom: 4 }}>System Suggestion Rationale</div>
+                    <div style={{ fontSize: 11, color: "#374151" }}>
+                      Based on {item.total} risks: {item.high} high ({Math.round(item.high/item.total*100)}%), {item.medium} medium ({Math.round(item.medium/item.total*100)}%), {item.low} low ({Math.round(item.low/item.total*100)}%)
+                      {item.derivedRating === "High" && " → High rating suggested due to significant high-risk concentration"}
+                      {item.derivedRating === "Medium" && " → Medium rating suggested due to moderate risk distribution"}
+                      {item.derivedRating === "Low" && " → Low rating suggested as majority of risks are well-controlled"}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Show assignment metadata if assigned */}
+              {assigned && !isEditing && assigned.notes && (
+                <div style={{ 
+                  marginTop: -8, 
+                  marginBottom: 8,
+                  marginLeft: 8,
+                  marginRight: 8,
+                  padding: "6px 12px", 
+                  borderRadius: "0 0 8px 8px", 
+                  background: "#F9FAFB", 
+                  border: "1px solid #E5E7EB",
+                  borderTop: "none",
+                }}>
+                  <span style={{ fontSize: 10, color: "#6B7280" }}>
+                    Note: {assigned.notes} — {assigned.assignedBy}, {assigned.assignedAt}
+                  </span>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Legend */}
+      <div style={{ marginTop: 16, display: "flex", justifyContent: "center", gap: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 14, height: 14, background: "#DC2626", borderRadius: 2 }} />
+          <span style={{ fontSize: 11, color: "#374151" }}>High</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 14, height: 14, background: "#FBBF24", borderRadius: 2 }} />
+          <span style={{ fontSize: 11, color: "#374151" }}>Medium</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 14, height: 14, background: "#22C55E", borderRadius: 2 }} />
+          <span style={{ fontSize: 11, color: "#374151" }}>Low</span>
+        </div>
+      </div>
+
+      {/* Summary stats */}
+      {Object.keys(assignedRatings).length > 0 && (
+        <div style={{ marginTop: 16, padding: 12, borderRadius: 10, background: "#F0FDF4", border: "1px solid #BBF7D0" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#166534" }}>
+                {Object.keys(assignedRatings).length} of {rollupData.length} Risk Types Assessed
+              </div>
+              <div style={{ fontSize: 11, color: "#15803D", marginTop: 2 }}>
+                {rollupData.length - Object.keys(assignedRatings).length === 0 
+                  ? "All risk types have been rated" 
+                  : `${rollupData.length - Object.keys(assignedRatings).length} remaining`}
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 12 }}>
+              {(["High", "Medium", "Low"] as const).map(r => {
+                const count = Object.values(assignedRatings).filter(a => a.rating === r).length;
+                if (count === 0) return null;
+                const colors = ratingColors[r];
+                return (
+                  <div key={r} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <div style={{ width: 12, height: 12, borderRadius: 2, background: colors.text }} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>{count} {r}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Methodology note */}
+      <div style={{ marginTop: 16, padding: 12, borderRadius: 10, background: "#F0F9FF", border: "1px solid #BAE6FD" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#0369A1", marginBottom: 6 }}>How It Works</div>
+        <div style={{ fontSize: 11, color: "#075985", lineHeight: 1.5 }}>
+          <strong>1. View the distribution</strong> — See how individual risks within each type are rated (High/Medium/Low).<br/>
+          <strong>2. Review the suggestion</strong> — The system suggests a rating based on the distribution:
+          <ul style={{ margin: "4px 0 4px 16px", padding: 0 }}>
+            <li>High if &gt;30% high-rated OR 3+ high risks</li>
+            <li>Medium if &gt;50% medium+high rated</li>
+            <li>Low otherwise</li>
+          </ul>
+          <strong>3. Assign your rating</strong> — Click &quot;+ Assign&quot; to set your official rating. Add notes to document your rationale.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // Popover Panel
 // ============================================================================
 
@@ -1616,6 +2134,7 @@ export default function RiskManagerExperimentsPage() {
     { id: "5x5" as ViewMode, label: "5×5 Heatmap" },
     { id: "compare" as ViewMode, label: "Year Compare" },
     { id: "materiality" as ViewMode, label: "Materiality" },
+    { id: "rollup" as ViewMode, label: "Type Rollup" },
     { id: "gaussian" as ViewMode, label: "Gaussian" },
     { id: "cost" as ViewMode, label: "Cost × Notion" },
     { id: "trend" as ViewMode, label: "Trend Line" },
@@ -1688,6 +2207,7 @@ export default function RiskManagerExperimentsPage() {
                     {viewMode === "5x5" && "Risk Heatmap (5×5)"}
                     {viewMode === "compare" && "Year-over-Year Comparison"}
                     {viewMode === "materiality" && "Materiality Distribution of Residual Risk"}
+                    {viewMode === "rollup" && "Risk Type Assessment Rollup"}
                     {viewMode === "gaussian" && "Risk Score Distribution"}
                     {viewMode === "cost" && "Cost × Notion Matrix"}
                     {viewMode === "trend" && "Risk Trend Over Time"}
@@ -1774,6 +2294,18 @@ export default function RiskManagerExperimentsPage() {
                     }}
                     onBarHover={handleCellHover}
                     onBarLeave={() => {}}
+                  />
+                )}
+
+                {viewMode === "rollup" && (
+                  <RiskTypeRollupChart
+                    onTypeClick={(type) => {
+                      // Filter table by risk type
+                      setTableVersion((v) => v + 1);
+                    }}
+                    onTypeHover={handleCellHover}
+                    onTypeLeave={() => {}}
+                    selectedType={null}
                   />
                 )}
 
