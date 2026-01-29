@@ -111,9 +111,9 @@ const TREND_DATA = [
 // Materiality Distribution data - by department, comparing last quarter vs this quarter
 const MATERIALITY_DATA = [
   { dept: "CEO Office", lastQtr: { red: 1, yellow: 1, green: 1 }, thisQtr: { red: 1, yellow: 1, green: 2 } },
-  { dept: "C&D", lastQtr: { red: 2, yellow: 3, green: 6 }, thisQtr: { red: 2, yellow: 4, green: 6 } },
+  { dept: "Commercial", lastQtr: { red: 2, yellow: 3, green: 6 }, thisQtr: { red: 2, yellow: 4, green: 6 } },
   { dept: "Investments", lastQtr: { red: 2, yellow: 3, green: 6 }, thisQtr: { red: 2, yellow: 3, green: 4 } },
-  { dept: "COO", lastQtr: { red: 2, yellow: 3, green: 1 }, thisQtr: { red: 3, yellow: 3, green: 5 } },
+  { dept: "Operations", lastQtr: { red: 2, yellow: 3, green: 1 }, thisQtr: { red: 3, yellow: 3, green: 5 } },
   { dept: "International", lastQtr: { red: 5, yellow: 7, green: 8 }, thisQtr: { red: 8, yellow: 5, green: 2 } },
   { dept: "Finance", lastQtr: { red: 2, yellow: 5, green: 9 }, thisQtr: { red: 2, yellow: 2, green: 5 } },
   { dept: "HR", lastQtr: { red: 1, yellow: 3, green: 4 }, thisQtr: { red: 1, yellow: 2, green: 3 } },
@@ -1357,7 +1357,7 @@ function MaterialityChart({
         <div style={{ display: "grid", gap: 4, fontSize: 11, color: "#78350F" }}>
           <div>• <strong>International</strong> shows highest red risk increase (+3 this quarter)</div>
           <div>• <strong>Finance</strong> improved significantly (green risks down but overall profile better)</div>
-          <div>• <strong>COO</strong> added more low-risk items while maintaining high-risk count</div>
+          <div>• <strong>Operations</strong> added more low-risk items while maintaining high-risk count</div>
         </div>
       </div>
     </div>
