@@ -518,6 +518,18 @@ function PrototypeNav({
               >
                 General Counsel
               </a>
+              <a
+                href="/now/agentic-hero/dark/audit-executive"
+                className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs font-medium text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]"
+              >
+                Audit Executive
+              </a>
+              <a
+                href="/now/agentic-hero/dark/audit-manager"
+                className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs font-medium text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]"
+              >
+                Audit Manager
+              </a>
             </nav>
           </div>
         </div>
