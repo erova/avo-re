@@ -388,7 +388,7 @@ function PrototypeNav({
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <div className="flex items-center gap-3">
             <span className="text-xs font-medium uppercase tracking-[0.2em] text-[#6e7681]">Prototype</span>
-            <span className="text-sm font-semibold text-[#f0f6fc]">QA Reviewer Dashboard</span>
+            <span className="text-sm font-semibold text-[#f0f6fc]">Audit Command Center</span>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1 rounded-xl border border-[#30363d] bg-[#0d1117] p-1">
