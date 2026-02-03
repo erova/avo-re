@@ -299,23 +299,31 @@ export function SecureAttachmentCard({ title, documentType, isSecure, accessLeve
 
 // 8. EmailDraftCard - For drafting emails with secure attachments
 const emailDraftSchema = z.object({
-  id: z.string().optional().default("email-0"),
-  to: z.string().describe("Recipients, e.g., 'CFO, Board Secretary'").optional().default(""),
-  cc: z.string().optional(),
-  subject: z.string().describe("Email subject line").optional().default(""),
-  preview: z.string().describe("First few lines of the email body").optional().default(""),
-  attachments: z.array(z.string()).describe("List of attached document names").optional().default([]),
-  isSecure: z.boolean().optional().default(true),
-  status: z.string().describe("Draft status: draft, ready, sent").optional().default("draft"),
+  id: z.string().nullish().default("email-0"),
+  to: z.string().nullish().describe("Recipients, e.g., 'CFO, Board Secretary'").default(""),
+  cc: z.string().nullish(),
+  subject: z.string().nullish().describe("Email subject line").default(""),
+  preview: z.string().nullish().describe("First few lines of the email body").default(""),
+  attachments: z.array(z.string()).nullish().describe("List of attached document names").default([]),
+  isSecure: z.boolean().nullish().default(true),
+  status: z.string().nullish().describe("Draft status: draft, ready, sent").default("draft"),
 }).describe("Shows an email draft with recipients, subject, preview, and secure attachments");
 
 export function EmailDraftCard({ to, cc, subject, preview, attachments, isSecure, status }: z.infer<typeof emailDraftSchema>) {
+  // Handle null/undefined values
+  const safeTo = to || "";
+  const safeSubject = subject || "Email Draft";
+  const safePreview = preview || "";
+  const safeAttachments = attachments || [];
+  const safeIsSecure = isSecure ?? true;
+  const safeStatus = status || "draft";
+  
   const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
     draft: { label: "DRAFT", color: "text-[#d29922]", bg: "bg-[#d29922]/10 border-[#d29922]/30" },
     ready: { label: "READY", color: "text-[#3fb950]", bg: "bg-[#3fb950]/10 border-[#3fb950]/30" },
     sent: { label: "SENT", color: "text-[#8b949e]", bg: "bg-[#8b949e]/10 border-[#8b949e]/30" },
   };
-  const config = statusConfig[status || "draft"] || statusConfig.draft;
+  const config = statusConfig[safeStatus] || statusConfig.draft;
   
   return (
     <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4">
@@ -335,7 +343,7 @@ export function EmailDraftCard({ to, cc, subject, preview, attachments, isSecure
       <div className="mt-3 space-y-2 text-sm">
         <div className="flex">
           <span className="w-12 text-[#6e7681]">To:</span>
-          <span className="text-[#f0f6fc]">{to}</span>
+          <span className="text-[#f0f6fc]">{safeTo}</span>
         </div>
         {cc && (
           <div className="flex">
@@ -345,21 +353,21 @@ export function EmailDraftCard({ to, cc, subject, preview, attachments, isSecure
         )}
         <div className="flex">
           <span className="w-12 text-[#6e7681]">Subj:</span>
-          <span className="font-medium text-[#f0f6fc]">{subject}</span>
+          <span className="font-medium text-[#f0f6fc]">{safeSubject}</span>
         </div>
       </div>
       
-      {preview && (
+      {safePreview && (
         <div className="mt-3 rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
-          <p className="line-clamp-3 text-xs text-[#8b949e]">&ldquo;{preview}&rdquo;</p>
+          <p className="line-clamp-3 text-xs text-[#8b949e]">&ldquo;{safePreview}&rdquo;</p>
         </div>
       )}
       
-      {attachments && attachments.length > 0 && (
+      {safeAttachments && safeAttachments.length > 0 && (
         <div className="mt-3 space-y-1.5">
-          {attachments.map((att, i) => (
+          {safeAttachments.map((att, i) => (
             <div key={i} className="flex items-center gap-2 rounded-lg border border-[#58a6ff]/30 bg-[#58a6ff]/5 px-2.5 py-1.5">
-              {isSecure && (
+              {safeIsSecure && (
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" strokeWidth="2">
                   <rect x="3" y="11" width="18" height="11" rx="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
