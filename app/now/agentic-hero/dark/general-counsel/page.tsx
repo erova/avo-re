@@ -572,13 +572,13 @@ function PrototypeNav({
                   href="/now/agentic-hero/dark/general-counsel"
                   className="rounded-md bg-[#58a6ff] px-3 py-1.5 text-xs font-medium text-white"
                 >
-                  Canvas Overlay
+                  Unified Chat
                 </a>
                 <a
                   href="/now/agentic-hero/dark/general-counsel/v2"
                   className="rounded-md px-3 py-1.5 text-xs font-medium text-[#8b949e] hover:text-[#f0f6fc]"
                 >
-                  Split Workspace
+                  Split Panel
                 </a>
                 <a
                   href="/now/agentic-hero/dark/general-counsel/v3"
@@ -2104,6 +2104,30 @@ function PageContent({ hasTamboProvider = false }: { hasTamboProvider?: boolean 
             device={device}
             onDeviceChange={setDevice}
           />
+          
+          {/* Tambo Instructions */}
+          <div className="border-b border-[#30363d] bg-[#161b22]/80 px-6 py-3">
+            <div className="mx-auto max-w-4xl">
+              <div className="flex items-start gap-3">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#a371f7]/20">
+                  <span className="text-xs">✨</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-[#f0f6fc]">Try Tambo Generative UI</p>
+                  <p className="mt-1 text-xs text-[#8b949e]">
+                    Switch to <span className="rounded bg-[#a371f7]/20 px-1 text-[#a371f7]">Live</span> mode and try these prompts to see AI-generated cards:
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {["who is Sarah Chen", "schedule a meeting", "draft an email", "show me a report", "contracts expiring", "active matters"].map((prompt) => (
+                      <span key={prompt} className="rounded-full border border-[#30363d] bg-[#21262d] px-2 py-0.5 text-[10px] text-[#8b949e]">
+                        {prompt}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           
           {device === "desktop" ? (
             <div className="mx-auto w-full max-w-6xl px-6 py-6">

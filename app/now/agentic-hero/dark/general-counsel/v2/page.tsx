@@ -827,7 +827,35 @@ function generateCardsFromContent(content: string, query: string): React.ReactNo
     );
   }
   
-  // PRIORITY 4: Detect matter/litigation content
+  // PRIORITY 4: Detect report/trend/analytics content
+  if (q.includes("report") || q.includes("trend") || q.includes("analytic") || q.includes("insight") || q.includes("pattern") || q.includes("attendance") || q.includes("voting")) {
+    return (
+      <div className="mt-2 space-y-2">
+        <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-[#6e7681]">Board Analytics</span>
+            <span className="text-xs text-[#3fb950]">+8% YoY</span>
+          </div>
+          <h4 className="mt-1 text-sm font-semibold text-[#f0f6fc]">Board Attendance Trends</h4>
+          <p className="mt-1 text-xs text-[#8b949e]">Attendance has increased 8% over the last 4 quarters. Average meeting duration down 12%.</p>
+          <div className="mt-2 flex items-center gap-4">
+            <div className="text-center"><span className="text-xl font-semibold text-[#3fb950]">94%</span><p className="text-[10px] text-[#6e7681]">Attendance</p></div>
+            <div className="text-center"><span className="text-xl font-semibold text-[#58a6ff]">97%</span><p className="text-[10px] text-[#6e7681]">Consensus</p></div>
+          </div>
+        </div>
+        <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4">
+          <h4 className="text-sm font-semibold text-[#f0f6fc]">Voting Patterns</h4>
+          <p className="mt-1 text-xs text-[#8b949e]">97% consensus rate on strategic initiatives. 3 items required multiple votes.</p>
+          <div className="mt-2 flex gap-2">
+            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-2.5 py-1 text-[10px] text-[#8b949e]">View Full Report</button>
+            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-2.5 py-1 text-[10px] text-[#8b949e]">Export PDF</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // PRIORITY 5: Detect matter/litigation content
   if (text.includes("matter") || text.includes("litigation") || text.includes("case") || text.includes("lawsuit") || text.includes("acme corp v")) {
     return (
       <div className="mt-2 space-y-2">
@@ -1266,10 +1294,10 @@ function TopBar() {
         <span className="text-xs text-[#6e7681]">Model:</span>
         <div className="flex rounded-lg border border-[#30363d] bg-[#161b22] p-0.5">
           <a href="/now/agentic-hero/dark/general-counsel" className="rounded-md px-2.5 py-1 text-xs text-[#8b949e] hover:text-[#f0f6fc]">
-            Canvas Overlay
+            Unified Chat
           </a>
           <a href="/now/agentic-hero/dark/general-counsel/v2" className="rounded-md bg-[#58a6ff] px-2.5 py-1 text-xs font-medium text-white">
-            Split Workspace
+            Split Panel
           </a>
           <a href="/now/agentic-hero/dark/general-counsel/v3" className="rounded-md px-2.5 py-1 text-xs text-[#8b949e] hover:text-[#f0f6fc]">
             Chat Thread
@@ -1294,6 +1322,17 @@ function PageContent({ hasTamboProvider }: { hasTamboProvider: boolean }) {
   return (
     <div className="flex h-screen flex-col bg-[#0d1117]">
       <TopBar />
+      {/* Tambo Instructions */}
+      <div className="border-b border-[#30363d] bg-[#161b22]/80 px-4 py-2">
+        <div className="flex items-center gap-3">
+          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#a371f7]/20">
+            <span className="text-[10px]">✨</span>
+          </div>
+          <p className="text-xs text-[#8b949e]">
+            <span className="font-medium text-[#f0f6fc]">Tambo Live:</span> Try &quot;who is Sarah Chen&quot;, &quot;schedule a meeting&quot;, &quot;show me a report&quot;, &quot;contracts expiring&quot;
+          </p>
+        </div>
+      </div>
       <AgentTicker 
         hoveredAgent={hoveredAgent}
         setHoveredAgent={setHoveredAgent}
