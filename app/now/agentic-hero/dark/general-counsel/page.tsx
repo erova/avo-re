@@ -842,14 +842,22 @@ function generateCardsFromContent(content: string, query: string): React.ReactNo
   return undefined;
 }
 
-function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void }) {
+function TamboPromptBoxWithHooks({ vision, onOpenCanvas, onFocusChange }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void; onFocusChange?: (focused: boolean) => void }) {
   const [inputValue, setInputValue] = React.useState("");
   const [messages, setMessages] = React.useState<Array<{ role: "user" | "assistant"; content: string; component?: React.ReactNode }>>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [demoMode, setDemoMode] = React.useState(true);
+  const [isFocused, setIsFocused] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const messagesContainerRef = React.useRef<HTMLDivElement>(null);
   const tamboThread = useTamboThread();
+  
+  // Track focus state - focused when input focused OR has messages
+  const isActive = isFocused || messages.length > 0;
+  
+  React.useEffect(() => {
+    onFocusChange?.(isActive);
+  }, [isActive, onFocusChange]);
 
   React.useEffect(() => {
     // Scroll within container only, not the whole page
@@ -983,16 +991,29 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onO
       )}
 
       {/* Input */}
-      <div className="mt-4 flex items-center gap-2 rounded-xl border border-[#30363d] bg-[#0d1117] p-2">
+      <div className={cn(
+        "mt-4 flex items-center gap-2 rounded-xl border bg-[#0d1117] p-2 transition-all duration-300",
+        isActive ? "border-[#58a6ff]/50 ring-1 ring-[#58a6ff]/20" : "border-[#30363d]"
+      )}>
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           disabled={isLoading}
           className="flex-1 bg-transparent px-2 text-sm text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
           placeholder="Ask a question or describe what you need..."
         />
+        {messages.length > 0 && (
+          <button
+            onClick={() => { setMessages([]); setInputValue(""); }}
+            className="mr-1 rounded-lg border border-[#30363d] px-2 py-1 text-[10px] text-[#6e7681] hover:border-[#8b949e] hover:text-[#8b949e]"
+          >
+            Clear
+          </button>
+        )}
         <button
           onClick={handleSubmit}
           disabled={!inputValue.trim() || isLoading}
@@ -1002,8 +1023,8 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onO
         </button>
       </div>
 
-      {/* Canvas Action Buttons */}
-      <div className="mt-4">
+      {/* Canvas Action Buttons - dim when focused */}
+      <div className={cn("mt-4 transition-opacity duration-300", isActive && "opacity-40")}>
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[#6e7681]">Or start with</p>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
           {canvasActions.map((action) => (
@@ -1024,12 +1045,20 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onO
 }
 
 // Demo-only version (no Tambo hooks)
-function TamboPromptBoxDemoOnly({ vision, onOpenCanvas }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void }) {
+function TamboPromptBoxDemoOnly({ vision, onOpenCanvas, onFocusChange }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void; onFocusChange?: (focused: boolean) => void }) {
   const [inputValue, setInputValue] = React.useState("");
   const [messages, setMessages] = React.useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isFocused, setIsFocused] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const messagesContainerRef = React.useRef<HTMLDivElement>(null);
+  
+  // Track focus state - focused when input focused OR has messages
+  const isActive = isFocused || messages.length > 0;
+  
+  React.useEffect(() => {
+    onFocusChange?.(isActive);
+  }, [isActive, onFocusChange]);
 
   React.useEffect(() => {
     // Scroll within container only, not the whole page
@@ -1123,16 +1152,29 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas }: { vision: Vision; onOp
         </div>
       )}
 
-      <div className="mt-4 flex items-center gap-2 rounded-xl border border-[#30363d] bg-[#0d1117] p-2">
+      <div className={cn(
+        "mt-4 flex items-center gap-2 rounded-xl border bg-[#0d1117] p-2 transition-all duration-300",
+        isActive ? "border-[#58a6ff]/50 ring-1 ring-[#58a6ff]/20" : "border-[#30363d]"
+      )}>
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           disabled={isLoading}
           className="flex-1 bg-transparent px-2 text-sm text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
           placeholder="Ask a question or describe what you need..."
         />
+        {messages.length > 0 && (
+          <button
+            onClick={() => { setMessages([]); setInputValue(""); }}
+            className="mr-1 rounded-lg border border-[#30363d] px-2 py-1 text-[10px] text-[#6e7681] hover:border-[#8b949e] hover:text-[#8b949e]"
+          >
+            Clear
+          </button>
+        )}
         <button
           onClick={handleSubmit}
           disabled={!inputValue.trim() || isLoading}
@@ -1142,7 +1184,8 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas }: { vision: Vision; onOp
         </button>
       </div>
 
-      <div className="mt-4">
+      {/* Canvas Action Buttons - dim when focused */}
+      <div className={cn("mt-4 transition-opacity duration-300", isActive && "opacity-40")}>
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[#6e7681]">Or start with</p>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
           {canvasActions.map((action) => (
@@ -1163,9 +1206,9 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas }: { vision: Vision; onOp
 }
 
 // Wrapper that switches based on TamboProvider availability
-function PromptBox({ vision, onOpenCanvas, hasTamboProvider }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void; hasTamboProvider: boolean }) {
-  if (!hasTamboProvider) return <TamboPromptBoxDemoOnly vision={vision} onOpenCanvas={onOpenCanvas} />;
-  return <TamboPromptBoxWithHooks vision={vision} onOpenCanvas={onOpenCanvas} />;
+function PromptBox({ vision, onOpenCanvas, hasTamboProvider, onFocusChange }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void; hasTamboProvider: boolean; onFocusChange?: (focused: boolean) => void }) {
+  if (!hasTamboProvider) return <TamboPromptBoxDemoOnly vision={vision} onOpenCanvas={onOpenCanvas} onFocusChange={onFocusChange} />;
+  return <TamboPromptBoxWithHooks vision={vision} onOpenCanvas={onOpenCanvas} onFocusChange={onFocusChange} />;
 }
 
 // Mobile-optimized prompt button for iPhone
@@ -1318,6 +1361,12 @@ function DashboardContent({
   const isIphone = device === "iphone";
   const isIpad = device === "ipad";
   const isMobile = isIphone || isIpad;
+  
+  // Track prompt box focus state to dim other sections
+  const [promptFocused, setPromptFocused] = React.useState(false);
+  
+  // CSS class for dimming other sections when prompt is focused
+  const dimClass = promptFocused ? "opacity-40 pointer-events-none transition-opacity duration-300" : "transition-opacity duration-300";
   return (
     <div className={cn(
       "overflow-hidden rounded-3xl border shadow-sm transition-colors duration-300",
@@ -1366,12 +1415,13 @@ function DashboardContent({
         ) : null}
 
         <header className={cn(
-          "rounded-3xl border p-10 shadow-sm transition-colors duration-300",
+          "rounded-3xl border p-10 shadow-sm transition-all duration-300",
           vision === "future"
             ? "border-[#a371f7]/30 bg-gradient-to-br from-[#0d1117] to-[#a371f7]/5"
             : "border-[#30363d] bg-[#0d1117]/80",
           isIphone && "p-5 rounded-2xl",
-          isIpad && "p-6 rounded-2xl"
+          isIpad && "p-6 rounded-2xl",
+          dimClass
         )}>
           <h1 className={cn(
             "text-center text-4xl font-semibold tracking-tight text-[#f0f6fc]",
@@ -1424,10 +1474,11 @@ function DashboardContent({
         {!isIphone && (
           <div
             className={cn(
-              "ticker-strip relative mt-4 rounded-2xl border px-4 py-2 transition-colors duration-300",
+              "ticker-strip relative mt-4 rounded-2xl border px-4 py-2 transition-all duration-300",
               vision === "future"
                 ? "border-[#a371f7]/30 bg-[#a371f7]/5"
-                : "border-[#30363d] bg-[#21262d]"
+                : "border-[#30363d] bg-[#21262d]",
+              dimClass
             )}
             ref={tickerRef}
             onMouseLeave={() => {
@@ -1556,13 +1607,13 @@ function DashboardContent({
           {isIphone ? (
             <MobilePromptButton vision={vision} onOpenCanvas={onOpenCanvas} />
           ) : (
-            <PromptBox vision={vision} onOpenCanvas={onOpenCanvas} hasTamboProvider={hasTamboProvider} />
+            <PromptBox vision={vision} onOpenCanvas={onOpenCanvas} hasTamboProvider={hasTamboProvider} onFocusChange={setPromptFocused} />
           )}
         </div>
 
         {/* Near-term: Pending Filings Approval - compact on iPhone */}
         {vision === "near-term" && !isIphone && (
-          <section className="mt-8">
+          <section className={cn("mt-8", dimClass)}>
             <Card className="p-0 overflow-hidden">
               <div className="flex items-center justify-between border-b border-[#30363d] bg-[#0d1117]/50 px-5 py-4">
                 <div className="flex items-center gap-3">
@@ -1636,7 +1687,7 @@ function DashboardContent({
 
         {/* Future: Cross-Diligent Risk Signals - full on desktop/iPad */}
         {vision === "future" && !isIphone && (
-          <section className="mt-8">
+          <section className={cn("mt-8", dimClass)}>
             <Card className="p-0 overflow-hidden border-[#a371f7]/20">
               <div className="flex items-center justify-between border-b border-[#a371f7]/20 bg-gradient-to-r from-[#a371f7]/5 to-transparent px-5 py-4">
                 <div className="flex items-center gap-3">
@@ -1710,7 +1761,7 @@ function DashboardContent({
           </section>
         )}
 
-        <section className="mt-10">
+        <section className={cn("mt-10", dimClass)}>
           <SectionHeader 
             title={vision === "future" 
               ? "Your AI workspace at a glance" 
@@ -1760,7 +1811,7 @@ function DashboardContent({
           </div>
         </section>
 
-        <section className="mt-12">
+        <section className={cn("mt-12", dimClass)}>
           <SectionHeader 
             title={vision === "future" 
               ? "AI-recommended actions awaiting your approval"
