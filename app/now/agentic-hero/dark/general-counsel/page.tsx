@@ -11,6 +11,10 @@ import {
   MeetingCanvas,
   EmailCanvas,
   tamboCanvasComponents,
+  SearchResultCard,
+  ContractSummaryCard,
+  MeetingProposalCard,
+  ReportInsightCard,
 } from "./canvases";
 
 // Grayscale SVG Icons
@@ -723,9 +727,84 @@ const canvasActions: Array<{ id: CanvasType; label: string; icon: React.ReactNod
 ];
 
 // Tambo-enabled prompt box with chat functionality
+// Generate card components based on Tambo response content
+function generateCardsFromContent(content: string, query: string): React.ReactNode | undefined {
+  const text = (content + " " + query).toLowerCase();
+  
+  // Detect board/meeting content
+  if (text.includes("board") || text.includes("agenda") || text.includes("directors")) {
+    return (
+      <div className="mt-3 space-y-2">
+        <ReportInsightCard 
+          id="board-insight"
+          title="Board Meeting Status"
+          insight="All agenda items finalized. 72% of directors have reviewed materials."
+          metric="72%"
+          change="+8% from last meeting"
+          changeType="positive"
+        />
+      </div>
+    );
+  }
+  
+  // Detect contract content
+  if (text.includes("contract") || text.includes("renewal") || text.includes("agreement")) {
+    return (
+      <div className="mt-3 space-y-2">
+        <ContractSummaryCard 
+          id="contract-1"
+          title="Master Services Agreement"
+          counterparty="Acme Corp"
+          value="$2.4M/year"
+          renewalDate="Mar 15, 2025"
+          owner="Sarah Chen"
+          riskScore="65"
+          status="Renewal pending"
+        />
+      </div>
+    );
+  }
+  
+  // Detect matter/litigation content
+  if (text.includes("matter") || text.includes("litigation") || text.includes("case") || text.includes("lawsuit")) {
+    return (
+      <div className="mt-3 space-y-2">
+        <SearchResultCard 
+          id="matter-1"
+          title="Smith v. Acme Holdings"
+          source="Matter Manager"
+          sourceIcon="⚖️"
+          snippet="Discovery phase. Document production deadline approaching. 73% favorable outlook."
+          relevance={98}
+          lastModified="2 days ago"
+        />
+      </div>
+    );
+  }
+  
+  // Detect meeting/schedule content  
+  if (text.includes("schedule") || text.includes("meeting") || text.includes("calendar")) {
+    return (
+      <div className="mt-3 space-y-2">
+        <MeetingProposalCard 
+          id="meeting-1"
+          time="3:30 PM"
+          date="Tomorrow"
+          available={true}
+          aiNote="Moved low-priority call to open this slot"
+          attendeesAvailable={3}
+          totalAttendees={3}
+        />
+      </div>
+    );
+  }
+  
+  return undefined;
+}
+
 function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void }) {
   const [inputValue, setInputValue] = React.useState("");
-  const [messages, setMessages] = React.useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [messages, setMessages] = React.useState<Array<{ role: "user" | "assistant"; content: string; component?: React.ReactNode }>>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [demoMode, setDemoMode] = React.useState(true);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
@@ -797,7 +876,9 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onO
             .map((c) => c.text)
             .join("\n");
         }
-        setMessages(prev => [...prev, { role: "assistant", content: textContent || JSON.stringify(response, null, 2) }]);
+        // Generate cards based on response content
+        const liveComponent = generateCardsFromContent(textContent, userMessage);
+        setMessages(prev => [...prev, { role: "assistant", content: textContent || "I found some relevant information.", component: liveComponent }]);
         setIsLoading(false);
       } catch (err) {
         setMessages(prev => [...prev, { role: "assistant", content: `Error: ${err instanceof Error ? err.message : "Unknown error"}. Try demo mode.` }]);
@@ -830,15 +911,21 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onO
 
       {/* Chat Messages */}
       {messages.length > 0 && (
-        <div className="mt-4 max-h-[300px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
+        <div className="mt-4 max-h-[400px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
           {messages.map((msg, idx) => (
             <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
-              <div className={cn(
-                "max-w-[85%] rounded-2xl px-3 py-2",
-                msg.role === "user" ? "rounded-br-md bg-[#30363d]" : "rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5"
-              )}>
-                <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
-              </div>
+              {msg.role === "user" ? (
+                <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[#30363d] px-3 py-2">
+                  <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+                </div>
+              ) : (
+                <div className="w-full space-y-2">
+                  <div className="rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
+                    <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+                  </div>
+                  {msg.component && <div>{msg.component}</div>}
+                </div>
+              )}
             </div>
           ))}
           {isLoading && (
