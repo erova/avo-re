@@ -897,22 +897,15 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas, onFocusChange }: { visi
   const handleSubmit = async () => {
     if (!inputValue.trim() || isLoading) return;
     const userMessage = inputValue.trim();
-    
-    // Check if this should open a canvas
-    const canvasIntent = detectCanvasIntent(userMessage);
-    if (canvasIntent) {
-      onOpenCanvas(canvasIntent);
-      setInputValue("");
-      return;
-    }
-
+    // All interactions stay in the prompt box - no modal redirects
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
     setInputValue("");
     setIsLoading(true);
 
     if (demoMode) {
       setTimeout(() => {
-        setMessages(prev => [...prev, { role: "assistant", content: getDemoResponse(userMessage) }]);
+        const demoComponent = generateCardsFromContent("", userMessage);
+        setMessages(prev => [...prev, { role: "assistant", content: getDemoResponse(userMessage), component: demoComponent }]);
         setIsLoading(false);
       }, 800);
     } else {
@@ -1056,7 +1049,7 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas, onFocusChange }: { visi
 // Demo-only version (no Tambo hooks)
 function TamboPromptBoxDemoOnly({ vision, onOpenCanvas, onFocusChange }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void; onFocusChange?: (focused: boolean) => void }) {
   const [inputValue, setInputValue] = React.useState("");
-  const [messages, setMessages] = React.useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [messages, setMessages] = React.useState<Array<{ role: "user" | "assistant"; content: string; component?: React.ReactNode }>>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isFocused, setIsFocused] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
@@ -1107,18 +1100,13 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas, onFocusChange }: { visio
     if (!inputValue.trim() || isLoading) return;
     const userMessage = inputValue.trim();
     
-    const canvasIntent = detectCanvasIntent(userMessage);
-    if (canvasIntent) {
-      onOpenCanvas(canvasIntent);
-      setInputValue("");
-      return;
-    }
-
+    // All interactions stay in the prompt box - no modal redirects
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
     setInputValue("");
     setIsLoading(true);
     setTimeout(() => {
-      setMessages(prev => [...prev, { role: "assistant", content: getDemoResponse(userMessage) }]);
+      const demoComponent = generateCardsFromContent("", userMessage);
+      setMessages(prev => [...prev, { role: "assistant", content: getDemoResponse(userMessage), component: demoComponent }]);
       setIsLoading(false);
     }, 800);
   };
@@ -1149,15 +1137,21 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas, onFocusChange }: { visio
       </div>
 
       {messages.length > 0 && (
-        <div ref={messagesContainerRef} className="mt-4 max-h-[300px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
+        <div ref={messagesContainerRef} className="mt-4 max-h-[400px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
           {messages.map((msg, idx) => (
             <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
-              <div className={cn(
-                "max-w-[85%] rounded-2xl px-3 py-2",
-                msg.role === "user" ? "rounded-br-md bg-[#30363d]" : "rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5"
-              )}>
-                <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
-              </div>
+              {msg.role === "user" ? (
+                <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[#30363d] px-3 py-2">
+                  <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+                </div>
+              ) : (
+                <div className="w-full space-y-2">
+                  <div className="rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
+                    <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+                  </div>
+                  {msg.component && <div>{msg.component}</div>}
+                </div>
+              )}
             </div>
           ))}
           {isLoading && (
