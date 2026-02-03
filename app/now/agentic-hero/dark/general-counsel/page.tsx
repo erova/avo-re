@@ -940,13 +940,22 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas, onFocusChange }: { visi
   };
 
   return (
-    <Card className="p-6">
+    <Card className={cn(
+      "p-6 transition-all duration-300",
+      isActive && "scale-[1.02] shadow-lg shadow-[#58a6ff]/10 ring-1 ring-[#58a6ff]/20"
+    )}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-lg font-semibold text-[#f0f6fc]">
+          <h3 className={cn(
+            "font-semibold text-[#f0f6fc] transition-all duration-300",
+            isActive ? "text-xl" : "text-lg"
+          )}>
             {vision === "near-term" ? "What do you need to do?" : "Direct your autonomous Legal AI workforce."}
           </h3>
-          <p className="mt-1 text-sm text-[#8b949e]">
+          <p className={cn(
+            "mt-1 text-[#8b949e] transition-all duration-300",
+            isActive ? "text-base" : "text-sm"
+          )}>
             Ask questions or choose an action below. Work entirely within Diligent.
           </p>
         </div>
@@ -1024,7 +1033,7 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas, onFocusChange }: { visi
       </div>
 
       {/* Canvas Action Buttons - dim when focused */}
-      <div className={cn("mt-4 transition-opacity duration-300", isActive && "opacity-40")}>
+      <div className={cn("mt-4 transition-opacity duration-300", isActive && "opacity-25")}>
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[#6e7681]">Or start with</p>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
           {canvasActions.map((action) => (
@@ -1115,13 +1124,22 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas, onFocusChange }: { visio
   };
 
   return (
-    <Card className="p-6">
+    <Card className={cn(
+      "p-6 transition-all duration-300",
+      isActive && "scale-[1.02] shadow-lg shadow-[#58a6ff]/10 ring-1 ring-[#58a6ff]/20"
+    )}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-lg font-semibold text-[#f0f6fc]">
+          <h3 className={cn(
+            "font-semibold text-[#f0f6fc] transition-all duration-300",
+            isActive ? "text-xl" : "text-lg"
+          )}>
             {vision === "near-term" ? "What do you need to do?" : "Direct your autonomous Legal AI workforce."}
           </h3>
-          <p className="mt-1 text-sm text-[#8b949e]">
+          <p className={cn(
+            "mt-1 text-[#8b949e] transition-all duration-300",
+            isActive ? "text-base" : "text-sm"
+          )}>
             Ask questions or choose an action below. Work entirely within Diligent.
           </p>
         </div>
@@ -1185,7 +1203,7 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas, onFocusChange }: { visio
       </div>
 
       {/* Canvas Action Buttons - dim when focused */}
-      <div className={cn("mt-4 transition-opacity duration-300", isActive && "opacity-40")}>
+      <div className={cn("mt-4 transition-opacity duration-300", isActive && "opacity-25")}>
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[#6e7681]">Or start with</p>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
           {canvasActions.map((action) => (
@@ -1366,7 +1384,7 @@ function DashboardContent({
   const [promptFocused, setPromptFocused] = React.useState(false);
   
   // CSS class for dimming other sections when prompt is focused
-  const dimClass = promptFocused ? "opacity-40 pointer-events-none transition-opacity duration-300" : "transition-opacity duration-300";
+  const dimClass = promptFocused ? "opacity-25 pointer-events-none transition-all duration-300" : "transition-all duration-300";
   return (
     <div className={cn(
       "overflow-hidden rounded-3xl border shadow-sm transition-colors duration-300",
