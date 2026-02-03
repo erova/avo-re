@@ -1283,26 +1283,41 @@ function AIAssistantPanel({ hasTamboProvider }: { hasTamboProvider: boolean }) {
 // Top navigation bar
 function TopBar() {
   return (
-    <div className="flex items-center justify-between border-b border-[#30363d] bg-[#0d1117] px-4 py-2">
-      <div className="flex items-center gap-3">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-[#6e7681]">Prototype</span>
-        <span className="text-sm font-semibold text-[#f0f6fc]">General Counsel Command Center</span>
+    <div className="flex flex-col border-b border-[#30363d] bg-[#0d1117]">
+      <div className="flex items-center justify-between px-4 py-2">
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-[#6e7681]">Prototype</span>
+          <span className="text-sm font-semibold text-[#f0f6fc]">General Counsel Command Center</span>
+        </div>
+        
+        {/* Version Selector */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-[#6e7681]">Model:</span>
+          <div className="flex rounded-lg border border-[#30363d] bg-[#161b22] p-0.5">
+            <a href="/now/agentic-hero/dark/general-counsel" className="rounded-md px-2.5 py-1 text-xs text-[#8b949e] hover:text-[#f0f6fc]">
+              Unified Chat
+            </a>
+            <a href="/now/agentic-hero/dark/general-counsel/v2" className="rounded-md bg-[#58a6ff] px-2.5 py-1 text-xs font-medium text-white">
+              Split Panel
+            </a>
+            <a href="/now/agentic-hero/dark/general-counsel/v3" className="rounded-md px-2.5 py-1 text-xs text-[#8b949e] hover:text-[#f0f6fc]">
+              Chat Thread
+            </a>
+          </div>
+        </div>
       </div>
       
-      {/* Version Selector */}
-      <div className="flex items-center gap-3">
-        <span className="text-xs text-[#6e7681]">Model:</span>
-        <div className="flex rounded-lg border border-[#30363d] bg-[#161b22] p-0.5">
-          <a href="/now/agentic-hero/dark/general-counsel" className="rounded-md px-2.5 py-1 text-xs text-[#8b949e] hover:text-[#f0f6fc]">
-            Unified Chat
-          </a>
-          <a href="/now/agentic-hero/dark/general-counsel/v2" className="rounded-md bg-[#58a6ff] px-2.5 py-1 text-xs font-medium text-white">
-            Split Panel
-          </a>
-          <a href="/now/agentic-hero/dark/general-counsel/v3" className="rounded-md px-2.5 py-1 text-xs text-[#8b949e] hover:text-[#f0f6fc]">
-            Chat Thread
-          </a>
-        </div>
+      {/* Tambo prompt hints */}
+      <div className="flex items-center gap-2 border-t border-[#30363d]/50 bg-[#161b22]/50 px-4 py-1.5 text-[11px] text-[#6e7681]">
+        <span className="rounded bg-[#a371f7]/20 px-1.5 py-0.5 text-[10px] font-medium text-[#a371f7]">Live</span>
+        <span>Try:</span>
+        <span className="text-[#8b949e]">&ldquo;who is Sarah Chen&rdquo;</span>
+        <span className="text-[#30363d]">•</span>
+        <span className="text-[#8b949e]">&ldquo;schedule a meeting&rdquo;</span>
+        <span className="text-[#30363d]">•</span>
+        <span className="text-[#8b949e]">&ldquo;show me trends&rdquo;</span>
+        <span className="text-[#30363d]">•</span>
+        <span className="text-[#8b949e]">&ldquo;contracts expiring&rdquo;</span>
       </div>
     </div>
   );
@@ -1322,17 +1337,6 @@ function PageContent({ hasTamboProvider }: { hasTamboProvider: boolean }) {
   return (
     <div className="flex h-screen flex-col bg-[#0d1117]">
       <TopBar />
-      {/* Tambo Instructions */}
-      <div className="border-b border-[#30363d] bg-[#161b22]/80 px-4 py-2">
-        <div className="flex items-center gap-3">
-          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#a371f7]/20">
-            <span className="text-[10px]">✨</span>
-          </div>
-          <p className="text-xs text-[#8b949e]">
-            <span className="font-medium text-[#f0f6fc]">Tambo Live:</span> Try &quot;who is Sarah Chen&quot;, &quot;schedule a meeting&quot;, &quot;show me a report&quot;, &quot;contracts expiring&quot;
-          </p>
-        </div>
-      </div>
       <AgentTicker 
         hoveredAgent={hoveredAgent}
         setHoveredAgent={setHoveredAgent}
