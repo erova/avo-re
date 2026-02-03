@@ -1,6 +1,60 @@
 "use client";
 
 import React from "react";
+import { TamboProvider, useTamboThread } from "@tambo-ai/react";
+import {
+  CanvasType,
+  WorkflowCanvas,
+  DocumentCanvas,
+  ReportingCanvas,
+  SearchCanvas,
+  MeetingCanvas,
+  EmailCanvas,
+  tamboCanvasComponents,
+} from "./canvases";
+
+// Grayscale SVG Icons
+const Icons = {
+  workflow: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+    </svg>
+  ),
+  document: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+    </svg>
+  ),
+  reporting: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M18 20V10M12 20V4M6 20v-6" />
+    </svg>
+  ),
+  search: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
+    </svg>
+  ),
+  meeting: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  ),
+  email: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m22 6-10 7L2 6" />
+    </svg>
+  ),
+  send: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+    </svg>
+  ),
+};
 
 function DiligentLogo({ className }: { className?: string }) {
   return (
@@ -496,45 +550,69 @@ function PrototypeNav({
 }) {
   return (
     <>
-      <div className="w-full border-b border-[#30363d] bg-[#0d1117]">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-medium uppercase tracking-[0.2em] text-[#6e7681]">Prototype</span>
-            <span className="text-sm font-semibold text-[#f0f6fc]">General Counsel Dashboard</span>
-          </div>
+      {/* Top bar with version selector */}
+      <div className="w-full border-b border-[#30363d] bg-[#161b22]">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-4">
-            <VisionToggle vision={vision} onChange={onVisionChange} />
+            <span className="text-xs font-medium uppercase tracking-wider text-[#6e7681]">Prototype</span>
+            <span className="text-sm font-semibold text-[#f0f6fc]">General Counsel Command Center</span>
+          </div>
+          
+          {/* Version Selector */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-[#6e7681]">Model:</span>
+              <div className="flex rounded-lg border border-[#30363d] bg-[#0d1117] p-0.5">
+                <a
+                  href="/now/agentic-hero/dark/general-counsel"
+                  className="rounded-md bg-[#58a6ff] px-3 py-1.5 text-xs font-medium text-white"
+                >
+                  Canvas Overlay
+                </a>
+                <a
+                  href="/now/agentic-hero/dark/general-counsel/v2"
+                  className="rounded-md px-3 py-1.5 text-xs font-medium text-[#8b949e] hover:text-[#f0f6fc]"
+                >
+                  Split Workspace
+                </a>
+                <a
+                  href="/now/agentic-hero/dark/general-counsel/v3"
+                  className="rounded-md px-3 py-1.5 text-xs font-medium text-[#8b949e] hover:text-[#f0f6fc]"
+                >
+                  Chat Thread
+                </a>
+              </div>
+            </div>
             <span className="text-[#30363d]">|</span>
-            <nav className="flex flex-wrap items-center gap-2">
-              <a
-                href="/now/agentic-hero/dark?context=diligent"
-                className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs font-medium text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]"
-              >
-                GRC Overview
-              </a>
-              <a
-                href="/now/agentic-hero/dark/general-counsel"
-                className="rounded-full border border-[#58a6ff] bg-[#161b22] px-3 py-1 text-xs font-semibold text-[#58a6ff] hover:bg-[#21262d]"
-              >
-                General Counsel
-              </a>
-              <a
-                href="/now/agentic-hero/dark/audit-executive"
-                className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs font-medium text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]"
-              >
-                Audit Executive
-              </a>
-              <a
-                href="/now/agentic-hero/dark/audit-manager"
-                className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs font-medium text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]"
-              >
-                Audit Manager
-              </a>
-            </nav>
+            <VisionToggle vision={vision} onChange={onVisionChange} />
           </div>
         </div>
       </div>
-      <DevicePreviewBar device={device} onDeviceChange={onDeviceChange} />
+
+      {/* Device selector - closer to content */}
+      <div className="flex justify-center bg-[#0d1117] py-4">
+        <div className="flex items-center gap-2 rounded-xl border border-[#30363d] bg-[#161b22] p-1">
+          {[
+            { id: "desktop" as DeviceType, icon: "🖥️", label: "Desktop" },
+            { id: "ipad" as DeviceType, icon: "📱", label: "iPad" },
+            { id: "iphone" as DeviceType, icon: "📱", label: "iPhone" },
+          ].map((d) => (
+            <button
+              key={d.id}
+              onClick={() => onDeviceChange(d.id)}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition",
+                device === d.id
+                  ? "bg-[#21262d] text-[#f0f6fc]"
+                  : "text-[#8b949e] hover:text-[#f0f6fc]"
+              )}
+            >
+              <span>{d.icon}</span>
+              <span>{d.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
     </>
   );
 }
@@ -604,117 +682,414 @@ function TopNav({
   );
 }
 
-function PromptBox({ vision }: { vision: Vision }) {
-  const prompts = {
-    "near-term": [
-      "Prep board materials",
-      "Check entity filings",
-      "Policy attestation status",
-      "Generate legal KPIs",
-    ],
-    "future": [
-      "Predict case outcomes",
-      "Auto-draft board book",
-      "Autonomous entity filings",
-      "Proactive policy updates",
-    ],
+// Canvas action buttons configuration
+const canvasActions: Array<{ id: CanvasType; label: string; icon: React.ReactNode; description: string }> = [
+  { 
+    id: "workflow", 
+    label: "Start Workflow", 
+    icon: Icons.workflow, 
+    description: "Complex multi-step tasks",
+  },
+  { 
+    id: "document", 
+    label: "Draft Document", 
+    icon: Icons.document, 
+    description: "Create or review docs",
+  },
+  { 
+    id: "reporting", 
+    label: "Run Report", 
+    icon: Icons.reporting, 
+    description: "Trends & analytics",
+  },
+  { 
+    id: "search", 
+    label: "AI Search", 
+    icon: Icons.search, 
+    description: "Find anything",
+  },
+  { 
+    id: "meeting", 
+    label: "Schedule", 
+    icon: Icons.meeting, 
+    description: "AI finds time",
+  },
+  { 
+    id: "email", 
+    label: "Draft Email", 
+    icon: Icons.email, 
+    description: "Secure sharing",
+  },
+];
+
+// Tambo-enabled prompt box with chat functionality
+function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void }) {
+  const [inputValue, setInputValue] = React.useState("");
+  const [messages, setMessages] = React.useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [demoMode, setDemoMode] = React.useState(true);
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const tamboThread = useTamboThread();
+
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Check if query should open a canvas instead of chat
+  const detectCanvasIntent = (query: string): CanvasType | null => {
+    const q = query.toLowerCase();
+    if (q.includes("workflow") || q.includes("prepare board materials")) return "workflow";
+    if (q.includes("draft") && (q.includes("document") || q.includes("memo") || q.includes("letter"))) return "document";
+    if (q.includes("report") || q.includes("trend") || q.includes("attendance pattern") || q.includes("voting pattern")) return "reporting";
+    if (q.includes("schedule") && (q.includes("meeting") || q.includes("call"))) return "meeting";
+    if (q.includes("draft email") || q.includes("send email")) return "email";
+    return null;
+  };
+
+  const getDemoResponse = (query: string): string => {
+    const q = query.toLowerCase();
+    if (q.includes("matter") || q.includes("litigation") || q.includes("smith")) {
+      return "I found 2 active matters:\n\n• Smith v. Acme Holdings (Discovery phase, 73% favorable)\n  → Document production deadline: Feb 15\n\n• IP Licensing Dispute (Negotiation, settlement likely)\n  → Counter-proposal awaiting your review";
+    }
+    if (q.includes("contract") || q.includes("acme") || q.includes("renewal")) {
+      return "Sarah Chen (Procurement) owns the Acme Corp relationship.\n\n• Master Services Agreement: $2.4M/year\n• Renewal date: March 15, 2025\n• Status: Renewal pending\n\nWould you like me to schedule a meeting with Sarah?";
+    }
+    if (q.includes("board") || q.includes("meeting")) {
+      return "Your next board meeting is in 12 days (Feb 14).\n\nPreparation status:\n✓ Financial Results Review — Complete\n○ Equity Grant Approval — In progress\n○ Risk Assessment Update — Not started\n\nShould I open the workflow canvas to prepare materials?";
+    }
+    if (q.includes("who") || q.includes("owner")) {
+      return "I searched across Third Party Manager, Entities, and Risk Manager.\n\nSarah Chen (Procurement) is the primary owner:\n• 98% confidence from Contract Manager\n• 92% confidence from Risk Manager";
+    }
+    return "I can help you with:\n• Active legal matters and litigation status\n• Contract renewals and vendor relationships\n• Board meeting preparation\n• Finding relationship owners across systems";
+  };
+
+  const handleSubmit = async () => {
+    if (!inputValue.trim() || isLoading) return;
+    const userMessage = inputValue.trim();
+    
+    // Check if this should open a canvas
+    const canvasIntent = detectCanvasIntent(userMessage);
+    if (canvasIntent) {
+      onOpenCanvas(canvasIntent);
+      setInputValue("");
+      return;
+    }
+
+    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+    setInputValue("");
+    setIsLoading(true);
+
+    if (demoMode) {
+      setTimeout(() => {
+        setMessages(prev => [...prev, { role: "assistant", content: getDemoResponse(userMessage) }]);
+        setIsLoading(false);
+      }, 800);
+    } else {
+      try {
+        const response = await tamboThread.sendThreadMessage(userMessage);
+        const rawContent = (response as unknown as Record<string, unknown>)?.content;
+        let textContent = "";
+        if (typeof rawContent === "string") {
+          textContent = rawContent;
+        } else if (Array.isArray(rawContent)) {
+          textContent = rawContent
+            .filter((c): c is { type: string; text: string } => c && typeof c === "object" && "text" in c)
+            .map((c) => c.text)
+            .join("\n");
+        }
+        setMessages(prev => [...prev, { role: "assistant", content: textContent || JSON.stringify(response, null, 2) }]);
+        setIsLoading(false);
+      } catch (err) {
+        setMessages(prev => [...prev, { role: "assistant", content: `Error: ${err instanceof Error ? err.message : "Unknown error"}. Try demo mode.` }]);
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
     <Card className="p-6">
-      <div className="flex items-start justify-between gap-6">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="mt-2 text-lg font-semibold text-[#f0f6fc]">
-            {vision === "near-term" 
-              ? "Ask your Legal AI assistant anything."
-              : "Direct your autonomous Legal AI workforce."
-            }
+          <h3 className="text-lg font-semibold text-[#f0f6fc]">
+            {vision === "near-term" ? "What do you need to do?" : "Direct your autonomous Legal AI workforce."}
           </h3>
-          <p className="mt-2 text-sm text-[#8b949e]">
-            {vision === "near-term"
-              ? "Get summaries, track deadlines, search documents, or prepare materials—all from one prompt."
-              : "Initiate predictive analysis, approve autonomous actions, or generate strategic recommendations."
-            }
+          <p className="mt-1 text-sm text-[#8b949e]">
+            Ask questions or choose an action below. Work entirely within Diligent.
           </p>
         </div>
-        {vision === "future" && <SoftTag variant="ai">AI-Powered</SoftTag>}
+        <div className="flex items-center gap-2">
+          <div className="flex rounded-full border border-[#30363d] bg-[#21262d] p-0.5">
+            <button onClick={() => setDemoMode(true)} className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium transition", demoMode ? "bg-[#161b22] text-[#f0f6fc]" : "text-[#6e7681] hover:text-[#8b949e]")}>Demo</button>
+            <button onClick={() => setDemoMode(false)} className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium transition", !demoMode ? "bg-[#161b22] text-[#f0f6fc]" : "text-[#6e7681] hover:text-[#8b949e]")}>Live</button>
+          </div>
+          <span className="flex items-center gap-1 rounded-full bg-[#a371f7]/10 px-2 py-0.5 text-[10px] text-[#a371f7]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#a371f7]" />Tambo
+          </span>
+        </div>
       </div>
-      <div className="mt-4 rounded-2xl border border-[#30363d] bg-[#0d1117] p-4">
-        <textarea
-          className="min-h-[96px] w-full resize-none bg-transparent text-sm text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
-          placeholder={
-            vision === "near-term"
-              ? "e.g., Which entities have annual reports due in the next 90 days? Or: Summarize board attendance for the past 4 meetings."
-              : "e.g., Analyze board composition against peer benchmarks and recommend diversity improvements with candidate profiles."
-          }
+
+      {/* Chat Messages */}
+      {messages.length > 0 && (
+        <div className="mt-4 max-h-[300px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
+              <div className={cn(
+                "max-w-[85%] rounded-2xl px-3 py-2",
+                msg.role === "user" ? "rounded-br-md bg-[#30363d]" : "rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5"
+              )}>
+                <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+              </div>
+            </div>
+          ))}
+          {isLoading && (
+            <div className="flex items-center gap-2 rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
+              <div className="h-2 w-2 animate-pulse rounded-full bg-[#58a6ff]" />
+              <span className="text-xs text-[#8b949e]">Thinking...</span>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      )}
+
+      {/* Input */}
+      <div className="mt-4 flex items-center gap-2 rounded-xl border border-[#30363d] bg-[#0d1117] p-2">
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          disabled={isLoading}
+          className="flex-1 bg-transparent px-2 text-sm text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
+          placeholder="Ask a question or describe what you need..."
         />
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          {prompts[vision].map((label) => (
+        <button
+          onClick={handleSubmit}
+          disabled={!inputValue.trim() || isLoading}
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#58a6ff] text-white transition hover:bg-[#79b8ff] disabled:opacity-50"
+        >
+          {Icons.send}
+        </button>
+      </div>
+
+      {/* Canvas Action Buttons */}
+      <div className="mt-4">
+        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[#6e7681]">Or start with</p>
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {canvasActions.map((action) => (
             <button
-              key={label}
-              className={cn(
-                "rounded-full border px-3 py-1 text-xs font-medium",
-                vision === "future"
-                  ? "border-[#a371f7]/40 bg-[#a371f7]/10 text-[#a371f7] hover:bg-[#a371f7]/20"
-                  : "border-[#30363d] bg-[#21262d] text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]"
-              )}
+              key={action.id}
+              onClick={() => onOpenCanvas(action.id)}
+              className="group flex flex-col items-center gap-1.5 rounded-xl border border-[#30363d] bg-[#21262d] p-3 text-[#8b949e] transition hover:border-[#58a6ff]/50 hover:bg-[#30363d] hover:text-[#f0f6fc]"
             >
-              {label}
+              <span className="flex h-8 w-8 items-center justify-center">{action.icon}</span>
+              <span className="text-xs font-medium text-[#f0f6fc]">{action.label}</span>
+              <span className="hidden text-[10px] text-[#6e7681] sm:block">{action.description}</span>
             </button>
           ))}
-          <div className="flex-1" />
-          <button className="rounded-xl border border-[#30363d] bg-[#161b22] px-3 py-2 text-sm text-[#8b949e] hover:bg-[#21262d] hover:text-[#f0f6fc]">
-            Clear
-          </button>
-          <button className={cn(
-            "rounded-xl border px-3 py-2 text-sm font-medium",
-            vision === "future"
-              ? "border-[#a371f7] bg-[#a371f7] text-white hover:bg-[#8b5cf6]"
-              : "border-[#58a6ff] bg-[#58a6ff] text-[#0d1117] hover:bg-[#79b8ff]"
-          )}>
-            {vision === "future" ? "Execute" : "Run task"}
-          </button>
         </div>
       </div>
     </Card>
   );
 }
 
-// Mobile-optimized prompt button for iPhone
-function MobilePromptButton({ vision }: { vision: Vision }) {
+// Demo-only version (no Tambo hooks)
+function TamboPromptBoxDemoOnly({ vision, onOpenCanvas }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void }) {
+  const [inputValue, setInputValue] = React.useState("");
+  const [messages, setMessages] = React.useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const detectCanvasIntent = (query: string): CanvasType | null => {
+    const q = query.toLowerCase();
+    if (q.includes("workflow") || q.includes("prepare board materials")) return "workflow";
+    if (q.includes("draft") && (q.includes("document") || q.includes("memo") || q.includes("letter"))) return "document";
+    if (q.includes("report") || q.includes("trend") || q.includes("attendance pattern") || q.includes("voting pattern")) return "reporting";
+    if (q.includes("schedule") && (q.includes("meeting") || q.includes("call"))) return "meeting";
+    if (q.includes("draft email") || q.includes("send email")) return "email";
+    return null;
+  };
+
+  const getDemoResponse = (query: string): string => {
+    const q = query.toLowerCase();
+    if (q.includes("matter") || q.includes("litigation") || q.includes("smith")) {
+      return "I found 2 active matters:\n\n• Smith v. Acme Holdings (Discovery phase, 73% favorable)\n  → Document production deadline: Feb 15\n\n• IP Licensing Dispute (Negotiation, settlement likely)\n  → Counter-proposal awaiting your review";
+    }
+    if (q.includes("contract") || q.includes("acme") || q.includes("renewal")) {
+      return "Sarah Chen (Procurement) owns the Acme Corp relationship.\n\n• Master Services Agreement: $2.4M/year\n• Renewal date: March 15, 2025\n• Status: Renewal pending\n\nWould you like me to schedule a meeting with Sarah?";
+    }
+    if (q.includes("board") || q.includes("meeting")) {
+      return "Your next board meeting is in 12 days (Feb 14).\n\nPreparation status:\n✓ Financial Results Review — Complete\n○ Equity Grant Approval — In progress\n○ Risk Assessment Update — Not started\n\nShould I open the workflow canvas to prepare materials?";
+    }
+    if (q.includes("who") || q.includes("owner")) {
+      return "I searched across Third Party Manager, Entities, and Risk Manager.\n\nSarah Chen (Procurement) is the primary owner:\n• 98% confidence from Contract Manager\n• 92% confidence from Risk Manager";
+    }
+    return "I can help you with:\n• Active legal matters and litigation status\n• Contract renewals and vendor relationships\n• Board meeting preparation\n• Finding relationship owners across systems";
+  };
+
+  const handleSubmit = () => {
+    if (!inputValue.trim() || isLoading) return;
+    const userMessage = inputValue.trim();
+    
+    const canvasIntent = detectCanvasIntent(userMessage);
+    if (canvasIntent) {
+      onOpenCanvas(canvasIntent);
+      setInputValue("");
+      return;
+    }
+
+    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+    setInputValue("");
+    setIsLoading(true);
+    setTimeout(() => {
+      setMessages(prev => [...prev, { role: "assistant", content: getDemoResponse(userMessage) }]);
+      setIsLoading(false);
+    }, 800);
+  };
+
   return (
-    <button className={cn(
-      "w-full rounded-2xl border p-4 text-left transition",
-      vision === "future"
-        ? "border-[#a371f7]/30 bg-[#a371f7]/5 hover:bg-[#a371f7]/10"
-        : "border-[#30363d] bg-[#21262d] hover:bg-[#30363d]"
-    )}>
-      <div className="flex items-center gap-3">
-        <div className={cn(
-          "flex h-10 w-10 items-center justify-center rounded-xl",
-          vision === "future" ? "bg-[#a371f7]/20" : "bg-[#58a6ff]/20"
-        )}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={vision === "future" ? "#a371f7" : "#58a6ff"} strokeWidth="2">
-            <path d="M12 2a10 10 0 1 0 10 10H12V2Z" />
-            <path d="M12 12 2.1 9.1" />
-            <path d="m12 12 3.9 7.8" />
-            <path d="m12 12 7.8-3.9" />
+    <Card className="p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-lg font-semibold text-[#f0f6fc]">
+            {vision === "near-term" ? "What do you need to do?" : "Direct your autonomous Legal AI workforce."}
+          </h3>
+          <p className="mt-1 text-sm text-[#8b949e]">
+            Ask questions or choose an action below. Work entirely within Diligent.
+          </p>
+        </div>
+        <span className="flex items-center gap-1 rounded-full bg-[#d29922]/10 px-2 py-1 text-[10px] text-[#d29922]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#d29922]" />Demo
+        </span>
+      </div>
+
+      {messages.length > 0 && (
+        <div className="mt-4 max-h-[300px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
+              <div className={cn(
+                "max-w-[85%] rounded-2xl px-3 py-2",
+                msg.role === "user" ? "rounded-br-md bg-[#30363d]" : "rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5"
+              )}>
+                <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+              </div>
+            </div>
+          ))}
+          {isLoading && (
+            <div className="flex items-center gap-2 rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
+              <div className="h-2 w-2 animate-pulse rounded-full bg-[#58a6ff]" />
+              <span className="text-xs text-[#8b949e]">Thinking...</span>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      )}
+
+      <div className="mt-4 flex items-center gap-2 rounded-xl border border-[#30363d] bg-[#0d1117] p-2">
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          disabled={isLoading}
+          className="flex-1 bg-transparent px-2 text-sm text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
+          placeholder="Ask a question or describe what you need..."
+        />
+        <button
+          onClick={handleSubmit}
+          disabled={!inputValue.trim() || isLoading}
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#58a6ff] text-white transition hover:bg-[#79b8ff] disabled:opacity-50"
+        >
+          {Icons.send}
+        </button>
+      </div>
+
+      <div className="mt-4">
+        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[#6e7681]">Or start with</p>
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {canvasActions.map((action) => (
+            <button
+              key={action.id}
+              onClick={() => onOpenCanvas(action.id)}
+              className="group flex flex-col items-center gap-1.5 rounded-xl border border-[#30363d] bg-[#21262d] p-3 text-[#8b949e] transition hover:border-[#58a6ff]/50 hover:bg-[#30363d] hover:text-[#f0f6fc]"
+            >
+              <span className="flex h-8 w-8 items-center justify-center">{action.icon}</span>
+              <span className="text-xs font-medium text-[#f0f6fc]">{action.label}</span>
+              <span className="hidden text-[10px] text-[#6e7681] sm:block">{action.description}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+// Wrapper that switches based on TamboProvider availability
+function PromptBox({ vision, onOpenCanvas, hasTamboProvider }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void; hasTamboProvider: boolean }) {
+  if (!hasTamboProvider) return <TamboPromptBoxDemoOnly vision={vision} onOpenCanvas={onOpenCanvas} />;
+  return <TamboPromptBoxWithHooks vision={vision} onOpenCanvas={onOpenCanvas} />;
+}
+
+// Mobile-optimized prompt button for iPhone
+function MobilePromptButton({ vision, onOpenCanvas }: { vision: Vision; onOpenCanvas: (canvas: CanvasType) => void }) {
+  return (
+    <div className="space-y-3">
+      <button 
+        onClick={() => onOpenCanvas("search")}
+        className={cn(
+          "w-full rounded-2xl border p-4 text-left transition",
+          vision === "future"
+            ? "border-[#a371f7]/30 bg-[#a371f7]/5 hover:bg-[#a371f7]/10"
+            : "border-[#30363d] bg-[#21262d] hover:bg-[#30363d]"
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <div className={cn(
+            "flex h-10 w-10 items-center justify-center rounded-xl",
+            vision === "future" ? "bg-[#a371f7]/20" : "bg-[#58a6ff]/20"
+          )}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={vision === "future" ? "#a371f7" : "#58a6ff"} strokeWidth="2">
+              <path d="M12 2a10 10 0 1 0 10 10H12V2Z" />
+              <path d="M12 12 2.1 9.1" />
+              <path d="m12 12 3.9 7.8" />
+              <path d="m12 12 7.8-3.9" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <p className={cn(
+              "text-sm font-semibold",
+              vision === "future" ? "text-[#a371f7]" : "text-[#f0f6fc]"
+            )}>
+              {vision === "future" ? "Direct AI Workforce" : "Ask Diligent AI"}
+            </p>
+            <p className="text-xs text-[#8b949e]">Tap to start</p>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6e7681" strokeWidth="2">
+            <path d="m9 18 6-6-6-6" />
           </svg>
         </div>
-        <div className="flex-1">
-          <p className={cn(
-            "text-sm font-semibold",
-            vision === "future" ? "text-[#a371f7]" : "text-[#f0f6fc]"
-          )}>
-            {vision === "future" ? "Direct AI Workforce" : "Ask Diligent AI"}
-          </p>
-          <p className="text-xs text-[#8b949e]">Tap to start</p>
-        </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6e7681" strokeWidth="2">
-          <path d="m9 18 6-6-6-6" />
-        </svg>
+      </button>
+      {/* Quick actions for mobile */}
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { id: "workflow" as CanvasType, icon: Icons.workflow, label: "Workflow" },
+          { id: "document" as CanvasType, icon: Icons.document, label: "Document" },
+          { id: "meeting" as CanvasType, icon: Icons.meeting, label: "Schedule" },
+        ].map((action) => (
+          <button
+            key={action.id}
+            onClick={() => onOpenCanvas(action.id)}
+            className="flex flex-col items-center gap-1 rounded-xl border border-[#30363d] bg-[#21262d] p-2 text-[#8b949e] transition hover:bg-[#30363d] hover:text-[#f0f6fc]"
+          >
+            <span className="flex h-6 w-6 items-center justify-center">{action.icon}</span>
+            <span className="text-[10px]">{action.label}</span>
+          </button>
+        ))}
       </div>
-    </button>
+    </div>
   );
 }
 
@@ -785,6 +1160,8 @@ function DashboardContent({
   setPopoverHovered,
   tickerRef,
   device = "desktop",
+  onOpenCanvas,
+  hasTamboProvider = false,
 }: {
   vision: Vision;
   activityOpen: boolean;
@@ -800,6 +1177,8 @@ function DashboardContent({
   setPopoverHovered: (v: boolean) => void;
   tickerRef: React.RefObject<HTMLDivElement | null>;
   device?: DeviceType;
+  onOpenCanvas: (canvas: CanvasType) => void;
+  hasTamboProvider?: boolean;
 }) {
   const isIphone = device === "iphone";
   const isIpad = device === "ipad";
@@ -1040,9 +1419,9 @@ function DashboardContent({
         {/* Prompt box - full on desktop/iPad, compact button on iPhone */}
         <div className="mt-8">
           {isIphone ? (
-            <MobilePromptButton vision={vision} />
+            <MobilePromptButton vision={vision} onOpenCanvas={onOpenCanvas} />
           ) : (
-            <PromptBox vision={vision} />
+            <PromptBox vision={vision} onOpenCanvas={onOpenCanvas} hasTamboProvider={hasTamboProvider} />
           )}
         </div>
 
@@ -1409,7 +1788,8 @@ function DashboardContent({
   );
 }
 
-export default function Page() {
+// Main page content component
+function PageContent({ hasTamboProvider = false }: { hasTamboProvider?: boolean }) {
   const [vision, setVision] = React.useState<Vision>("near-term");
   const [device, setDevice] = React.useState<DeviceType>("desktop");
   const [activityOpen, setActivityOpen] = React.useState(false);
@@ -1417,6 +1797,20 @@ export default function Page() {
   const [popoverPos, setPopoverPos] = React.useState({ x: 0, y: 0 });
   const [popoverHovered, setPopoverHovered] = React.useState(false);
   const tickerRef = React.useRef<HTMLDivElement | null>(null);
+  
+  // Canvas state
+  const [activeCanvas, setActiveCanvas] = React.useState<CanvasType>("none");
+  const [canvasPrompt, setCanvasPrompt] = React.useState("");
+
+  const handleOpenCanvas = (canvas: CanvasType, prompt?: string) => {
+    setActiveCanvas(canvas);
+    setCanvasPrompt(prompt || "");
+  };
+
+  const handleCloseCanvas = () => {
+    setActiveCanvas("none");
+    setCanvasPrompt("");
+  };
 
   const currentActivityLog = activityLog[vision];
   const currentNextActions = nextActions[vision];
@@ -1436,34 +1830,71 @@ export default function Page() {
     popoverHovered,
     setPopoverHovered,
     tickerRef,
+    onOpenCanvas: handleOpenCanvas,
+    hasTamboProvider,
+  };
+
+  // Render active canvas
+  const renderCanvas = () => {
+    switch (activeCanvas) {
+      case "workflow":
+        return <WorkflowCanvas onClose={handleCloseCanvas} initialPrompt={canvasPrompt} />;
+      case "document":
+        return <DocumentCanvas onClose={handleCloseCanvas} initialPrompt={canvasPrompt} />;
+      case "reporting":
+        return <ReportingCanvas onClose={handleCloseCanvas} initialPrompt={canvasPrompt} />;
+      case "search":
+        return <SearchCanvas onClose={handleCloseCanvas} initialPrompt={canvasPrompt} />;
+      case "meeting":
+        return <MeetingCanvas onClose={handleCloseCanvas} initialPrompt={canvasPrompt} />;
+      case "email":
+        return <EmailCanvas onClose={handleCloseCanvas} initialPrompt={canvasPrompt} />;
+      default:
+        return null;
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#0d1117]">
-      <PrototypeNav 
-        vision={vision} 
-        onVisionChange={setVision} 
-        device={device}
-        onDeviceChange={setDevice}
-      />
+      {/* Canvas overlay */}
+      {activeCanvas !== "none" && renderCanvas()}
       
-      {device === "desktop" ? (
-        <div className="mx-auto w-full max-w-6xl px-6 py-6">
-          <DashboardContent {...dashboardProps} device="desktop" />
-        </div>
-      ) : device === "ipad" ? (
-        <div className="flex justify-center overflow-x-auto bg-[#0d1117] px-4">
-          <IPadFrame>
-            <DashboardContent {...dashboardProps} device="ipad" />
-          </IPadFrame>
-        </div>
-      ) : (
-        <div className="flex justify-center overflow-x-auto bg-[#0d1117] px-4">
-          <IPhoneFrame>
-            <DashboardContent {...dashboardProps} device="iphone" />
-          </IPhoneFrame>
-        </div>
+      {/* Main dashboard (hidden when canvas is active) */}
+      {activeCanvas === "none" && (
+        <>
+          <PrototypeNav 
+            vision={vision} 
+            onVisionChange={setVision} 
+            device={device}
+            onDeviceChange={setDevice}
+          />
+          
+          {device === "desktop" ? (
+            <div className="mx-auto w-full max-w-6xl px-6 py-6">
+              <DashboardContent {...dashboardProps} device="desktop" />
+            </div>
+          ) : device === "ipad" ? (
+            <div className="flex justify-center overflow-x-auto bg-[#0d1117] px-4">
+              <IPadFrame>
+                <DashboardContent {...dashboardProps} device="ipad" />
+              </IPadFrame>
+            </div>
+          ) : (
+            <div className="flex justify-center overflow-x-auto bg-[#0d1117] px-4">
+              <IPhoneFrame>
+                <DashboardContent {...dashboardProps} device="iphone" />
+              </IPhoneFrame>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
+}
+
+// Main export with TamboProvider
+export default function Page() {
+  const apiKey = process.env.NEXT_PUBLIC_TAMBO_API_KEY;
+  if (!apiKey) return <PageContent hasTamboProvider={false} />;
+  return <TamboProvider apiKey={apiKey} components={tamboCanvasComponents}><PageContent hasTamboProvider={true} /></TamboProvider>;
 }

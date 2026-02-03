@@ -1,12 +1,94 @@
 # avo-re - Context for Claude
 
 ## Current State
-- Last updated: January 31, 2026
+- Last updated: February 2, 2026
 - Project: Portfolio/prototype site at avo.re
+
+## VibeSharing Integration
+
+**After deploying or creating a new prototype**, automatically register it with VibeSharing:
+
+```bash
+curl -X POST https://vibesharing.app/api/prototypes \
+  -H "Authorization: Bearer $VIBESHARING_DEPLOY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "PROTOTYPE_NAME",
+    "external_url": "https://www.avo.re/PATH_TO_PROTOTYPE",
+    "description": "BRIEF_DESCRIPTION"
+  }'
+```
+
+**Token:** Stored in `.env.local` as `VIBESHARING_DEPLOY_TOKEN`
+
+**After registering**, tell the user:
+- The prototype is now in VibeSharing
+- Share the `feedback_url` from the response for stakeholder feedback
+
+**Context:**
+- avo.re and vibesharing.app are sibling sites (same owner, different purposes)
+- VibeSharing adds feedback/handoff tracking on top of prototypes hosted here
+- Optional: include `parent_project_id` to link under an existing VibeSharing project
 
 ## What Was Built This Session
 
-### Compliance Command Center (Near-term Vision)
+### General Counsel Command Center - Deep Work Canvases (February 2, 2026)
+
+Enhanced the General Counsel dashboard at `/now/agentic-hero/dark/general-counsel` with 6 immersive "canvas" experiences that enable users to complete complex tasks without leaving Diligent:
+
+1. **Workflow Canvas** (`canvases.tsx` → `WorkflowCanvas`)
+   - Multi-step wizard for complex tasks (e.g., "Prepare board materials")
+   - 4-step process: Define Objective → Gather Context → Draft & Review → Finalize
+   - AI gathers relevant documents/data automatically
+   - Suggested workflow templates included
+   - AI chat sidebar for iterative refinement
+
+2. **Document Canvas** (`DocumentCanvas`)
+   - Draft/create/review legal documents with AI assistance
+   - Templates: Legal Memo, Contract Review, Board Resolution, Policy Draft, Legal Letter, Executive Brief
+   - Situation-triggered workflows ("respond to regulatory inquiry")
+   - AI suggestions sidebar
+   - Save to Boards integration
+
+3. **Reporting Canvas** (`ReportingCanvas`)
+   - Natural language queries for governance analytics
+   - "Show me board attendance trends over 4 quarters"
+   - "Compare our board composition to peer group"
+   - Visual charts with AI-generated insights
+   - Export to PDF / Add to Board Book
+
+4. **AI Search Canvas** (`SearchCanvas`)
+   - Cross-system search: "Who owns the vendor relationship with Acme Corp?"
+   - Searches: Boards, Entities, Policy Manager, Third Party Manager, Risk Manager, Activity Center
+   - AI-summarized results with source attribution
+   - Relevance scoring per result
+
+5. **Meeting Scheduler Canvas** (`MeetingCanvas`)
+   - "Schedule a board prep sync with CFO"
+   - AI finds optimal times, shows attendee availability
+   - **Key feature**: AI proactively moved a low-priority meeting to open preferred time slot
+   - Sends calendar invites automatically
+
+6. **Email Draft Canvas** (`EmailCanvas`)
+   - Draft emails with secure Board material references
+   - **Security**: Board materials shared via secure links, NOT as attachments
+   - Templates: Board Meeting Prep, Director Update, Committee Notice
+   - AI writing assistant for tone/length adjustments
+   - Audit trail when recipients access materials
+
+### Key Design Principles
+- **Deep Work Mode**: Each canvas is full-screen, immersive—no distractions
+- **Stay in Diligent**: Complete tasks that would normally require Outlook, Word, etc.
+- **AI as Agent**: AI doesn't just answer questions—it takes actions (schedules meetings, drafts documents, gathers context)
+- **Secure by Design**: Board materials never emailed as attachments
+- **Intent Detection**: Prompt box routes to appropriate canvas based on natural language
+
+### Entry Points
+- Enhanced PromptBox with text input + 6 action buttons
+- Intent detection routes typed queries to appropriate canvas
+- Mobile-optimized quick actions for iPhone view
+
+### Previous Session: Compliance Command Center (Near-term Vision)
 Built 5 role-based dashboards for Diligent compliance personas at `/now/agentic-hero/dark/`:
 
 1. **CCO** (`/compliance-cco`)
@@ -118,4 +200,4 @@ Built 4 role-based dashboards for Diligent audit personas at `/now/agentic-hero/
 - Ticker uses CSS animation with pause on hover
 
 ---
-*Updated: January 31, 2026*
+*Updated: February 2, 2026*
