@@ -741,83 +741,33 @@ function WorkPanel() {
 // Generate card components based on Tambo response content
 function generateCardsFromContent(content: string, query: string): React.ReactNode | undefined {
   const text = (content + " " + query).toLowerCase();
+  const q = query.toLowerCase(); // Use query alone for intent detection
   
-  // Detect matter/litigation content
-  if (text.includes("matter") || text.includes("litigation") || text.includes("case") || text.includes("lawsuit") || text.includes("acme corp v")) {
+  // PRIORITY 1: Detect explicit search intent from query (who, find, where, search)
+  if (q.includes("who") || q.includes("find") || q.includes("where is") || q.includes("search for") || q.includes("look up")) {
+    // Extract name from query if present
+    const nameMatch = query.match(/who is (\w+ \w+|\w+)/i) || query.match(/find (\w+ \w+|\w+)/i);
+    const name = nameMatch ? nameMatch[1] : "Sarah Chen";
     return (
       <div className="mt-2 space-y-2">
-        <MatterCard 
-          id="MATTER-2024-0847" 
-          title="ACME Corp v. WidgetCo" 
-          status="Discovery" 
-          probability="73% favorable" 
-          detail="Breach of contract lawsuit. Next hearing scheduled in 10 days." 
-          lastUpdate="2 days ago" 
-          nextDeadline="Feb 15" 
-        />
+        <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-[#6e7681]">Employee Directory</span>
+            <span className="text-xs text-[#3fb950]">98% match</span>
+          </div>
+          <h4 className="mt-1 text-sm font-semibold text-[#f0f6fc]">{name} - Deputy General Counsel</h4>
+          <p className="mt-1 text-xs text-[#8b949e]">Specializes in corporate governance and compliance. Primary contact for regulatory filings.</p>
+          <div className="mt-2 flex gap-2">
+            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-2.5 py-1 text-[10px] text-[#8b949e]">View Profile</button>
+            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-2.5 py-1 text-[10px] text-[#8b949e]">Schedule Meeting</button>
+          </div>
+        </div>
       </div>
     );
   }
   
-  // Detect urgent action content
-  if (text.includes("urgent") || text.includes("action") || text.includes("approval") || text.includes("settlement")) {
-    return (
-      <div className="mt-2 space-y-2">
-        <ActionCard 
-          id="action-urgent-1" 
-          title="Approve Litigation Settlement Offer" 
-          description="Settlement offer received in ACME Corp v. WidgetCo. Immediate approval recommended for compliance." 
-          actionLabel="Review & Approve" 
-          urgency="high" 
-          dueDate="June 12, 2024" 
-        />
-      </div>
-    );
-  }
-  
-  // Detect contract content
-  if (text.includes("contract") || text.includes("renewal") || text.includes("expir")) {
-    return (
-      <div className="mt-2 space-y-2">
-        <ContractCard 
-          id="CONTRACT-2847" 
-          title="Master Services Agreement" 
-          counterparty="Acme Corp" 
-          renewalDate="Mar 15, 2025" 
-          value="$2.4M/year" 
-          status="Renewal pending" 
-          alertType="warning" 
-        />
-      </div>
-    );
-  }
-  
-  // Detect board content
-  if (text.includes("board") || text.includes("meeting") || text.includes("agenda")) {
-    return (
-      <div className="mt-2 space-y-2">
-        <BoardItemCard 
-          id="BOARD-Q1-01" 
-          title="Financial Results Review" 
-          type="Discussion" 
-          status="Scheduled" 
-          meetingDate="Feb 14" 
-          prepStatus="Complete" 
-        />
-        <BoardItemCard 
-          id="BOARD-Q1-02" 
-          title="Equity Grant Approval" 
-          type="Resolution" 
-          status="Draft" 
-          meetingDate="Feb 14" 
-          prepStatus="In progress" 
-        />
-      </div>
-    );
-  }
-  
-  // Detect email/draft content
-  if (text.includes("email") || text.includes("draft") || text.includes("send") || text.includes("compose")) {
+  // PRIORITY 2: Detect email/draft intent from query
+  if (q.includes("email") || q.includes("draft") || q.includes("send") || q.includes("compose")) {
     return (
       <div className="mt-2 space-y-2">
         <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4">
@@ -852,22 +802,101 @@ function generateCardsFromContent(content: string, query: string): React.ReactNo
     );
   }
   
-  // Detect search/find content
-  if (text.includes("search") || text.includes("find") || text.includes("who owns") || text.includes("where is") || text.includes("look up")) {
+  // PRIORITY 3: Detect meeting/schedule intent from query
+  if (q.includes("schedule") || q.includes("set up time") || q.includes("calendar")) {
     return (
       <div className="mt-2 space-y-2">
         <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-[#6e7681]">Employee Directory</span>
-            <span className="text-xs text-[#3fb950]">98% match</span>
+          <div className="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3fb950" strokeWidth="1.5">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            <span className="text-sm font-medium text-[#f0f6fc]">Meeting Proposed</span>
+            <span className="text-xs text-[#3fb950]">All available</span>
           </div>
-          <h4 className="mt-1 text-sm font-semibold text-[#f0f6fc]">Sarah Chen - Procurement Lead</h4>
-          <p className="mt-1 text-xs text-[#8b949e]">Primary owner of Acme Corp vendor relationship. Manages $2.4M annual contract.</p>
-          <div className="mt-2 flex gap-2">
-            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-2.5 py-1 text-[10px] text-[#8b949e]">View Profile</button>
-            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-2.5 py-1 text-[10px] text-[#8b949e]">Schedule Meeting</button>
+          <div className="mt-2 text-2xl font-semibold text-[#f0f6fc]">3:30 PM <span className="text-sm font-normal text-[#8b949e]">Tomorrow</span></div>
+          <p className="mt-1 text-xs text-[#58a6ff]">Moved low-priority call to open this slot</p>
+          <div className="mt-3 flex gap-2">
+            <button className="rounded-lg bg-[#3fb950] px-3 py-1.5 text-xs font-medium text-[#0d1117]">Confirm</button>
+            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-3 py-1.5 text-xs text-[#8b949e]">Other Times</button>
           </div>
         </div>
+      </div>
+    );
+  }
+  
+  // PRIORITY 4: Detect matter/litigation content
+  if (text.includes("matter") || text.includes("litigation") || text.includes("case") || text.includes("lawsuit") || text.includes("acme corp v")) {
+    return (
+      <div className="mt-2 space-y-2">
+        <MatterCard 
+          id="MATTER-2024-0847" 
+          title="ACME Corp v. WidgetCo" 
+          status="Discovery" 
+          probability="73% favorable" 
+          detail="Breach of contract lawsuit. Next hearing scheduled in 10 days." 
+          lastUpdate="2 days ago" 
+          nextDeadline="Feb 15" 
+        />
+      </div>
+    );
+  }
+  
+  // PRIORITY 5: Detect urgent action content
+  if (text.includes("urgent") || text.includes("approval") || text.includes("settlement")) {
+    return (
+      <div className="mt-2 space-y-2">
+        <ActionCard 
+          id="action-urgent-1" 
+          title="Approve Litigation Settlement Offer" 
+          description="Settlement offer received in ACME Corp v. WidgetCo. Immediate approval recommended for compliance." 
+          actionLabel="Review & Approve" 
+          urgency="high" 
+          dueDate="June 12, 2024" 
+        />
+      </div>
+    );
+  }
+  
+  // PRIORITY 6: Detect contract content
+  if (text.includes("contract") || text.includes("renewal") || text.includes("expir") || text.includes("vendor")) {
+    return (
+      <div className="mt-2 space-y-2">
+        <ContractCard 
+          id="CONTRACT-2847" 
+          title="Master Services Agreement" 
+          counterparty="Acme Corp" 
+          renewalDate="Mar 15, 2025" 
+          value="$2.4M/year" 
+          status="Renewal pending" 
+          alertType="warning" 
+        />
+      </div>
+    );
+  }
+  
+  // PRIORITY 7: Detect board content (only if explicitly asked about board)
+  if (q.includes("board") || q.includes("agenda") || q.includes("directors") || q.includes("governance")) {
+    return (
+      <div className="mt-2 space-y-2">
+        <BoardItemCard 
+          id="BOARD-Q1-01" 
+          title="Financial Results Review" 
+          type="Discussion" 
+          status="Scheduled" 
+          meetingDate="Feb 14" 
+          prepStatus="Complete" 
+        />
+        <BoardItemCard 
+          id="BOARD-Q1-02" 
+          title="Equity Grant Approval" 
+          type="Resolution" 
+          status="Draft" 
+          meetingDate="Feb 14" 
+          prepStatus="In progress" 
+        />
       </div>
     );
   }

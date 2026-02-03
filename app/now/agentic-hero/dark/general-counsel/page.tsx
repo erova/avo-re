@@ -731,25 +731,65 @@ const canvasActions: Array<{ id: CanvasType; label: string; icon: React.ReactNod
 // Generate card components based on Tambo response content
 function generateCardsFromContent(content: string, query: string): React.ReactNode | undefined {
   const text = (content + " " + query).toLowerCase();
+  const q = query.toLowerCase(); // Use query alone for intent detection
   
-  // Detect board/meeting content
-  if (text.includes("board") || text.includes("agenda") || text.includes("directors")) {
+  // PRIORITY 1: Detect explicit search intent from query (who, find, where, search)
+  if (q.includes("who") || q.includes("find") || q.includes("where is") || q.includes("search for") || q.includes("look up")) {
+    // Extract name from query if present
+    const nameMatch = query.match(/who is (\w+ \w+|\w+)/i) || query.match(/find (\w+ \w+|\w+)/i);
+    const name = nameMatch ? nameMatch[1] : "Sarah Chen";
     return (
       <div className="mt-3 space-y-2">
-        <ReportInsightCard 
-          id="board-insight"
-          title="Board Meeting Status"
-          insight="All agenda items finalized. 72% of directors have reviewed materials."
-          metric="72%"
-          change="+8% from last meeting"
-          changeType="positive"
+        <SearchResultCard 
+          id="search-1"
+          title={`${name} - Deputy General Counsel`}
+          source="Employee Directory"
+          sourceIcon="👤"
+          snippet="Specializes in corporate governance and compliance. Primary contact for regulatory filings."
+          relevance={98}
+          lastModified="Active employee"
+          owner="Legal"
         />
       </div>
     );
   }
   
-  // Detect contract content
-  if (text.includes("contract") || text.includes("renewal") || text.includes("agreement")) {
+  // PRIORITY 2: Detect email/draft intent from query
+  if (q.includes("email") || q.includes("draft") || q.includes("send") || q.includes("compose")) {
+    return (
+      <div className="mt-3 space-y-2">
+        <EmailDraftCard 
+          id="email-1"
+          to="CFO, Board Secretary"
+          subject="Q1 Board Materials - Pre-Read"
+          preview="Please find the attached pre-read materials for our upcoming Q1 board meeting on February 14. The financial summary and risk assessment are ready for your review..."
+          attachments={["Q1 Financial Summary", "Risk Assessment Update"]}
+          isSecure={true}
+          status="draft"
+        />
+      </div>
+    );
+  }
+  
+  // PRIORITY 3: Detect meeting/schedule intent from query
+  if (q.includes("schedule") || q.includes("meeting") || q.includes("calendar") || q.includes("set up time")) {
+    return (
+      <div className="mt-3 space-y-2">
+        <MeetingProposalCard 
+          id="meeting-1"
+          time="3:30 PM"
+          date="Tomorrow"
+          available={true}
+          aiNote="Moved low-priority call to open this slot"
+          attendeesAvailable={3}
+          totalAttendees={3}
+        />
+      </div>
+    );
+  }
+  
+  // PRIORITY 4: Detect contract content from query or response
+  if (text.includes("contract") || text.includes("renewal") || text.includes("agreement") || text.includes("vendor")) {
     return (
       <div className="mt-3 space-y-2">
         <ContractSummaryCard 
@@ -766,7 +806,7 @@ function generateCardsFromContent(content: string, query: string): React.ReactNo
     );
   }
   
-  // Detect matter/litigation content
+  // PRIORITY 5: Detect matter/litigation content
   if (text.includes("matter") || text.includes("litigation") || text.includes("case") || text.includes("lawsuit")) {
     return (
       <div className="mt-3 space-y-2">
@@ -783,53 +823,17 @@ function generateCardsFromContent(content: string, query: string): React.ReactNo
     );
   }
   
-  // Detect meeting/schedule content  
-  if (text.includes("schedule") || text.includes("meeting") || text.includes("calendar")) {
+  // PRIORITY 6: Detect board/governance content (only if no specific intent above)
+  if (q.includes("board") || q.includes("agenda") || q.includes("directors") || q.includes("governance")) {
     return (
       <div className="mt-3 space-y-2">
-        <MeetingProposalCard 
-          id="meeting-1"
-          time="3:30 PM"
-          date="Tomorrow"
-          available={true}
-          aiNote="Moved low-priority call to open this slot"
-          attendeesAvailable={3}
-          totalAttendees={3}
-        />
-      </div>
-    );
-  }
-  
-  // Detect email/draft content
-  if (text.includes("email") || text.includes("draft") || text.includes("send") || text.includes("compose")) {
-    return (
-      <div className="mt-3 space-y-2">
-        <EmailDraftCard 
-          id="email-1"
-          to="CFO, Board Secretary"
-          subject="Q1 Board Materials - Pre-Read"
-          preview="Please find the attached pre-read materials for our upcoming Q1 board meeting on February 14. The financial summary and risk assessment are ready for your review..."
-          attachments={["Q1 Financial Summary", "Risk Assessment Update"]}
-          isSecure={true}
-          status="draft"
-        />
-      </div>
-    );
-  }
-  
-  // Detect search/find content
-  if (text.includes("search") || text.includes("find") || text.includes("who") || text.includes("where") || text.includes("look")) {
-    return (
-      <div className="mt-3 space-y-2">
-        <SearchResultCard 
-          id="search-1"
-          title="Sarah Chen - Procurement Lead"
-          source="Employee Directory"
-          sourceIcon="👤"
-          snippet="Primary owner of Acme Corp vendor relationship. Manages $2.4M annual contract."
-          relevance={98}
-          lastModified="Active employee"
-          owner="Procurement"
+        <ReportInsightCard 
+          id="board-insight"
+          title="Board Meeting Status"
+          insight="All agenda items finalized. 72% of directors have reviewed materials."
+          metric="72%"
+          change="+8% from last meeting"
+          changeType="positive"
         />
       </div>
     );
