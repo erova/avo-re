@@ -788,7 +788,31 @@ function generateCardsFromContent(content: string, query: string): React.ReactNo
     );
   }
   
-  // PRIORITY 4: Detect contract content from query or response
+  // PRIORITY 4: Detect report/trend/analytics content
+  if (q.includes("report") || q.includes("trend") || q.includes("analytic") || q.includes("insight") || q.includes("pattern") || q.includes("attendance") || q.includes("voting")) {
+    return (
+      <div className="mt-3 space-y-2">
+        <ReportInsightCard 
+          id="report-1"
+          title="Board Attendance Trends"
+          insight="Attendance has increased 8% over the last 4 quarters. Average meeting duration down 12%."
+          metric="94%"
+          change="+8% vs prior year"
+          changeType="positive"
+        />
+        <ReportInsightCard 
+          id="report-2"
+          title="Voting Patterns"
+          insight="97% consensus rate on strategic initiatives. 3 items required multiple votes."
+          metric="97%"
+          change="Consistent with peers"
+          changeType="neutral"
+        />
+      </div>
+    );
+  }
+  
+  // PRIORITY 5: Detect contract content from query or response
   if (text.includes("contract") || text.includes("renewal") || text.includes("agreement") || text.includes("vendor")) {
     return (
       <div className="mt-3 space-y-2">

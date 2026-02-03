@@ -25,12 +25,12 @@ export type CanvasType =
 
 // 1. WorkflowStepCard - For Workflow Canvas progress & context
 const workflowStepSchema = z.object({
-  id: z.string().optional().default("step-0"),
-  title: z.string().optional().default("Step"),
-  description: z.string().optional().default(""),
-  status: z.string().describe("Status: pending, in_progress, or complete").optional().default("pending"),
-  source: z.string().optional(),
-  sourceType: z.string().optional(),
+  id: z.string().nullish().default("step-0"),
+  title: z.string().nullish().default("Step"),
+  description: z.string().nullish().default(""),
+  status: z.string().describe("Status: pending, in_progress, or complete").nullish().default("pending"),
+  source: z.string().nullish(),
+  sourceType: z.string().nullish(),
 });
 
 export function WorkflowStepCard({ title, description, status, source, sourceType }: z.infer<typeof workflowStepSchema>) {
@@ -67,12 +67,12 @@ export function WorkflowStepCard({ title, description, status, source, sourceTyp
 
 // 2. DocumentDraftCard - For Document Canvas AI drafts
 const documentDraftSchema = z.object({
-  id: z.string().optional().default("doc-0"),
-  title: z.string().optional().default("Draft Document"),
-  documentType: z.string().optional().default("Document"),
-  preview: z.string().optional().default(""),
-  suggestions: z.array(z.string()).optional().default([]),
-  lastEdited: z.string().optional(),
+  id: z.string().nullish().default("doc-0"),
+  title: z.string().nullish().default("Draft Document"),
+  documentType: z.string().nullish().default("Document"),
+  preview: z.string().nullish().default(""),
+  suggestions: z.array(z.string()).nullish().default([]),
+  lastEdited: z.string().nullish(),
 });
 
 export function DocumentDraftCard({ title, documentType, preview, suggestions, lastEdited }: z.infer<typeof documentDraftSchema>) {
@@ -108,13 +108,13 @@ export function DocumentDraftCard({ title, documentType, preview, suggestions, l
 
 // 3. ReportInsightCard - For Reporting Canvas AI analysis
 const reportInsightSchema = z.object({
-  id: z.string().optional().default("insight-0"),
-  title: z.string().optional().default("Insight"),
-  insight: z.string().optional().default(""),
-  metric: z.string().optional(),
-  change: z.string().optional(),
-  changeType: z.string().describe("Change type: positive, negative, or neutral").optional().default("neutral"),
-  period: z.string().optional(),
+  id: z.string().nullish().default("insight-0"),
+  title: z.string().nullish().default("Insight"),
+  insight: z.string().nullish().default(""),
+  metric: z.string().nullish(),
+  change: z.string().nullish(),
+  changeType: z.string().describe("Change type: positive, negative, or neutral").nullish().default("neutral"),
+  period: z.string().nullish(),
 });
 
 export function ReportInsightCard({ title, insight, metric, change, changeType, period }: z.infer<typeof reportInsightSchema>) {
@@ -147,33 +147,34 @@ export function ReportInsightCard({ title, insight, metric, change, changeType, 
 
 // 4. SearchResultCard - For AI Search Canvas cross-system results
 const searchResultSchema = z.object({
-  id: z.string().optional().default("result-0"),
-  title: z.string().optional().default("Result"),
-  source: z.string().optional().default("Unknown"),
-  sourceIcon: z.string().optional().default("📄"),
-  snippet: z.string().optional().default(""),
-  relevance: z.number().optional().default(0),
-  lastModified: z.string().optional(),
-  owner: z.string().optional(),
+  id: z.string().nullish().default("result-0"),
+  title: z.string().nullish().default("Result"),
+  source: z.string().nullish().default("Unknown"),
+  sourceIcon: z.string().nullish().default("📄"),
+  snippet: z.string().nullish().default(""),
+  relevance: z.number().nullish().default(0),
+  lastModified: z.string().nullish(),
+  owner: z.string().nullish(),
 });
 
 export function SearchResultCard({ title, source, sourceIcon, snippet, relevance, lastModified, owner }: z.infer<typeof searchResultSchema>) {
+  const safeRelevance = relevance ?? 0;
   return (
     <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4 transition hover:border-[#f0883e]/50">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-lg">{sourceIcon}</span>
-            <span className="rounded-full border border-[#30363d] bg-[#21262d] px-2 py-0.5 text-xs text-[#8b949e]">{source}</span>
+            <span className="text-lg">{sourceIcon || "📄"}</span>
+            <span className="rounded-full border border-[#30363d] bg-[#21262d] px-2 py-0.5 text-xs text-[#8b949e]">{source || "Unknown"}</span>
             {lastModified && <span className="text-xs text-[#6e7681]">· {lastModified}</span>}
           </div>
-          <h4 className="mt-2 font-medium text-[#f0f6fc]">{title}</h4>
-          <p className="mt-1 text-sm text-[#8b949e]">{snippet}</p>
+          <h4 className="mt-2 font-medium text-[#f0f6fc]">{title || "Result"}</h4>
+          <p className="mt-1 text-sm text-[#8b949e]">{snippet || ""}</p>
           {owner && <p className="mt-2 text-xs text-[#58a6ff]">Owner: {owner}</p>}
         </div>
-        {relevance > 0 && (
+        {safeRelevance > 0 && (
           <span className="shrink-0 rounded-full border border-[#3fb950]/40 bg-[#3fb950]/10 px-2 py-0.5 text-xs font-medium text-[#3fb950]">
-            {relevance}% match
+            {safeRelevance}% match
           </span>
         )}
       </div>
@@ -183,14 +184,14 @@ export function SearchResultCard({ title, source, sourceIcon, snippet, relevance
 
 // 5. ContractSummaryCard - For search results involving contracts
 const contractSummarySchema = z.object({
-  id: z.string().optional().default("contract-0"),
-  title: z.string().optional().default("Contract"),
-  counterparty: z.string().optional().default(""),
-  value: z.string().optional(),
-  renewalDate: z.string().optional(),
-  owner: z.string().optional(),
-  riskScore: z.string().optional(),
-  status: z.string().optional().default("Active"),
+  id: z.string().nullish().default("contract-0"),
+  title: z.string().nullish().default("Contract"),
+  counterparty: z.string().nullish().default(""),
+  value: z.string().nullish(),
+  renewalDate: z.string().nullish(),
+  owner: z.string().nullish(),
+  riskScore: z.string().nullish(),
+  status: z.string().nullish().default("Active"),
 });
 
 export function ContractSummaryCard({ title, counterparty, value, renewalDate, owner, riskScore, status }: z.infer<typeof contractSummarySchema>) {
@@ -223,30 +224,34 @@ export function ContractSummaryCard({ title, counterparty, value, renewalDate, o
 
 // 6. MeetingProposalCard - For Meeting Scheduler AI suggestions
 const meetingProposalSchema = z.object({
-  id: z.string().optional().default("meeting-0"),
-  time: z.string().optional().default(""),
-  date: z.string().optional().default(""),
-  available: z.boolean().optional().default(true),
-  aiNote: z.string().optional(),
-  conflict: z.string().optional(),
-  attendeesAvailable: z.number().optional(),
-  totalAttendees: z.number().optional(),
+  id: z.string().nullish().default("meeting-0"),
+  time: z.string().nullish().default("3:00 PM"),
+  date: z.string().nullish().default("Tomorrow"),
+  available: z.boolean().nullish().default(true),
+  aiNote: z.string().nullish(),
+  conflict: z.string().nullish(),
+  attendeesAvailable: z.number().nullish(),
+  totalAttendees: z.number().nullish(),
 });
 
 export function MeetingProposalCard({ time, date, available, aiNote, conflict, attendeesAvailable, totalAttendees }: z.infer<typeof meetingProposalSchema>) {
+  const safeTime = time || "3:00 PM";
+  const safeDate = date || "Tomorrow";
+  const safeAvailable = available ?? true;
+  
   return (
     <div className={cn(
       "rounded-xl border p-4 transition",
-      available 
+      safeAvailable 
         ? "border-[#30363d] bg-[#161b22] hover:border-[#a371f7]/50 cursor-pointer"
         : "border-[#30363d] bg-[#161b22] opacity-50"
     )}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="font-medium text-[#f0f6fc]">{time}</p>
-          <p className="text-sm text-[#8b949e]">{date}</p>
+          <p className="font-medium text-[#f0f6fc]">{safeTime}</p>
+          <p className="text-sm text-[#8b949e]">{safeDate}</p>
         </div>
-        {available ? (
+        {safeAvailable ? (
           <span className="rounded-full border border-[#3fb950]/40 bg-[#3fb950]/10 px-2 py-0.5 text-xs text-[#3fb950]">
             {attendeesAvailable && totalAttendees ? `${attendeesAvailable}/${totalAttendees} available` : "Available"}
           </span>
@@ -270,11 +275,11 @@ export function MeetingProposalCard({ time, date, available, aiNote, conflict, a
 
 // 7. SecureAttachmentCard - For Email Canvas board material links
 const secureAttachmentSchema = z.object({
-  id: z.string().optional().default("attach-0"),
-  title: z.string().optional().default("Document"),
-  documentType: z.string().optional().default("File"),
-  isSecure: z.boolean().optional().default(true),
-  accessLevel: z.string().optional().default("Board Members"),
+  id: z.string().nullish().default("attach-0"),
+  title: z.string().nullish().default("Document"),
+  documentType: z.string().nullish().default("File"),
+  isSecure: z.boolean().nullish().default(true),
+  accessLevel: z.string().nullish().default("Board Members"),
 });
 
 export function SecureAttachmentCard({ title, documentType, isSecure, accessLevel }: z.infer<typeof secureAttachmentSchema>) {
