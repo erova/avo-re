@@ -987,66 +987,72 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas, onFocusChange }: { visi
         </div>
       </div>
 
-      {/* Chat Messages */}
-      {messages.length > 0 && (
-        <div ref={messagesContainerRef} className="mt-4 max-h-[400px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
-              {msg.role === "user" ? (
-                <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[#30363d] px-3 py-2">
-                  <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
-                </div>
-              ) : (
-                <div className="w-full space-y-2">
-                  <div className="rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
-                    <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
-                  </div>
-                  {msg.component && <div>{msg.component}</div>}
-                </div>
-              )}
-            </div>
-          ))}
-          {isLoading && (
-            <div className="flex items-center gap-2 rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-[#58a6ff]" />
-              <span className="text-xs text-[#8b949e]">Thinking...</span>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      )}
-
-      {/* Input */}
+      {/* Unified Chat Container */}
       <div className={cn(
-        "mt-4 flex items-center gap-2 rounded-xl border bg-[#0d1117] p-2 transition-all duration-300",
+        "mt-4 flex flex-col rounded-xl border bg-[#0d1117] transition-all duration-300",
         isActive ? "border-[#58a6ff]/50 ring-1 ring-[#58a6ff]/20" : "border-[#30363d]"
       )}>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          disabled={isLoading}
-          className="flex-1 bg-transparent px-2 text-sm text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
-          placeholder="Ask a question or describe what you need..."
-        />
+        {/* Messages Area */}
         {messages.length > 0 && (
-          <button
-            onClick={() => { setMessages([]); setInputValue(""); }}
-            className="mr-1 rounded-lg border border-[#30363d] px-2 py-1 text-[10px] text-[#6e7681] hover:border-[#8b949e] hover:text-[#8b949e]"
-          >
-            Clear
-          </button>
+          <div ref={messagesContainerRef} className="max-h-[400px] space-y-3 overflow-y-auto p-4">
+            {messages.map((msg, idx) => (
+              <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
+                {msg.role === "user" ? (
+                  <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[#30363d] px-3 py-2">
+                    <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+                  </div>
+                ) : (
+                  <div className="w-full space-y-2">
+                    <div className="rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
+                      <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+                    </div>
+                    {msg.component && <div>{msg.component}</div>}
+                  </div>
+                )}
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex items-center gap-2 rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
+                <div className="h-2 w-2 animate-pulse rounded-full bg-[#58a6ff]" />
+                <span className="text-xs text-[#8b949e]">Thinking...</span>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
         )}
-        <button
-          onClick={handleSubmit}
-          disabled={!inputValue.trim() || isLoading}
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#58a6ff] text-white transition hover:bg-[#79b8ff] disabled:opacity-50"
-        >
-          {Icons.send}
-        </button>
+
+        {/* Input Area */}
+        <div className={cn(
+          "flex items-center gap-2 p-3",
+          messages.length > 0 && "border-t border-[#30363d]"
+        )}>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            disabled={isLoading}
+            className="flex-1 bg-transparent px-2 py-2 text-base text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
+            placeholder="Ask a question or describe what you need..."
+          />
+          {messages.length > 0 && (
+            <button
+              onClick={() => { setMessages([]); setInputValue(""); }}
+              className="mr-1 rounded-lg border border-[#30363d] px-3 py-2 text-xs text-[#6e7681] hover:border-[#8b949e] hover:text-[#8b949e]"
+            >
+              Clear
+            </button>
+          )}
+          <button
+            onClick={handleSubmit}
+            disabled={!inputValue.trim() || isLoading}
+            className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#58a6ff] text-white transition hover:bg-[#79b8ff] disabled:opacity-50"
+          >
+            {Icons.send}
+          </button>
+        </div>
       </div>
 
       {/* Canvas Action Buttons - dim when focused */}
@@ -1160,64 +1166,72 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas, onFocusChange }: { visio
         </span>
       </div>
 
-      {messages.length > 0 && (
-        <div ref={messagesContainerRef} className="mt-4 max-h-[400px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
-              {msg.role === "user" ? (
-                <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[#30363d] px-3 py-2">
-                  <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
-                </div>
-              ) : (
-                <div className="w-full space-y-2">
-                  <div className="rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
-                    <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
-                  </div>
-                  {msg.component && <div>{msg.component}</div>}
-                </div>
-              )}
-            </div>
-          ))}
-          {isLoading && (
-            <div className="flex items-center gap-2 rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-[#58a6ff]" />
-              <span className="text-xs text-[#8b949e]">Thinking...</span>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      )}
-
+      {/* Unified Chat Container */}
       <div className={cn(
-        "mt-4 flex items-center gap-2 rounded-xl border bg-[#0d1117] p-2 transition-all duration-300",
+        "mt-4 flex flex-col rounded-xl border bg-[#0d1117] transition-all duration-300",
         isActive ? "border-[#58a6ff]/50 ring-1 ring-[#58a6ff]/20" : "border-[#30363d]"
       )}>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          disabled={isLoading}
-          className="flex-1 bg-transparent px-2 text-sm text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
-          placeholder="Ask a question or describe what you need..."
-        />
+        {/* Messages Area */}
         {messages.length > 0 && (
-          <button
-            onClick={() => { setMessages([]); setInputValue(""); }}
-            className="mr-1 rounded-lg border border-[#30363d] px-2 py-1 text-[10px] text-[#6e7681] hover:border-[#8b949e] hover:text-[#8b949e]"
-          >
-            Clear
-          </button>
+          <div ref={messagesContainerRef} className="max-h-[400px] space-y-3 overflow-y-auto p-4">
+            {messages.map((msg, idx) => (
+              <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
+                {msg.role === "user" ? (
+                  <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[#30363d] px-3 py-2">
+                    <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+                  </div>
+                ) : (
+                  <div className="w-full space-y-2">
+                    <div className="rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
+                      <p className="whitespace-pre-wrap text-sm text-[#f0f6fc]">{msg.content}</p>
+                    </div>
+                    {msg.component && <div>{msg.component}</div>}
+                  </div>
+                )}
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex items-center gap-2 rounded-2xl rounded-bl-md border border-[#58a6ff]/20 bg-[#58a6ff]/5 px-3 py-2">
+                <div className="h-2 w-2 animate-pulse rounded-full bg-[#58a6ff]" />
+                <span className="text-xs text-[#8b949e]">Thinking...</span>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
         )}
-        <button
-          onClick={handleSubmit}
-          disabled={!inputValue.trim() || isLoading}
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#58a6ff] text-white transition hover:bg-[#79b8ff] disabled:opacity-50"
-        >
-          {Icons.send}
-        </button>
+
+        {/* Input Area */}
+        <div className={cn(
+          "flex items-center gap-2 p-3",
+          messages.length > 0 && "border-t border-[#30363d]"
+        )}>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            disabled={isLoading}
+            className="flex-1 bg-transparent px-2 py-2 text-base text-[#f0f6fc] placeholder:text-[#6e7681] focus:outline-none"
+            placeholder="Ask a question or describe what you need..."
+          />
+          {messages.length > 0 && (
+            <button
+              onClick={() => { setMessages([]); setInputValue(""); }}
+              className="mr-1 rounded-lg border border-[#30363d] px-3 py-2 text-xs text-[#6e7681] hover:border-[#8b949e] hover:text-[#8b949e]"
+            >
+              Clear
+            </button>
+          )}
+          <button
+            onClick={handleSubmit}
+            disabled={!inputValue.trim() || isLoading}
+            className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#58a6ff] text-white transition hover:bg-[#79b8ff] disabled:opacity-50"
+          >
+            {Icons.send}
+          </button>
+        </div>
       </div>
 
       {/* Canvas Action Buttons - dim when focused */}
