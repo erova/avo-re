@@ -848,10 +848,14 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onO
   const [isLoading, setIsLoading] = React.useState(false);
   const [demoMode, setDemoMode] = React.useState(true);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const messagesContainerRef = React.useRef<HTMLDivElement>(null);
   const tamboThread = useTamboThread();
 
   React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll within container only, not the whole page
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   // Check if query should open a canvas instead of chat
@@ -951,7 +955,7 @@ function TamboPromptBoxWithHooks({ vision, onOpenCanvas }: { vision: Vision; onO
 
       {/* Chat Messages */}
       {messages.length > 0 && (
-        <div className="mt-4 max-h-[400px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
+        <div ref={messagesContainerRef} className="mt-4 max-h-[400px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
           {messages.map((msg, idx) => (
             <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
               {msg.role === "user" ? (
@@ -1025,9 +1029,13 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas }: { vision: Vision; onOp
   const [messages, setMessages] = React.useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const messagesContainerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll within container only, not the whole page
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const detectCanvasIntent = (query: string): CanvasType | null => {
@@ -1094,7 +1102,7 @@ function TamboPromptBoxDemoOnly({ vision, onOpenCanvas }: { vision: Vision; onOp
       </div>
 
       {messages.length > 0 && (
-        <div className="mt-4 max-h-[300px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
+        <div ref={messagesContainerRef} className="mt-4 max-h-[300px] space-y-3 overflow-y-auto rounded-xl border border-[#30363d] bg-[#0d1117] p-3">
           {messages.map((msg, idx) => (
             <div key={idx} className={msg.role === "user" ? "flex justify-end" : ""}>
               <div className={cn(

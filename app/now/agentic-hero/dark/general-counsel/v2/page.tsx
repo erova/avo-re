@@ -917,10 +917,14 @@ function AIAssistantPanelWithTambo() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [demoMode, setDemoMode] = React.useState(true);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const messagesContainerRef = React.useRef<HTMLDivElement>(null);
   const tamboThread = useTamboThread();
 
   React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll within container only, not the whole page
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const getDemoResponse = (query: string): { content: string; component?: React.ReactNode; results?: Array<{ title: string; source: string; snippet: string; confidence: number }>; actions?: Array<{ label: string }> } => {
@@ -1053,7 +1057,7 @@ function AIAssistantPanelWithTambo() {
           <span className="text-[10px] text-[#6e7681]">{tamboComponents.length} components</span>
         </div>
       </div>
-      <div className="flex-1 overflow-auto p-3">
+      <div ref={messagesContainerRef} className="flex-1 overflow-auto p-3">
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center text-center">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#21262d]">{Icons.search}</div>
@@ -1125,9 +1129,13 @@ function AIAssistantPanelDemoOnly() {
   }>>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const messagesContainerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll within container only, not the whole page
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const getDemoResponse = (query: string): { content: string; component?: React.ReactNode; results?: Array<{ title: string; source: string; snippet: string; confidence: number }>; actions?: Array<{ label: string }> } => {
@@ -1196,7 +1204,7 @@ function AIAssistantPanelDemoOnly() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto p-3">
+      <div ref={messagesContainerRef} className="flex-1 overflow-auto p-3">
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center text-center">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#21262d]">{Icons.search}</div>
