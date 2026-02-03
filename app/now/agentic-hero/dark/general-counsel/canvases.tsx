@@ -28,18 +28,22 @@ const workflowStepSchema = z.object({
   id: z.string().optional().default("step-0"),
   title: z.string().optional().default("Step"),
   description: z.string().optional().default(""),
-  status: z.enum(["pending", "in_progress", "complete"]).optional().default("pending"),
+  status: z.string().describe("Status: pending, in_progress, or complete").optional().default("pending"),
   source: z.string().optional(),
   sourceType: z.string().optional(),
 });
 
 export function WorkflowStepCard({ title, description, status, source, sourceType }: z.infer<typeof workflowStepSchema>) {
-  const statusConfig = {
+  const statusConfig: Record<string, { icon: string; color: string; bg: string }> = {
     pending: { icon: "○", color: "text-[#6e7681]", bg: "bg-[#6e7681]/20" },
     in_progress: { icon: "◐", color: "text-[#58a6ff]", bg: "bg-[#58a6ff]/20" },
     complete: { icon: "✓", color: "text-[#3fb950]", bg: "bg-[#3fb950]/20" },
+    completed: { icon: "✓", color: "text-[#3fb950]", bg: "bg-[#3fb950]/20" },
+    done: { icon: "✓", color: "text-[#3fb950]", bg: "bg-[#3fb950]/20" },
+    active: { icon: "◐", color: "text-[#58a6ff]", bg: "bg-[#58a6ff]/20" },
   };
-  const config = statusConfig[status || "pending"];
+  const normalizedStatus = (status || "pending").toLowerCase().replace(/[\s-]/g, "_");
+  const config = statusConfig[normalizedStatus] || statusConfig.pending;
   
   return (
     <div className="flex items-start gap-3 rounded-xl border border-[#30363d] bg-[#161b22] p-4">
@@ -109,15 +113,19 @@ const reportInsightSchema = z.object({
   insight: z.string().optional().default(""),
   metric: z.string().optional(),
   change: z.string().optional(),
-  changeType: z.enum(["positive", "negative", "neutral"]).optional().default("neutral"),
+  changeType: z.string().describe("Change type: positive, negative, or neutral").optional().default("neutral"),
   period: z.string().optional(),
 });
 
 export function ReportInsightCard({ title, insight, metric, change, changeType, period }: z.infer<typeof reportInsightSchema>) {
-  const changeColors = {
+  const changeColors: Record<string, string> = {
     positive: "text-[#3fb950]",
     negative: "text-[#da3633]",
     neutral: "text-[#8b949e]",
+    up: "text-[#3fb950]",
+    down: "text-[#da3633]",
+    increase: "text-[#3fb950]",
+    decrease: "text-[#da3633]",
   };
   
   return (
@@ -130,7 +138,7 @@ export function ReportInsightCard({ title, insight, metric, change, changeType, 
       {(metric || change) && (
         <div className="mt-3 flex items-center gap-4">
           {metric && <span className="text-lg font-semibold text-[#f0f6fc]">{metric}</span>}
-          {change && <span className={cn("text-sm", changeColors[changeType || "neutral"])}>{change}</span>}
+          {change && <span className={cn("text-sm", changeColors[(changeType || "neutral").toLowerCase()] || changeColors.neutral)}>{change}</span>}
         </div>
       )}
     </div>
