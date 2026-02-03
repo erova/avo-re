@@ -15,6 +15,7 @@ import {
   ContractSummaryCard,
   MeetingProposalCard,
   ReportInsightCard,
+  EmailDraftCard,
 } from "./canvases";
 
 // Grayscale SVG Icons
@@ -794,6 +795,41 @@ function generateCardsFromContent(content: string, query: string): React.ReactNo
           aiNote="Moved low-priority call to open this slot"
           attendeesAvailable={3}
           totalAttendees={3}
+        />
+      </div>
+    );
+  }
+  
+  // Detect email/draft content
+  if (text.includes("email") || text.includes("draft") || text.includes("send") || text.includes("compose")) {
+    return (
+      <div className="mt-3 space-y-2">
+        <EmailDraftCard 
+          id="email-1"
+          to="CFO, Board Secretary"
+          subject="Q1 Board Materials - Pre-Read"
+          preview="Please find the attached pre-read materials for our upcoming Q1 board meeting on February 14. The financial summary and risk assessment are ready for your review..."
+          attachments={["Q1 Financial Summary", "Risk Assessment Update"]}
+          isSecure={true}
+          status="draft"
+        />
+      </div>
+    );
+  }
+  
+  // Detect search/find content
+  if (text.includes("search") || text.includes("find") || text.includes("who") || text.includes("where") || text.includes("look")) {
+    return (
+      <div className="mt-3 space-y-2">
+        <SearchResultCard 
+          id="search-1"
+          title="Sarah Chen - Procurement Lead"
+          source="Employee Directory"
+          sourceIcon="👤"
+          snippet="Primary owner of Acme Corp vendor relationship. Manages $2.4M annual contract."
+          relevance={98}
+          lastModified="Active employee"
+          owner="Procurement"
         />
       </div>
     );

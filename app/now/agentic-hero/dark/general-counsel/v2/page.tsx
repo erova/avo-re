@@ -816,6 +816,62 @@ function generateCardsFromContent(content: string, query: string): React.ReactNo
     );
   }
   
+  // Detect email/draft content
+  if (text.includes("email") || text.includes("draft") || text.includes("send") || text.includes("compose")) {
+    return (
+      <div className="mt-2 space-y-2">
+        <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b949e" strokeWidth="1.5">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m22 6-10 7L2 6" />
+              </svg>
+              <span className="text-sm font-medium text-[#f0f6fc]">Email Draft</span>
+            </div>
+            <span className="rounded-full border border-[#d29922]/30 bg-[#d29922]/10 px-2 py-0.5 text-[10px] font-medium text-[#d29922]">DRAFT</span>
+          </div>
+          <div className="mt-3 space-y-2 text-sm">
+            <div className="flex"><span className="w-12 text-[#6e7681]">To:</span><span className="text-[#f0f6fc]">CFO, Board Secretary</span></div>
+            <div className="flex"><span className="w-12 text-[#6e7681]">Subj:</span><span className="font-medium text-[#f0f6fc]">Q1 Board Materials - Pre-Read</span></div>
+          </div>
+          <div className="mt-3 rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+            <p className="line-clamp-2 text-xs text-[#8b949e]">&ldquo;Please find the attached pre-read materials for our upcoming Q1 board meeting...&rdquo;</p>
+          </div>
+          <div className="mt-3 flex items-center gap-2 rounded-lg border border-[#58a6ff]/30 bg-[#58a6ff]/5 px-2.5 py-1.5">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+            <span className="text-xs text-[#f0f6fc]">Q1 Financial Summary</span>
+            <span className="text-[10px] text-[#58a6ff]">Secure Link</span>
+          </div>
+          <div className="mt-3 flex items-center gap-2">
+            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-3 py-1.5 text-xs text-[#8b949e] hover:bg-[#30363d]">Edit</button>
+            <button className="rounded-lg bg-[#58a6ff] px-3 py-1.5 text-xs font-medium text-[#0d1117]">Send</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Detect search/find content
+  if (text.includes("search") || text.includes("find") || text.includes("who owns") || text.includes("where is") || text.includes("look up")) {
+    return (
+      <div className="mt-2 space-y-2">
+        <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-[#6e7681]">Employee Directory</span>
+            <span className="text-xs text-[#3fb950]">98% match</span>
+          </div>
+          <h4 className="mt-1 text-sm font-semibold text-[#f0f6fc]">Sarah Chen - Procurement Lead</h4>
+          <p className="mt-1 text-xs text-[#8b949e]">Primary owner of Acme Corp vendor relationship. Manages $2.4M annual contract.</p>
+          <div className="mt-2 flex gap-2">
+            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-2.5 py-1 text-[10px] text-[#8b949e]">View Profile</button>
+            <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-2.5 py-1 text-[10px] text-[#8b949e]">Schedule Meeting</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return undefined;
 }
 

@@ -297,15 +297,106 @@ export function SecureAttachmentCard({ title, documentType, isSecure, accessLeve
   );
 }
 
+// 8. EmailDraftCard - For drafting emails with secure attachments
+const emailDraftSchema = z.object({
+  id: z.string().optional().default("email-0"),
+  to: z.string().describe("Recipients, e.g., 'CFO, Board Secretary'").optional().default(""),
+  cc: z.string().optional(),
+  subject: z.string().describe("Email subject line").optional().default(""),
+  preview: z.string().describe("First few lines of the email body").optional().default(""),
+  attachments: z.array(z.string()).describe("List of attached document names").optional().default([]),
+  isSecure: z.boolean().optional().default(true),
+  status: z.string().describe("Draft status: draft, ready, sent").optional().default("draft"),
+}).describe("Shows an email draft with recipients, subject, preview, and secure attachments");
+
+export function EmailDraftCard({ to, cc, subject, preview, attachments, isSecure, status }: z.infer<typeof emailDraftSchema>) {
+  const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
+    draft: { label: "DRAFT", color: "text-[#d29922]", bg: "bg-[#d29922]/10 border-[#d29922]/30" },
+    ready: { label: "READY", color: "text-[#3fb950]", bg: "bg-[#3fb950]/10 border-[#3fb950]/30" },
+    sent: { label: "SENT", color: "text-[#8b949e]", bg: "bg-[#8b949e]/10 border-[#8b949e]/30" },
+  };
+  const config = statusConfig[status || "draft"] || statusConfig.draft;
+  
+  return (
+    <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b949e" strokeWidth="1.5">
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="m22 6-10 7L2 6" />
+          </svg>
+          <span className="text-sm font-medium text-[#f0f6fc]">Email Draft</span>
+        </div>
+        <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", config.bg, config.color)}>
+          {config.label}
+        </span>
+      </div>
+      
+      <div className="mt-3 space-y-2 text-sm">
+        <div className="flex">
+          <span className="w-12 text-[#6e7681]">To:</span>
+          <span className="text-[#f0f6fc]">{to}</span>
+        </div>
+        {cc && (
+          <div className="flex">
+            <span className="w-12 text-[#6e7681]">CC:</span>
+            <span className="text-[#8b949e]">{cc}</span>
+          </div>
+        )}
+        <div className="flex">
+          <span className="w-12 text-[#6e7681]">Subj:</span>
+          <span className="font-medium text-[#f0f6fc]">{subject}</span>
+        </div>
+      </div>
+      
+      {preview && (
+        <div className="mt-3 rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+          <p className="line-clamp-3 text-xs text-[#8b949e]">&ldquo;{preview}&rdquo;</p>
+        </div>
+      )}
+      
+      {attachments && attachments.length > 0 && (
+        <div className="mt-3 space-y-1.5">
+          {attachments.map((att, i) => (
+            <div key={i} className="flex items-center gap-2 rounded-lg border border-[#58a6ff]/30 bg-[#58a6ff]/5 px-2.5 py-1.5">
+              {isSecure && (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              )}
+              <span className="text-xs text-[#f0f6fc]">{att}</span>
+              <span className="text-[10px] text-[#58a6ff]">Secure Link</span>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      <div className="mt-4 flex items-center gap-2">
+        <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-3 py-1.5 text-xs text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]">
+          Edit Draft
+        </button>
+        <button className="rounded-lg border border-[#30363d] bg-[#21262d] px-3 py-1.5 text-xs text-[#8b949e] hover:bg-[#30363d] hover:text-[#f0f6fc]">
+          Attach More
+        </button>
+        <button className="rounded-lg bg-[#58a6ff] px-3 py-1.5 text-xs font-medium text-[#0d1117] hover:bg-[#79b8ff]">
+          Send
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // Export Tambo component registry
 export const tamboCanvasComponents = [
-  { name: "WorkflowStepCard", description: "Shows a workflow step with status, source, and description.", component: WorkflowStepCard, propsSchema: workflowStepSchema },
-  { name: "DocumentDraftCard", description: "Displays an AI-generated document draft with suggestions.", component: DocumentDraftCard, propsSchema: documentDraftSchema },
-  { name: "ReportInsightCard", description: "Shows an AI insight with metrics and change indicators.", component: ReportInsightCard, propsSchema: reportInsightSchema },
-  { name: "SearchResultCard", description: "Displays a cross-system search result with source and relevance.", component: SearchResultCard, propsSchema: searchResultSchema },
-  { name: "ContractSummaryCard", description: "Shows contract details including value, renewal, and owner.", component: ContractSummaryCard, propsSchema: contractSummarySchema },
-  { name: "MeetingProposalCard", description: "Displays an AI-suggested meeting time with availability.", component: MeetingProposalCard, propsSchema: meetingProposalSchema },
-  { name: "SecureAttachmentCard", description: "Shows a secure board material link for emails.", component: SecureAttachmentCard, propsSchema: secureAttachmentSchema },
+  { name: "WorkflowStepCard", description: "Shows a workflow step with status. Use when discussing workflows or multi-step processes.", component: WorkflowStepCard, propsSchema: workflowStepSchema },
+  { name: "DocumentDraftCard", description: "Displays an AI-generated document draft. Use when user asks to draft memos, letters, or documents.", component: DocumentDraftCard, propsSchema: documentDraftSchema },
+  { name: "ReportInsightCard", description: "Shows data insights with metrics. Use when user asks about trends, analytics, or reports.", component: ReportInsightCard, propsSchema: reportInsightSchema },
+  { name: "SearchResultCard", description: "Displays a search result from Diligent systems. Use when user searches for people, documents, or information.", component: SearchResultCard, propsSchema: searchResultSchema },
+  { name: "ContractSummaryCard", description: "Shows contract details. Use when user asks about contracts, agreements, renewals, or vendors.", component: ContractSummaryCard, propsSchema: contractSummarySchema },
+  { name: "MeetingProposalCard", description: "Displays a proposed meeting time. Use when user wants to schedule meetings or calls.", component: MeetingProposalCard, propsSchema: meetingProposalSchema },
+  { name: "SecureAttachmentCard", description: "Shows a secure document link. Use when attaching board materials to emails.", component: SecureAttachmentCard, propsSchema: secureAttachmentSchema },
+  { name: "EmailDraftCard", description: "Shows an email draft with recipients, subject, preview, and secure attachments. Use when user asks to draft, send, or compose an email.", component: EmailDraftCard, propsSchema: emailDraftSchema },
 ];
 
 interface CanvasProps {
