@@ -67,7 +67,7 @@ export default function RootLayout({
                       href="/now"
                       className="hover:text-neutral-100 transition hover:underline underline-offset-4"
                     >
-                      Now
+                      Scratchpad
                     </NavLink>
                     <NavLink
                       href="/about"
@@ -105,7 +105,7 @@ export default function RootLayout({
                       href="/now"
                       className="hover:text-neutral-100 transition hover:underline underline-offset-4"
                     >
-                      Now
+                      Scratchpad
                     </NavLink>
                     <NavLink
                       href="/about"
