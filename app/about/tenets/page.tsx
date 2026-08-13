@@ -35,6 +35,7 @@ export default async function TenetsPage() {
       <div className="mt-12 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed">
         <MDXRemote
           source={content}
+          options={{ blockJS: false }}
           components={{
             ExperienceOutcomes,
           }}

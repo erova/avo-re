@@ -51,7 +51,7 @@ export default async function ResumePage() {
 
       <div className="mt-12 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed resume-prose">
 
-  <MDXRemote source={source} />
+  <MDXRemote source={source} options={{ blockJS: false }} />
 </div>
     </article>
   );

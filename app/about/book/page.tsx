@@ -29,7 +29,7 @@ export default async function BookPage() {
       </header>
 
       <div className="mt-12 prose prose-invert prose-neutral max-w-none prose-headings:tracking-tight prose-p:leading-relaxed">
-        <MDXRemote source={source} />
+        <MDXRemote source={source} options={{ blockJS: false }} />
       </div>
     </article>
   );

@@ -158,7 +158,7 @@ export default async function NowExperimentPage({
             </div>
   
             <div className="prose-now mt-12 [&>*+*]:mt-16">
-              <MDXRemote source={content} components={mdxComponents} />
+              <MDXRemote source={content} options={{ blockJS: false }} components={mdxComponents} />
             </div>
           </div>
   

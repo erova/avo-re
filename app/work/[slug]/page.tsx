@@ -115,6 +115,7 @@ export default async function WorkPostPage({
             <div className="mt-0 prose prose-invert prose-neutral max-w-none">
               <MDXRemote
                 source={content}
+                options={{ blockJS: false }}
                 components={{
                   Callout: (props) => <Callout {...props} />,
                   MetricTiles: (props) => <MetricTiles {...props} />,
