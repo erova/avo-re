@@ -36,7 +36,7 @@ export default function NowPage() {
           ← Home
         </Link>
 
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight">Now: My Scratchpad</h1>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight">Scratchpad</h1>
         <p className="mt-3 max-w-2xl text-neutral-300">
           What I’m tinkering with and exploring right now.
         </p>

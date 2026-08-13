@@ -128,7 +128,7 @@ export default async function NowExperimentPage({
                 className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-neutral-200"
               >
                 <span aria-hidden>←</span>
-                <span>Back to Now</span>
+                <span>Back to Scratchpad</span>
               </Link>
 
               <div className="hidden lg:block text-xs uppercase tracking-wide text-neutral-500">
@@ -138,7 +138,7 @@ export default async function NowExperimentPage({
   
             <div className="mt-10">
               <div className="text-xs uppercase tracking-wide text-neutral-500">
-                Now
+                Scratchpad
               </div>
   
               <h1 className="page-title">
