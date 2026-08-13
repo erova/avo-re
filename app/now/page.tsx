@@ -1,32 +1,85 @@
-export default function ComingSoonNow() {
+import Link from "next/link";
+import { getAllNowMeta } from "@/lib/now";
+
+function formatNowDate(input: unknown): string {
+  if (!input) return "";
+
+  // If it's already short YYYY-MM-DD, keep it.
+  const s = String(input).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+  // Try to parse into a readable, compact form.
+  const d = new Date(s);
+  if (!Number.isNaN(d.getTime())) {
+    // Example: Dec 21, 2025
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    });
+  }
+
+  // Fallback: avoid huge strings
+  return s.length > 18 ? s.slice(0, 18) + "…" : s;
+}
+
+export default function NowPage() {
+  const experiments = getAllNowMeta();
+
   return (
-    <article className="relative mx-auto max-w-2xl px-6 py-24 min-h-[70vh] flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-xs uppercase tracking-wider text-neutral-500 mb-4">
-          Now
-        </div>
+    <article className="mx-auto max-w-3xl px-6 py-16">
+      <header className="mt-8 rounded-2xl border border-neutral-800/60 bg-neutral-950/40 p-8 shadow-sm">
+        <Link
+          href="/"
+          className="mb-3 inline-block text-sm text-neutral-400 hover:text-neutral-200"
+        >
+          ← Home
+        </Link>
 
-        <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-neutral-100">
-          Coming Soon
-        </h1>
-
-        <p className="mt-6 text-lg text-neutral-400 max-w-md mx-auto leading-relaxed">
-          Experiments and prototypes are being polished — tinkering with AI
-          interfaces, risk visualization, and design systems.
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight">Now: My Scratchpad</h1>
+        <p className="mt-3 max-w-2xl text-neutral-300">
+          What I’m tinkering with and exploring right now.
         </p>
+      </header>
 
-        <div className="mt-10 flex flex-col items-center gap-4">
-          <a
-            href="mailto:chris@avo.re"
-            className="inline-flex items-center gap-2 rounded-full bg-[rgb(var(--accent)/0.18)] text-[rgb(var(--accent))] border border-[rgb(var(--accent)/0.35)] px-5 py-2.5 text-sm font-medium hover:opacity-90 transition"
-          >
-            Get in touch
-          </a>
-        </div>
+      <div className="mt-10 space-y-6">
+        {experiments.map((e: any) => {
+          const date = formatNowDate(e.date);
 
-        <div className="mt-16 text-xs text-neutral-600">
-          Chris Avore · Design Leadership · AI Products
-        </div>
+          return (
+            <div
+              key={e.slug}
+              className="rounded-2xl border border-white/10 bg-white/5 p-6"
+            >
+              <div className="f">
+                <div className="flex-1">
+                  <h2 className="text-lg font-semibold tracking-tight">
+                    <Link
+                      href={`/now/${e.slug}`}
+                      className="hover:underline underline-offset-4"
+                    >
+                      {e.title}
+                    </Link>
+                  </h2>
+
+                  {e.summary ? (
+                    <p className="mt-2 text-sm text-neutral-300">{e.summary}</p>
+                  ) : null}
+                </div>
+
+                {date ? (
+                  <div className="shrink-0 text-xs uppercase tracking-wider text-neutral-500 whitespace-nowrap pt-1">
+                    {date}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
+
+        {!experiments.length ? (
+          <p className="text-sm text-neutral-400">No Now posts yet.</p>
+        ) : null}
       </div>
     </article>
   );
