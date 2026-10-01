@@ -209,7 +209,7 @@ export default function Home() {
               />
               <CardLink
                 href="/now"
-                eyebrow="Now"
+                eyebrow="Scratchpad"
                 title="What I’m building"
                 desc="Current experiments and prototypes — tinkering and iterating in code"
                 meta="visuals + prototypes"
