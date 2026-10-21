@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import type { RiskRow, RiskLevel } from "@/app/now/risk-heatmap-insights/data/riskSeed";
+import type { RiskRow, RiskLevel } from "@/app/(site)/now/risk-heatmap-insights/data/riskSeed";
 
 type Dimension = "Business Unit" | "Region" | "Risk Type";
 

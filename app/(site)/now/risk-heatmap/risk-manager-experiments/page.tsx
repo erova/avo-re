@@ -8,7 +8,7 @@ import {
   RISK_ROWS,
   type RiskLevel,
   type RiskRow,
-} from "@/app/now/risk-heatmap/data/riskSeed";
+} from "@/app/(site)/now/risk-heatmap/data/riskSeed";
 
 // ============================================================================
 // Types

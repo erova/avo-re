@@ -9,13 +9,13 @@ import {
   RISK_ROWS,
   type RiskLevel,
   type RiskRow,
-} from "@/app/now/risk-heatmap/data/riskSeed";
+} from "@/app/(site)/now/risk-heatmap/data/riskSeed";
 
-import type { ClusterContext } from "@/app/now/risk-heatmap/components/HeatMapDemo";
+import type { ClusterContext } from "@/app/(site)/now/risk-heatmap/components/HeatMapDemo";
 
 // Reuse your interactive heatmap demo inside the simulated product surface.
 const HeatMapDemo = dynamic(
-  () => import("@/app/now/risk-heatmap/components/HeatMapDemo"),
+  () => import("@/app/(site)/now/risk-heatmap/components/HeatMapDemo"),
   { ssr: false }
 );
 

@@ -7,9 +7,9 @@ import {
   RISK_ROWS,
   type RiskLevel,
   type RiskRow,
-} from "@/app/now/risk-heatmap-insights/data/riskSeed";
+} from "@/app/(site)/now/risk-heatmap-insights/data/riskSeed";
 
-import PatternViz from "@/app/now/risk-heatmap-insights/components/PatternViz";
+import PatternViz from "@/app/(site)/now/risk-heatmap-insights/components/PatternViz";
 
 export default function RiskHeatmapInsightsPatternsPage() {
   const rowsSeed: RiskRow[] = RISK_ROWS;

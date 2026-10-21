@@ -201,3 +201,37 @@ Built 4 role-based dashboards for Diligent audit personas at `/now/agentic-hero/
 
 ---
 *Updated: February 2, 2026*
+
+---
+
+## Portfolio build (avo.re home page) — standing rules
+
+Branch `portfolio-build`. The full spec is `docs/avo-re-portfolio-brief.md` (goal, page structure, draft copy, canonical facts, public-safety review §5, visual direction §6, build order §9). Read the relevant section before building it. Source decks are in `~/Projects/avo-re/source/`.
+
+**Stack deviation from the brief:** built in this Next.js repo, not Astro, so the prototype routes under `/now/*` keep working. Brief §7 "Astro / content collections" maps to Next + MDX files in `content/` read via `lib/*.ts`.
+
+**Structure:** two route groups with separate root layouts. `app/(site)/` is the legacy dark/pink site (`/work`, `/writing`, `/now`, `/about`) and must not be restyled. `app/(portfolio)/` is the new `/` with its own tokens (`tokens.css`) and fonts. Imports of legacy code use `@/app/(site)/...`. Never import portfolio CSS into `(site)` or the reverse.
+
+**Status:** draft is `noindex` (in `(portfolio)/layout.tsx`). Remove only after the brief's step 8 review.
+
+### Design tokens
+Defined in `app/(portfolio)/tokens.css`; use the semantic vars (`--bg`, `--fg`, `--fg-muted`, `--hairline`, `--focus`), not raw palette values.
+Paper `#F6F7F8` · Ink `#14213D` · Slate `#5A6478` · Rule `#D5D9E0` · Night `#0E1A30` (dark bg) · Signal `#C2410C` (state viewer and focus rings only).
+Display: Bodoni Moda italic (H1/H2/H3). Body/UI: Public Sans. Scale ~1.25, body 18px/1.6, measure < 70ch, column ~640px.
+
+### Don't
+- No all-caps tracked eyebrow labels. No monospace data labels or "A · B · C" meta strings.
+- No big-number stat cards or gradients; outcomes are short sentences with the number in plain bold.
+- No 01/02/03 numbering on cases. No fade-and-slide on sections; the state viewer is the only animated moment.
+- No cream background with terracotta accent. No "→" appended to links.
+- No quote-mark ornaments or carousels. No autoplay video.
+- Copy: first person, plain, short. No "passionate," "leveraged," "drove synergies." Tighten, don't expand.
+
+### Quality floor
+WCAG 2.1 AA contrast, visible focus, keyboard-accessible interactives, `prefers-reduced-motion`, `prefers-color-scheme`, Lighthouse 95+ on all four, no font layout shift.
+
+### Working rules
+- Anything marked **DECIDE** in the brief gets a visible `[DECIDE: ...]` placeholder. Never invent facts, numbers, quotes, or names.
+- Sections backed by content hide themselves when empty.
+- Check brief §5 before adding financials, internal ratings, client names, or screenshots.
+- Run `npm run build` after structural changes; confirm `/`, `/work`, `/writing`, `/now`, `/about` still return 200.

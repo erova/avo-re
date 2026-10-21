@@ -1,0 +1,135 @@
+/* Design tokens for the portfolio ("the board book"). See docs/avo-re-portfolio-brief.md §6.
+   Signal is reserved for the state viewer and focus rings. Nowhere else. */
+
+:root {
+  --paper: #f6f7f8;
+  --ink: #14213d;
+  --slate: #5a6478;
+  --rule: #d5d9e0;
+  --night: #0e1a30;
+  --signal: #c2410c;
+
+  /* Semantic roles, so components never reference the raw palette */
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --fg-muted: var(--slate);
+  --hairline: var(--rule);
+  --focus: var(--signal);
+
+  --font-display: var(--font-bodoni), "Bodoni 72", Didot, serif;
+  --font-body: var(--font-public-sans), system-ui, sans-serif;
+
+  /* Type scale, ratio ~1.25 */
+  --text-sm: 0.8rem;
+  --text-base: 1.125rem; /* 18px */
+  --text-lg: 1.406rem;
+  --text-xl: 1.758rem;
+  --text-2xl: 2.197rem;
+  --text-3xl: 2.747rem;
+  --leading-body: 1.6;
+
+  --measure: 66ch;
+  --column: 640px;
+  --column-wide: 960px;
+  --gutter: 1.5rem;
+  --space-section: clamp(4rem, 10vw, 8rem);
+  --space-case: clamp(3.5rem, 8vw, 6rem);
+}
+
+/* Dark mode: Paper/Ink invert around Night. Signal stays. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--night);
+    --fg: var(--paper);
+    --fg-muted: #a9b2c3; /* Slate lightened to hold AA contrast on Night */
+    --hairline: #26334d;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.15;
+  margin: 0;
+}
+
+h1 { font-size: var(--text-3xl); }
+h2 { font-size: var(--text-2xl); }
+h3 { font-size: var(--text-xl); }
+
+p {
+  margin: 0 0 1em;
+  max-width: var(--measure);
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: -4rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--fg);
+  color: var(--bg);
+  z-index: 10;
+}
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+.column {
+  width: min(100% - 2 * var(--gutter), var(--column));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--space-section);
+}
+.section + .section {
+  border-top: 1px solid var(--hairline);
+}

@@ -9,13 +9,13 @@ import {
   RISK_ROWS,
   type RiskLevel,
   type RiskRow,
-} from "@/app/now/risk-heatmap-insights/data/riskSeed";
+} from "@/app/(site)/now/risk-heatmap-insights/data/riskSeed";
 
-import type { ClusterContext } from "@/app/now/risk-heatmap-insights/components/HeatMapInsights";
+import type { ClusterContext } from "@/app/(site)/now/risk-heatmap-insights/components/HeatMapInsights";
 
 // Grayscale heatmap (insights-focused) inside the simulated product surface.
 const HeatMapInsights = dynamic(
-  () => import("@/app/now/risk-heatmap-insights/components/HeatMapInsights"),
+  () => import("@/app/(site)/now/risk-heatmap-insights/components/HeatMapInsights"),
   { ssr: false }
 );
 

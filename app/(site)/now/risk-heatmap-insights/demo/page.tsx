@@ -1,5 +1,5 @@
 import Link from "next/link";
-import HeatMapDemo from "@/app/now/risk-heatmap/components/HeatMapDemo";
+import HeatMapDemo from "@/app/(site)/now/risk-heatmap/components/HeatMapDemo";
 
 export default function RiskHeatmapDemoPage() {
   return (
