@@ -227,27 +227,95 @@
   padding-bottom: clamp(2.5rem, 5vw, 4rem);
 }
 
-.case-meta {
+/* Case study frame: ruled header, facts bar, and label/body rows, so each
+   piece reads as a case study and not a job entry. */
+.case-head {
+  border-top: 1px solid currentColor;
+}
+.case-kicker {
+  display: flex;
+  justify-content: space-between;
   font-family: var(--font-ui);
   font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+  max-width: none;
+  padding-block: 0.7rem;
   color: var(--fg-muted);
-  margin: 0.75rem 0 0;
+}
+.case-head h3 {
+  margin: clamp(1rem, 2vw, 1.75rem) 0 clamp(1.5rem, 3vw, 2.5rem);
+}
+.case-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.case-facts > div {
+  padding: 0.8rem 1rem 0.9rem 0;
+}
+.case-facts > div:last-child {
+  grid-column: span 2;
+}
+.case-facts dt {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+  margin-bottom: 0.15rem;
+}
+.case-facts dd {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+@media (min-width: 760px) {
+  .case-facts > div + div {
+    padding-left: 1rem;
+    border-left: 1px solid var(--hairline);
+  }
+}
+.case-rows {
+  margin-top: 0;
+}
+.case-row:first-child {
+  border-top: 0;
+}
+.case-row {
+  display: grid;
+  gap: 0.5rem 2rem;
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--hairline);
+}
+.case-row:last-child {
+  border-bottom: 1px solid var(--hairline);
+}
+@media (min-width: 800px) {
+  .case-row {
+    grid-template-columns: minmax(9rem, 1fr) minmax(0, 3fr);
+  }
 }
 h4 {
   font-family: var(--font-ui);
   font-size: 0.9375rem;
   font-weight: 600;
-  margin: 1.75rem 0 0.35rem;
+  margin: 0;
 }
-.feature h4:first-child,
-.case h4:first-of-type {
-  margin-top: 1.5rem;
-}
-.feature ul,
-.case ul {
-  margin: 0 0 1em;
-  padding-left: 1.2rem;
+.case-row p,
+.case-row ul {
   max-width: var(--measure);
+  margin: 0;
+}
+.case-row p + p {
+  margin-top: 0.75em;
+}
+.case-row ul {
+  padding-left: 1.2rem;
+}
+.case-asking {
+  font-style: italic;
 }
 li {
   margin-bottom: 0.45em;
@@ -341,15 +409,6 @@ li::marker {
   }
 }
 
-.feature-body {
-  display: grid;
-  gap: 0 4rem;
-}
-@media (min-width: 900px) {
-  .feature-body {
-    grid-template-columns: 1.15fr 1fr;
-  }
-}
 
 /* Other cases on paper */
 .case {
@@ -357,9 +416,6 @@ li::marker {
 }
 .case h3 {
   font-size: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
-}
-.case > *:not(h3):not(.media) {
-  max-width: var(--measure);
 }
 
 /* Media + placeholders (until real assets land) */

@@ -14,6 +14,7 @@ export type Case = {
   company: string;
   years: string;
   rail: string;
+  tags: string[];
   order: number;
   deepDive: boolean;
   situation: string;
@@ -49,6 +50,7 @@ export function getCases(): Case[] {
         company: String(d.company ?? ""),
         years: String(d.years ?? ""),
         rail: String(d.rail ?? d.title ?? ""),
+        tags: Array.isArray(d.tags) ? d.tags.map(String) : [],
         order: Number(d.order ?? 99),
         deepDive: d.deepDive === true,
         situation: String(d.situation ?? "").trim(),

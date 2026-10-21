@@ -19,50 +19,88 @@ const HIDDEN_ESSAYS = new Set(["hello-avo"]);
 type Link = { label: string; href: string };
 type Img = { src: string; width: number; height: number; alt: string };
 
-function CaseText({ c }: { c: Case }) {
+function CaseHead({ c, n, total }: { c: Case; n: number; total: number }) {
+  const num = String(n).padStart(2, "0");
   return (
-    <>
-      <h4>The situation</h4>
-      <p>{c.situation}</p>
-      <h4>What I did</h4>
-      <p>{c.did}</p>
-    </>
+    <header className="case-head">
+      <p className="case-kicker">
+        <span>Case study</span>
+        <span>
+          {num} / {String(total).padStart(2, "0")}
+        </span>
+      </p>
+      <h3 id={`case-${c.slug}-h`}>{c.title}</h3>
+      <dl className="case-facts">
+        <div>
+          <dt>Organization</dt>
+          <dd>{c.company}</dd>
+        </div>
+        <div>
+          <dt>Years</dt>
+          <dd>{c.years}</dd>
+        </div>
+        {c.tags.length > 0 && (
+          <div>
+            <dt>Focus</dt>
+            <dd>{c.tags.join(" · ")}</dd>
+          </div>
+        )}
+      </dl>
+    </header>
   );
 }
 
-function CaseOutcomes({ c }: { c: Case }) {
+function CaseRows({ c }: { c: Case }) {
   return (
-    <>
-      <h4>What changed</h4>
-      <ul>
-        {c.outcomes.map((o) => (
-          <li key={o}>{o}</li>
-        ))}
-      </ul>
+    <div className="case-rows">
+      <section className="case-row">
+        <h4>The situation</h4>
+        <div>
+          <p>{c.situation}</p>
+        </div>
+      </section>
+      <section className="case-row">
+        <h4>What I did</h4>
+        <div>
+          <p>{c.did}</p>
+        </div>
+      </section>
+      <section className="case-row">
+        <h4>What changed</h4>
+        <div>
+          <ul>
+            {c.outcomes.map((o) => (
+              <li key={o}>{o}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
       {c.asking && (
-        <>
+        <section className="case-row">
           <h4>What I&rsquo;m still asking</h4>
-          <p>{c.asking}</p>
-        </>
+          <div>
+            <p className="case-asking">{c.asking}</p>
+          </div>
+        </section>
       )}
-    </>
-  );
-}
-
-function CaseLinks({ c }: { c: Case }) {
-  return (
-    <>
-      {c.link && (
-        <p>
-          <a href={c.link}>{c.linkLabel ?? c.link}</a>
-        </p>
+      {(c.link || c.deepDive) && (
+        <section className="case-row case-links">
+          <h4>Go further</h4>
+          <div>
+            {c.link && (
+              <p>
+                <a href={c.link}>{c.linkLabel ?? c.link}</a>
+              </p>
+            )}
+            {c.deepDive && (
+              <p>
+                <a href={`/work/${c.slug}`}>Read the full case</a>
+              </p>
+            )}
+          </div>
+        </section>
       )}
-      {c.deepDive && (
-        <p>
-          <a href={`/work/${c.slug}`}>Read the full case</a>
-        </p>
-      )}
-    </>
+    </div>
   );
 }
 
@@ -155,7 +193,7 @@ export default function Home() {
             <h2 id="work-h">{titles.work}</h2>
           </div>
 
-          {cases.map((c) =>
+          {cases.map((c, i) =>
             c.stage ? (
               <article
                 className="field field-rose feature"
@@ -164,45 +202,29 @@ export default function Home() {
                 aria-labelledby={`case-${c.slug}-h`}
               >
                 <div className="container">
-                  <h3 id={`case-${c.slug}-h`}>{c.title}</h3>
-                  <p className="case-meta">
-                    {c.company}, {c.years}
-                  </p>
+                  <CaseHead c={c} n={i + 1} total={cases.length} />
 
                   <div className="stage" data-stage>
                     <img className="stage-main" {...c.stage.main} decoding="async" />
-                    {c.stage.panels.map((panel, i) => (
+                    {c.stage.panels.map((panel, j) => (
                       <img
                         key={panel.src}
-                        className={`panel panel-${i === 0 ? "a" : "b"}`}
+                        className={`panel panel-${j === 0 ? "a" : "b"}`}
                         {...panel}
                         decoding="async"
                       />
                     ))}
                   </div>
 
-                  <div className="feature-body">
-                    <div>
-                      <CaseText c={c} />
-                    </div>
-                    <div>
-                      <CaseOutcomes c={c} />
-                      <CaseLinks c={c} />
-                    </div>
-                  </div>
+                  <CaseRows c={c} />
                 </div>
               </article>
             ) : (
               <div className="container" key={c.slug}>
                 <article className="case" id={`case-${c.slug}`} aria-labelledby={`case-${c.slug}-h`}>
-                  <h3 id={`case-${c.slug}-h`}>{c.title}</h3>
-                  <p className="case-meta">
-                    {c.company}, {c.years}
-                  </p>
-                  <CaseText c={c} />
-                  <CaseOutcomes c={c} />
+                  <CaseHead c={c} n={i + 1} total={cases.length} />
+                  <CaseRows c={c} />
                   <Placeholder label={c.media} />
-                  <CaseLinks c={c} />
                 </article>
               </div>
             ),
