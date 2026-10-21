@@ -5,6 +5,9 @@ import matter from "gray-matter";
 const CASES_DIR = path.join(process.cwd(), "content", "cases");
 const QUOTES_DIR = path.join(process.cwd(), "content", "quotes");
 
+export type StageImage = { src: string; width: number; height: number; alt: string };
+export type Stage = { main: StageImage; panels: StageImage[] };
+
 export type Case = {
   slug: string;
   title: string;
@@ -20,6 +23,7 @@ export type Case = {
   media: string;
   link?: string;
   linkLabel?: string;
+  stage?: Stage;
 };
 
 export type Quote = {
@@ -54,6 +58,7 @@ export function getCases(): Case[] {
         media: String(d.media ?? ""),
         link: d.link ? String(d.link) : undefined,
         linkLabel: d.linkLabel ? String(d.linkLabel) : undefined,
+        stage: d.stage ? (d.stage as Stage) : undefined,
       } satisfies Case;
     })
     .filter((c) => c.title)
@@ -80,4 +85,40 @@ export function formatMonthYear(raw: string): string {
   const d = new Date(raw);
   if (Number.isNaN(d.getTime())) return raw;
   return d.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+// ───── Home page prose: content/portfolio/*.md ─────
+const PORTFOLIO_DIR = path.join(process.cwd(), "content", "portfolio");
+
+/** Read one file from content/portfolio. Frontmatter is `data`, the markdown below it is `body`. */
+export function readPortfolio<T = Record<string, any>>(name: string): { data: T; body: string } {
+  const raw = fs.readFileSync(path.join(PORTFOLIO_DIR, `${name}.md`), "utf8");
+  const { data, content } = matter(raw);
+  return { data: data as T, body: content.trim() };
+}
+
+/** Split markdown on its "##" headings: each heading becomes a title, the text under it a body. */
+export function splitSections(body: string): { title: string; body: string }[] {
+  const out: { title: string; lines: string[] }[] = [];
+  for (const line of body.split("\n")) {
+    const m = line.match(/^##\s+(.+?)\s*$/);
+    if (m) out.push({ title: m[1], lines: [] });
+    else if (out.length) out[out.length - 1].lines.push(line);
+  }
+  return out.map((o) => ({ title: o.title, body: o.lines.join("\n").trim() }));
+}
+
+export type EarlierJob = { title: string; order: number; body: string };
+
+export function getEarlier(): EarlierJob[] {
+  const dir = path.join(PORTFOLIO_DIR, "earlier");
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => {
+      const { data, content } = matter(fs.readFileSync(path.join(dir, f), "utf8"));
+      return { title: String(data.title ?? f), order: Number(data.order ?? 99), body: content.trim() };
+    })
+    .sort((a, b) => a.order - b.order);
 }

@@ -192,6 +192,9 @@
   gap: 0.25rem 2rem;
   margin: 0;
 }
+.glance-row {
+  display: contents;
+}
 .glance dt {
   font-family: var(--font-ui);
   font-weight: 600;
@@ -269,6 +272,7 @@ li::marker {
 }
 .stage-main {
   width: 100%;
+  height: auto;
   border-radius: 16px;
   box-shadow:
     0 50px 90px -40px oklch(0.2 0.06 8 / 0.6),
@@ -281,23 +285,23 @@ li::marker {
     0 30px 60px -20px oklch(0.15 0.05 8 / 0.65),
     0 0 0 1px oklch(1 0 0 / 0.1);
 }
-.panel-prompt {
+.panel-a {
   --depth: 70px;
   left: -8%;
   top: 34%;
   width: 58%;
 }
-.panel-incident {
+.panel-b {
   --depth: 110px;
   right: -7%;
   bottom: -11%;
   width: 64%;
 }
 @media (max-width: 759px) {
-  .panel-prompt {
+  .panel-a {
     display: none;
   }
-  .panel-incident {
+  .panel-b {
     right: -2%;
     bottom: -14%;
     width: 78%;
@@ -702,4 +706,26 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
       to { translate: 0 -20px; }
     }
   }
+}
+
+/* Markdown-rendered prose */
+.md-list ul {
+  list-style: none;
+  margin: 0 0 1em;
+  padding: 0;
+  max-width: var(--measure);
+}
+.md-list li {
+  margin-bottom: 1.25rem;
+}
+.md-contact p:last-child {
+  margin-top: 2rem;
+  color: var(--fg-muted);
+}
+.rows details a {
+  display: inline-block;
+}
+
+.section > .actions {
+  margin-bottom: 1.25rem;
 }
