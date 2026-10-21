@@ -10,6 +10,9 @@
   --green: oklch(0.3 0.055 160);
   --green-muted: oklch(0.8 0.03 150);
   --rose-field: oklch(0.9 0.032 18);
+  --rose-l: 0.86;
+  --rose-dl: 0.022;
+  --rose-c: 0.04;
   --rose-ink: oklch(0.48 0.16 8); /* rose as text on light fields */
   --rose-light: oklch(0.82 0.1 5); /* rose as text on dark fields */
 
@@ -51,6 +54,9 @@
     --ink-muted: oklch(0.78 0.025 150);
     --green: oklch(0.25 0.055 160);
     --rose-field: oklch(0.32 0.07 8);
+    --rose-l: 0.29;
+    --rose-dl: 0.025;
+    --rose-c: 0.065;
     --rose-ink: oklch(0.8 0.1 5);
     --cream: oklch(0.95 0.015 90);
   }
@@ -68,7 +74,8 @@
   --accent: var(--rose-light);
 }
 .field-rose {
-  --bg: var(--rose-field);
+  /* Each case steps one notch along the ramp (--step set per case). */
+  --bg: oklch(calc(var(--rose-l) + var(--step, 0) * var(--rose-dl)) var(--rose-c) 18);
   --fg: var(--ink);
   --fg-muted: var(--ink-muted);
   --accent: var(--rose-ink);

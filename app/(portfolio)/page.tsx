@@ -202,32 +202,25 @@ export default function Home() {
             <h2 id="work-h">{titles.work}</h2>
           </div>
 
-          {cases.map((c, i) =>
-            c.stage ? (
-              <article
-                className="field field-rose feature"
-                key={c.slug}
-                id={`case-${c.slug}`}
-                aria-labelledby={`case-${c.slug}-h`}
-              >
-                <div className="container">
-                  <CaseHead c={c} n={i + 1} total={cases.length} />
-
+          {cases.map((c, i) => (
+            <article
+              className="field field-rose feature"
+              key={c.slug}
+              id={`case-${c.slug}`}
+              aria-labelledby={`case-${c.slug}-h`}
+              style={{ "--step": i } as React.CSSProperties}
+            >
+              <div className="container">
+                <CaseHead c={c} n={i + 1} total={cases.length} />
+                {c.stage ? (
                   <GatedStage main={c.stage.main} panels={c.stage.panels} gate={gate.data} />
-
-                  <CaseRows c={c} />
-                </div>
-              </article>
-            ) : (
-              <div className="container" key={c.slug}>
-                <article className="case" id={`case-${c.slug}`} aria-labelledby={`case-${c.slug}-h`}>
-                  <CaseHead c={c} n={i + 1} total={cases.length} />
-                  <CaseRows c={c} />
+                ) : (
                   <Placeholder label={c.media} />
-                </article>
+                )}
+                <CaseRows c={c} />
               </div>
-            ),
-          )}
+            </article>
+          ))}
         </section>
 
         {quotes.length > 0 && (
