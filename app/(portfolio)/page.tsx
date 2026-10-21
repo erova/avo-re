@@ -9,6 +9,7 @@ import {
 } from "@/lib/portfolio";
 import { getAllWritingMeta } from "@/lib/writing";
 import { Rail } from "./_components/Rail";
+import { GatedStage } from "./_components/GatedStage";
 import { Placeholder } from "./_components/Placeholder";
 import { VideoFacade } from "./_components/VideoFacade";
 import { Md, MdInline, Emph } from "./_components/Md";
@@ -129,6 +130,14 @@ export default function Home() {
   }>("speaking");
   const talks = readPortfolio<{ title: string }>("talks");
   const pubs = readPortfolio<{ title: string; cover: Img }>("publications");
+  const gate = readPortfolio<{
+    note: string;
+    request: string;
+    requestHref: string;
+    label: string;
+    button: string;
+    error: string;
+  }>("gate");
   const contact = readPortfolio<{ links: Link[] }>("contact");
 
   const rail = [
@@ -204,17 +213,7 @@ export default function Home() {
                 <div className="container">
                   <CaseHead c={c} n={i + 1} total={cases.length} />
 
-                  <div className="stage" data-stage>
-                    <img className="stage-main" {...c.stage.main} decoding="async" />
-                    {c.stage.panels.map((panel, j) => (
-                      <img
-                        key={panel.src}
-                        className={`panel panel-${j === 0 ? "a" : "b"}`}
-                        {...panel}
-                        decoding="async"
-                      />
-                    ))}
-                  </div>
+                  <GatedStage main={c.stage.main} panels={c.stage.panels} gate={gate.data} />
 
                   <CaseRows c={c} />
                 </div>
