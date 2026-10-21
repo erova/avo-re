@@ -10,6 +10,7 @@ export type Case = {
   title: string;
   company: string;
   years: string;
+  rail: string;
   order: number;
   deepDive: boolean;
   situation: string;
@@ -43,6 +44,7 @@ export function getCases(): Case[] {
         title: String(d.title ?? ""),
         company: String(d.company ?? ""),
         years: String(d.years ?? ""),
+        rail: String(d.rail ?? d.title ?? ""),
         order: Number(d.order ?? 99),
         deepDive: d.deepDive === true,
         situation: String(d.situation ?? "").trim(),

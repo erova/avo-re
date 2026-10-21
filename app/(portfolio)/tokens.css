@@ -1,48 +1,83 @@
-/* Design tokens for the portfolio ("the board book"). See docs/avo-re-portfolio-brief.md §6.
-   Signal is reserved for the state viewer and focus rings. Nowhere else. */
+/* Portfolio design tokens. Direction: editorial long-form magazine, committed
+   green and rose color fields, depth through layered imagery. See PRODUCT.md. */
 
 :root {
-  --paper: #f6f7f8;
-  --ink: #14213d;
-  --slate: #5a6478;
-  --rule: #d5d9e0;
-  --night: #0e1a30;
-  --signal: #c2410c;
+  /* Raw palette (OKLCH). Reference only through the semantic roles below. */
+  --paper: oklch(0.972 0.01 90);
+  --cream: oklch(0.95 0.015 90);
+  --ink: oklch(0.24 0.035 165);
+  --ink-muted: oklch(0.43 0.03 165);
+  --green: oklch(0.3 0.055 160);
+  --green-muted: oklch(0.8 0.03 150);
+  --rose-field: oklch(0.9 0.032 18);
+  --rose-ink: oklch(0.48 0.16 8); /* rose as text on light fields */
+  --rose-light: oklch(0.82 0.1 5); /* rose as text on dark fields */
 
-  /* Semantic roles, so components never reference the raw palette */
+  /* Roles, redefined per field below */
   --bg: var(--paper);
   --fg: var(--ink);
-  --fg-muted: var(--slate);
-  --hairline: var(--rule);
-  --focus: var(--signal);
+  --fg-muted: var(--ink-muted);
+  --accent: var(--rose-ink);
+  --hairline: color-mix(in oklab, var(--fg) 18%, transparent);
 
-  --font-display: var(--font-bodoni), "Bodoni 72", Didot, serif;
-  --font-body: var(--font-public-sans), system-ui, sans-serif;
+  --font-display: var(--font-gloock), Georgia, serif;
+  --font-body: var(--font-source-serif), Georgia, serif;
+  --font-ui: var(--font-public-sans), system-ui, sans-serif;
 
-  /* Type scale, ratio ~1.25 */
-  --text-sm: 0.8rem;
-  --text-base: 1.125rem; /* 18px */
-  --text-lg: 1.406rem;
-  --text-xl: 1.758rem;
-  --text-2xl: 2.197rem;
-  --text-3xl: 2.747rem;
+  --text-sm: 0.875rem;
+  --text-base: clamp(1.1rem, 1.05rem + 0.2vw, 1.1875rem);
+  --text-lg: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem);
+  --text-h3: clamp(2.25rem, 1.6rem + 3vw, 4.25rem);
+  --text-h2: clamp(2.5rem, 1.8rem + 3.4vw, 4.75rem);
+  --text-hero: clamp(3rem, 1.6rem + 7vw, 8.25rem);
   --leading-body: 1.6;
 
-  --measure: 66ch;
-  --column: 640px;
-  --column-wide: 960px;
-  --gutter: 1.5rem;
-  --space-section: clamp(4rem, 10vw, 8rem);
-  --space-case: clamp(3.5rem, 8vw, 6rem);
+  --measure: 62ch;
+  --container: 1120px;
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --space-section: clamp(5rem, 11vw, 9rem);
+
+  /* Motion: one curve and a few durations so the page moves as one system */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 180ms;
+  --dur: 450ms;
+  --dur-slow: 900ms;
 }
 
-/* Dark mode: Paper/Ink invert around Night. Signal stays. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: var(--night);
-    --fg: var(--paper);
-    --fg-muted: #a9b2c3; /* Slate lightened to hold AA contrast on Night */
-    --hairline: #26334d;
+    --paper: oklch(0.2 0.03 160);
+    --ink: oklch(0.95 0.015 90);
+    --ink-muted: oklch(0.78 0.025 150);
+    --green: oklch(0.25 0.055 160);
+    --rose-field: oklch(0.32 0.07 8);
+    --rose-ink: oklch(0.8 0.1 5);
+    --cream: oklch(0.95 0.015 90);
+  }
+}
+
+/* Color fields. Each sets its own roles; text inside always uses the roles. */
+.field {
+  background: var(--bg);
+  color: var(--fg);
+}
+.field-green {
+  --bg: var(--green);
+  --fg: var(--cream);
+  --fg-muted: var(--green-muted);
+  --accent: var(--rose-light);
+}
+.field-rose {
+  --bg: var(--rose-field);
+  --fg: var(--ink);
+  --fg-muted: var(--ink-muted);
+  --accent: var(--rose-ink);
+}
+@media (prefers-color-scheme: dark) {
+  .field-rose {
+    --fg: var(--cream);
+    --fg-muted: var(--green-muted);
+    --accent: var(--rose-light);
   }
 }
 
@@ -55,8 +90,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  background: var(--paper);
 }
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -65,41 +100,62 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--paper);
   color: var(--fg);
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: var(--leading-body);
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-style: italic;
   font-weight: 400;
-  line-height: 1.15;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
   margin: 0;
+  text-wrap: balance;
 }
+h1 { font-size: var(--text-hero); letter-spacing: -0.025em; }
+h2 { font-size: var(--text-h2); }
+h3 { font-size: var(--text-h3); }
 
-h1 { font-size: var(--text-3xl); }
-h2 { font-size: var(--text-2xl); }
-h3 { font-size: var(--text-xl); }
+h1 em,
+h2 em,
+h3 em {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
 
 p {
   margin: 0 0 1em;
   max-width: var(--measure);
+  text-wrap: pretty;
 }
 
 a {
   color: inherit;
-  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+  transition: text-decoration-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+a:hover {
+  text-decoration-color: var(--accent);
+  color: var(--accent);
 }
 
 :focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
+  border-radius: 2px;
 }
 
 img,
@@ -114,22 +170,16 @@ video {
   left: var(--gutter);
   top: -4rem;
   padding: 0.5rem 0.75rem;
-  background: var(--fg);
-  color: var(--bg);
-  z-index: 10;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-ui);
+  z-index: 100;
 }
 .skip-link:focus {
   top: 0.5rem;
 }
 
-.column {
-  width: min(100% - 2 * var(--gutter), var(--column));
+.container {
+  width: min(100% - 2 * var(--gutter), var(--container));
   margin-inline: auto;
-}
-
-.section {
-  padding-block: var(--space-section);
-}
-.section + .section {
-  border-top: 1px solid var(--hairline);
 }

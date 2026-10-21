@@ -2,6 +2,8 @@
 
 Drop this file into the repo root (or reference it from CLAUDE.md) and ask Claude Code to build from it. Sections marked **DECIDE** need Chris's call before launch.
 
+> **Superseded (Oct 2026):** §6 Visual direction, its palette and type, and its "Don't" list were rejected by Chris. Visual direction now lives in `PRODUCT.md`. Everything else in this brief still applies.
+
 ---
 
 ## 1. Goal and audience

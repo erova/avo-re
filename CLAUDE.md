@@ -214,18 +214,13 @@ Branch `portfolio-build`. The full spec is `docs/avo-re-portfolio-brief.md` (goa
 
 **Status:** draft is `noindex` (in `(portfolio)/layout.tsx`). Remove only after the brief's step 8 review.
 
-### Design tokens
-Defined in `app/(portfolio)/tokens.css`; use the semantic vars (`--bg`, `--fg`, `--fg-muted`, `--hairline`, `--focus`), not raw palette values.
-Paper `#F6F7F8` · Ink `#14213D` · Slate `#5A6478` · Rule `#D5D9E0` · Night `#0E1A30` (dark bg) · Signal `#C2410C` (state viewer and focus rings only).
-Display: Bodoni Moda italic (H1/H2/H3). Body/UI: Public Sans. Scale ~1.25, body 18px/1.6, measure < 70ch, column ~640px.
-
-### Don't
-- No all-caps tracked eyebrow labels. No monospace data labels or "A · B · C" meta strings.
-- No big-number stat cards or gradients; outcomes are short sentences with the number in plain bold.
-- No 01/02/03 numbering on cases. No fade-and-slide on sections; the state viewer is the only animated moment.
-- No cream background with terracotta accent. No "→" appended to links.
-- No quote-mark ornaments or carousels. No autoplay video.
-- Copy: first person, plain, short. No "passionate," "leveraged," "drove synergies." Tighten, don't expand.
+### Visual direction
+Set by the user, recorded in `PRODUCT.md` (read it before any design work). The brief's §6 "board book" concept, its palette, fonts and don't list are **rejected**; do not reintroduce them.
+- Lane: serious long-form magazine (Asterisk, Works in Progress, Quanta). Anti-references: pudding.cool (playful, loud) and chelseawatson.com (portfolio template: self-descriptor headline, trait grid under tracked-caps labels, logo strip).
+- Color: committed large fields, deep green and rose, plus warm paper. Tokens and field roles are in `app/(portfolio)/tokens.css` (OKLCH). Use the roles (`--bg`, `--fg`, `--fg-muted`, `--accent`), never raw palette values. Pink and green must differ in lightness.
+- Type: Gloock (display), Source Serif 4 (body and italic emphasis), Public Sans (small UI only). Gloock has no italic; emphasis words use Source Serif italic.
+- Depth and motion are welcome when they have a job: staggered hero entrance, scroll-driven parallax with floating panels (native CSS `animation-timeline: view()`), the margin rail. One easing curve and a few durations (`--ease`, `--dur*`). Animate `transform`/`opacity`/`translate`/`scale` only. Everything behind `prefers-reduced-motion: no-preference`.
+- Avoid: tracked all-caps eyebrow labels, trait grids, logo strips, stat cards, side-stripe borders, gradient text, identical card grids, emoji/cartoon illustration.
 
 ### Quality floor
 WCAG 2.1 AA contrast, visible focus, keyboard-accessible interactives, `prefers-reduced-motion`, `prefers-color-scheme`, Lighthouse 95+ on all four, no font layout shift.

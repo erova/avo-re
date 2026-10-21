@@ -1,7 +1,8 @@
 import { getCases, getQuotes, formatMonthYear } from "@/lib/portfolio";
 import { getAllWritingMeta } from "@/lib/writing";
-import { SectionIndex } from "./_components/SectionIndex";
+import { Rail } from "./_components/Rail";
 import { Placeholder } from "./_components/Placeholder";
+import { VideoFacade } from "./_components/VideoFacade";
 
 const EMAIL = "avore@erova.com";
 const LINKEDIN = "https://www.linkedin.com/in/chrisavore/";
@@ -15,107 +16,203 @@ export default function Home() {
   const quotes = getQuotes();
   const essays = getAllWritingMeta().filter((e) => !HIDDEN_ESSAYS.has(e.slug));
 
-  const index = [
-    { id: "work", label: "Work" },
-    { id: "earlier", label: "Earlier" },
+  const rail = [
+    { id: "top", label: "Chris Avore" },
+    { id: "glance", label: "At a glance" },
+    { id: "work", label: "Selected work" },
+    ...cases.map((c) => ({ id: `case-${c.slug}`, label: c.rail })),
+    { id: "earlier", label: "Earlier work" },
     { id: "lead", label: "How I lead" },
-    { id: "writing", label: "Writing" },
+    { id: "writing", label: "Writing & speaking" },
     { id: "contact", label: "Contact" },
   ];
+  const [feature, ...rest] = cases;
+
 
   return (
     <div className="page">
-      <SectionIndex items={index} />
+      <Rail items={rail} />
+
+      <header className="field field-green hero" id="top">
+        <div className="hero-portrait rise" style={{ "--i": 4 } as React.CSSProperties}>
+          <div className="hero-slab" aria-hidden="true" />
+          <img
+            src="/images/portrait/chris-cutout.webp"
+            width={475}
+            height={937}
+            alt="Chris Avore, smiling, arms crossed, in a navy t-shirt."
+            fetchPriority="high"
+          />
+        </div>
+        <div className="container hero-inner">
+          <p className="masthead rise" style={{ "--i": 0 } as React.CSSProperties}>
+            Chris Avore
+          </p>
+          <h1 className="rise" style={{ "--i": 1 } as React.CSSProperties}>
+            Design leadership for <em>products</em> that can&rsquo;t afford to be wrong.
+          </h1>
+          <div className="hero-lower">
+            <p className="hero-now rise" style={{ "--i": 2 } as React.CSSProperties}>
+              I lead design at Diligent, turning a governance, risk, and compliance portfolio
+              used by most of the Fortune 1000 into an AI-first one. I still prototype in code.
+              Before Diligent: Northwestern Mutual, Meta, and Nasdaq.
+            </p>
+            <p className="actions rise" style={{ "--i": 3 } as React.CSSProperties}>
+              <a href={RESUME}>Download résumé (PDF)</a>
+              <a href={LINKEDIN}>LinkedIn</a>
+              <a href={`mailto:${EMAIL}`}>Email</a>
+            </p>
+          </div>
+        </div>
+      </header>
 
       <div className="page-main">
-        <section className="section hero" aria-labelledby="name">
-          <h1 id="name">Chris Avore</h1>
-          <p className="positioning">
-            Design leadership for products that can&rsquo;t afford to be wrong.
-          </p>
-          <p>
-            I lead design at Diligent, turning a governance, risk, and compliance portfolio used
-            by most of the Fortune 1000 into an AI-first one. I still prototype in code. Before
-            Diligent: Northwestern Mutual, Meta, and Nasdaq.
-          </p>
-          <p className="actions">
-            <a href={RESUME}>Download résumé (PDF)</a>
-            <a href={LINKEDIN}>LinkedIn</a>
-            <a href={`mailto:${EMAIL}`}>Email</a>
-          </p>
+        <section className="section" id="glance" aria-labelledby="glance-h">
+            <h2 id="glance-h">At a glance</h2>
+            <dl className="glance">
+              <dt>Diligent, 2024–</dt>
+              <dd>
+                VP &amp; Head of Design. [DECIDE: canonical team size] across 4 business units and
+                5 countries; 5 directors.
+              </dd>
+              <dt>Northwestern Mutual, 2021–24</dt>
+              <dd>VP &amp; Head of Design. Scaled the org from 60 to 120+.</dd>
+              <dt>Meta, 2020–21</dt>
+              <dd>Product Design Manager, recruiting platforms.</dd>
+              <dt>Nasdaq, 2011–18</dt>
+              <dd>Built the UX team from 1 to 35. 32 patents.</dd>
+              <dt>Author</dt>
+              <dd>
+                <em>Liftoff! Practical Design Leadership</em> (Rosenfeld Media, with Russ Unger).
+              </dd>
+              <dt>Founder</dt>
+              <dd>VibeSharing, a home for AI-generated prototypes.</dd>
+              <dt>Research, accessibility, content</dt>
+              <dd>
+                [DECIDE: one concrete line each. A research practice I set up, a WCAG standard
+                adopted across N products, a content design hire or guideline.]
+              </dd>
+            </dl>
         </section>
 
-        <section className="section" aria-labelledby="glance">
-          <h2 id="glance">At a glance</h2>
-          <dl className="glance">
-            <dt>Diligent, 2024–</dt>
-            <dd>
-              VP &amp; Head of Design. [DECIDE: canonical team size] across 4 business units and 5
-              countries; 5 directors.
-            </dd>
-            <dt>Northwestern Mutual, 2021–24</dt>
-            <dd>VP &amp; Head of Design. Scaled the org from 60 to 120+.</dd>
-            <dt>Meta, 2020–21</dt>
-            <dd>Product Design Manager, recruiting platforms.</dd>
-            <dt>Nasdaq, 2011–18</dt>
-            <dd>Built the UX team from 1 to 35. 32 patents.</dd>
-            <dt>Author</dt>
-            <dd>
-              <em>Liftoff! Practical Design Leadership</em> (Rosenfeld Media, with Russ Unger).
-            </dd>
-            <dt>Founder</dt>
-            <dd>VibeSharing, a home for AI-generated prototypes.</dd>
-            <dt>Research, accessibility, content</dt>
-            <dd>
-              [DECIDE: one concrete line each. A research practice I set up, a WCAG standard
-              adopted across N products, a content design hire or guideline.]
-            </dd>
-          </dl>
-        </section>
+        <section id="work" aria-labelledby="work-h">
+          <div className="container work-head">
+            <h2 id="work-h">Selected work</h2>
+          </div>
 
-        <section className="section" id="work" aria-labelledby="work-h">
-          <h2 id="work-h">Selected work</h2>
-          {cases.map((c) => (
-            <article className="case" key={c.slug} aria-labelledby={`case-${c.slug}`}>
-              <h3 id={`case-${c.slug}`}>{c.title}</h3>
-              <p className="case-meta">
-                {c.company}, {c.years}
-              </p>
-
-              <h4>The situation</h4>
-              <p>{c.situation}</p>
-
-              <h4>What I did</h4>
-              <p>{c.did}</p>
-
-              <h4>What changed</h4>
-              <ul>
-                {c.outcomes.map((o) => (
-                  <li key={o}>{o}</li>
-                ))}
-              </ul>
-
-              {c.asking && (
-                <>
-                  <h4>What I&rsquo;m still asking</h4>
-                  <p>{c.asking}</p>
-                </>
-              )}
-
-              <Placeholder label={c.media} />
-
-              {c.link && (
-                <p>
-                  <a href={c.link}>{c.linkLabel ?? c.link}</a>
+          {feature && (
+            <article
+              className="field field-rose feature"
+              id={`case-${feature.slug}`}
+              aria-labelledby={`case-${feature.slug}-h`}
+            >
+              <div className="container">
+                <h3 id={`case-${feature.slug}-h`}>{feature.title}</h3>
+                <p className="case-meta">
+                  {feature.company}, {feature.years}
                 </p>
-              )}
-              {c.deepDive && (
-                <p>
-                  <a href={`/work/${c.slug}`}>Read the full case</a>
-                </p>
-              )}
+
+                <div className="stage" data-stage>
+                  <img
+                    className="stage-main"
+                    src="/work/agentic-vision/frame.webp"
+                    width={2208}
+                    height={1380}
+                    alt="The prototype's home screen in a calm state. The headline reads 'Everything looks good right now', with a prompt box and recent activity below."
+                    decoding="async"
+                  />
+                  <img
+                    className="panel panel-prompt"
+                    src="/work/agentic-vision/prompt.webp"
+                    width={1720}
+                    height={410}
+                    alt="A prompt panel that has already framed the question: 'What should we review about INC-2847?', with suggested next steps."
+                    decoding="async"
+                  />
+                  <img
+                    className="panel panel-incident"
+                    src="/work/agentic-vision/incident.webp"
+                    width={1720}
+                    height={480}
+                    alt="An active security incident card marked high urgency. An agent has completed 5 of 8 response steps, with Assign and Review actions."
+                    decoding="async"
+                  />
+                </div>
+
+                <div className="feature-body">
+                  <div>
+                    <h4>The situation</h4>
+                    <p>{feature.situation}</p>
+                    <h4>What I did</h4>
+                    <p>{feature.did}</p>
+                  </div>
+                  <div>
+                    <h4>What changed</h4>
+                    <ul>
+                      {feature.outcomes.map((o) => (
+                        <li key={o}>{o}</li>
+                      ))}
+                    </ul>
+                    {feature.asking && (
+                      <>
+                        <h4>What I&rsquo;m still asking</h4>
+                        <p>{feature.asking}</p>
+                      </>
+                    )}
+                    {feature.deepDive && (
+                      <p>
+                        <a href={`/work/${feature.slug}`}>Read the full case</a>
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
             </article>
-          ))}
+          )}
+
+          <div className="container">
+            {rest.map((c) => (
+              <article className="case" key={c.slug} id={`case-${c.slug}`} aria-labelledby={`case-${c.slug}-h`}>
+                <h3 id={`case-${c.slug}-h`}>{c.title}</h3>
+                <p className="case-meta">
+                  {c.company}, {c.years}
+                </p>
+
+                <h4>The situation</h4>
+                <p>{c.situation}</p>
+
+                <h4>What I did</h4>
+                <p>{c.did}</p>
+
+                <h4>What changed</h4>
+                <ul>
+                  {c.outcomes.map((o) => (
+                    <li key={o}>{o}</li>
+                  ))}
+                </ul>
+
+                {c.asking && (
+                  <>
+                    <h4>What I&rsquo;m still asking</h4>
+                    <p>{c.asking}</p>
+                  </>
+                )}
+
+                <Placeholder label={c.media} />
+
+                {c.link && (
+                  <p>
+                    <a href={c.link}>{c.linkLabel ?? c.link}</a>
+                  </p>
+                )}
+                {c.deepDive && (
+                  <p>
+                    <a href={`/work/${c.slug}`}>Read the full case</a>
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
         </section>
 
         {quotes.length > 0 && (
@@ -236,17 +333,51 @@ export default function Home() {
           <p>[DECIDE: pick the story. What I believed, what happened, what I do differently now.]</p>
         </section>
 
-        <section className="section" id="writing" aria-labelledby="writing-h">
-          <h2 id="writing-h">Writing &amp; speaking</h2>
+        <section id="writing" aria-labelledby="writing-h">
+          <div className="field field-green speaking">
+            <div className="container">
+              <h2 id="writing-h">Writing &amp; speaking</h2>
 
-          <h3 className="sub">Signature talk</h3>
+              <div className="speaking-stage">
+                <figure className="speaking-figure">
+                  <img
+                    className="speaking-photo"
+                    src="/images/speaking/dls-stage-2400.webp"
+                    srcSet="/images/speaking/dls-stage-1200.webp 1200w, /images/speaking/dls-stage-2400.webp 2400w"
+                    sizes="(min-width: 1200px) 1120px, 100vw"
+                    width={2400}
+                    height={1597}
+                    alt="Chris Avore speaking on a stage lit in magenta and blue, in a blue sweater and jeans, standing behind oversized concrete letters, with a laptop on a table to his right."
+                    decoding="async"
+                  />
+                  <figcaption>[DECIDE: photographer credit and event]</figcaption>
+                </figure>
+
+                <div className="panel panel-card speaking-info">
+                  <p className="panel-lede">Speaking since 2010: 24+ conferences in 10 countries.</p>
+                  <p>
+                    <a href="https://erova.com/public-speaking">Book a talk</a>
+                  </p>
+                </div>
+
+                <div className="panel speaking-video">
+                  <VideoFacade
+                    id="pqI1OIaHbVg"
+                    title="AI, Anxiety, and Actual Impact"
+                    heading="Watch the talk"
+                    caption="Design Leadership Summit, Toronto, 2025"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="section writing-body">
           <p>
-            <strong>AI, Anxiety, and Actual Impact: Leading Design Teams Through the AI Era</strong>
-            , Design Leadership Summit, Budapest, October 2026.
+            <strong>AI, Anxiety, and Actual Impact: Leading Design Teams Through the AI Era.</strong>{" "}
+            Most recent delivery: Design Leadership Summit, Budapest, October 2026.
           </p>
-          <p>
-            [DECIDE: two-sentence abstract, and slides or video if available.]
-          </p>
+          <p>[DECIDE: two-sentence abstract, and slides if available.]</p>
 
           {essays.length > 0 && (
             <>
@@ -280,18 +411,21 @@ export default function Home() {
               Toronto, IxDA South America, UXDX, Confab, MX, UX Week.
             </li>
           </ul>
-          <p>
-            24+ conferences in 10 countries since 2010.{" "}
-            <a href="https://erova.com/public-speaking">Book a talk</a>.
-          </p>
 
           <h3 className="sub">
             <em>Liftoff!</em> and other publications
           </h3>
-          <Placeholder label="Liftoff! book cover at 2×" ratio="3 / 4" />
+          <img
+            className="book-cover"
+            src="/images/speaking/liftoff-cover.webp"
+            width={683}
+            height={1024}
+            alt="Cover of Liftoff! Practical Design Leadership to Elevate Your Team, Your Organization, and You, by Chris Avore and Russ Unger. A graphic coffee mug with a black number 1 on pink and light blue panels."
+            decoding="async"
+          />
           <p>
             <em>Liftoff! Practical Design Leadership to Elevate Your Team, Your Organization, and
-            You</em>, with Russ Unger (Rosenfeld Media, July 2020). A practical guide for new and
+            You</em>, with Russ Unger (Rosenfeld Media, July 2020), foreword by Kim Goodwin. A practical guide for new and
             experienced design managers: hiring and scaling teams, developing careers, why
             diversity matters to the business, and establishing design&rsquo;s place in the
             organization. It includes a step-by-step design charter workshop (Chapter 8) and ways
@@ -310,6 +444,7 @@ export default function Home() {
             Nasdaq IR Mobile in <em>Successful User Experience: Strategies and Roadmaps</em>{" "}
             (Morgan Kaufmann).
           </p>
+          </div>
         </section>
 
         <section className="section" id="contact" aria-labelledby="contact-h">

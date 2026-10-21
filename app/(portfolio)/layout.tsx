@@ -1,14 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, Public_Sans } from "next/font/google";
+import { Gloock, Public_Sans, Source_Serif_4 } from "next/font/google";
 import "./tokens.css";
 import "./home.css";
 
-const bodoni = Bodoni_Moda({
+const gloock = Gloock({
   subsets: ["latin"],
-  style: ["italic"],
+  weight: "400",
   display: "swap",
   preload: true,
-  variable: "--font-bodoni",
+  variable: "--font-gloock",
+});
+
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  display: "swap",
+  variable: "--font-source-serif",
 });
 
 const publicSans = Public_Sans({
@@ -18,7 +26,8 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.avo.re"),
+  metadataBase: new URL(`https://${process.env.PORTFOLIO_HOST ?? "chris.avo.re"}`),
+  alternates: { canonical: "/" },
   title: "Chris Avore",
   description:
     "Design leadership for products that can't afford to be wrong.",
@@ -36,7 +45,7 @@ export default function PortfolioLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${bodoni.variable} ${publicSans.variable}`}>
+    <html lang="en" className={`${gloock.variable} ${sourceSerif.variable} ${publicSans.variable}`}>
       <body>
         <a className="skip-link" href="#main">
           Skip to content
