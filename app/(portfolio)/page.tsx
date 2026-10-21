@@ -161,9 +161,16 @@ export default function Home() {
           <img {...hero.data.portrait} fetchPriority="high" />
         </div>
         <div className="container hero-inner">
-          <p className="masthead rise" style={{ "--i": 0 } as React.CSSProperties}>
-            {hero.data.name}
-          </p>
+          <div className="masthead-bar rise" style={{ "--i": 0 } as React.CSSProperties}>
+            <p className="masthead">{hero.data.name}</p>
+            <nav className="hero-actions" aria-label="Résumé and contact">
+              {hero.data.links.map((l) => (
+                <a key={l.href} href={l.href}>
+                  {l.label}
+                </a>
+              ))}
+            </nav>
+          </div>
           <h1 className="rise" style={{ "--i": 1 } as React.CSSProperties}>
             <Emph text={hero.data.positioning} />
           </h1>
@@ -171,13 +178,6 @@ export default function Home() {
             <div className="hero-now rise" style={{ "--i": 2 } as React.CSSProperties}>
               <Md source={hero.body} />
             </div>
-            <p className="actions rise" style={{ "--i": 3 } as React.CSSProperties}>
-              {hero.data.links.map((l) => (
-                <a key={l.href} href={l.href}>
-                  {l.label}
-                </a>
-              ))}
-            </p>
           </div>
         </div>
       </header>
