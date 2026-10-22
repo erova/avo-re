@@ -65,7 +65,19 @@ export function Article({
       </header>
 
       <div className="article-body">
-        <div className="container article-grid">
+        <div className={`container article-grid${toc.length > 1 ? "" : " solo"}`}>
+          {toc.length > 1 && (
+            <nav className="toc" aria-label="On this page">
+              <h2>On this page</h2>
+              <ol>
+                {toc.map((t) => (
+                  <li key={t.id}>
+                    <a href={`#${t.id}`}>{t.title}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )}
           <div className="prose">
             <MDXRemote source={body} options={{ blockJS: false }} components={articleComponents} />
           </div>
