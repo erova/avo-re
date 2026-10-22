@@ -7,7 +7,7 @@ Everything you read on the home page lives in these files (plus `content/cases/`
 | Section headings ("Selected work", "How I lead"...) | `sections.md` |
 | Name, headline, intro paragraph, hero links, portrait | `hero.md` |
 | "At a glance" rows | `glance.md` (each `##` is a term, the text under it is the detail) |
-| A case study | `../cases/<name>.mdx` |
+| A case study | `../cases/<name>.md` |
 | Earlier jobs | `earlier/*.md` (one file per job; `order` sets the sequence) |
 | Clarity / Consistency / Curiosity, and the footnote | `lead.md` |
 | "People I've grown" | `people.md` |

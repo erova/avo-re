@@ -37,7 +37,7 @@ export type Quote = {
 
 function readDir(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter((f) => f.endsWith(".mdx"));
+  return fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
 }
 
 export function getCases(): Case[] {
@@ -45,7 +45,7 @@ export function getCases(): Case[] {
     .map((file) => {
       const { data: d } = matter(fs.readFileSync(path.join(CASES_DIR, file), "utf8"));
       return {
-        slug: file.replace(/\.mdx$/, ""),
+        slug: file.replace(/\.md$/, ""),
         title: String(d.title ?? ""),
         company: String(d.company ?? ""),
         years: String(d.years ?? ""),

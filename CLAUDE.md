@@ -223,7 +223,7 @@ Set by the user, recorded in `PRODUCT.md` (read it before any design work). The 
 - Avoid: tracked all-caps eyebrow labels, trait grids, logo strips, stat cards, side-stripe borders, gradient text, identical card grids, emoji/cartoon illustration.
 
 ### Where copy lives
-Home page prose is **not** in `page.tsx`. It lives in `content/portfolio/*.md` (see its README), case studies in `content/cases/*.mdx`, quotes in `content/quotes/`. `page.tsx` only reads and arranges them (`lib/portfolio.ts`, `_components/Md.tsx`). Edit copy in those files; never hardcode copy, image paths, or alt text into components. New sections should follow the same pattern.
+Home page prose is **not** in `page.tsx`. It lives in `content/portfolio/*.md` (see its README), case studies in `content/cases/*.md`, quotes in `content/quotes/`. `page.tsx` only reads and arranges them (`lib/portfolio.ts`, `_components/Md.tsx`). Edit copy in those files; never hardcode copy, image paths, or alt text into components. New sections should follow the same pattern.
 
 ### Quality floor
 WCAG 2.1 AA contrast, visible focus, keyboard-accessible interactives, `prefers-reduced-motion`, `prefers-color-scheme`, Lighthouse 95+ on all four, no font layout shift.
