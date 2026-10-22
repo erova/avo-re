@@ -37,7 +37,7 @@ export type Quote = {
 
 // Some Markdown editors (Ulysses) turn frontmatter indentation into tabs, which YAML rejects.
 function parse(raw: string) {
-  return matter(raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, (fm) => fm.replace(/^\t+/gm, (t) => "  ".repeat(t.length))));
+  return matter(raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, (fm) => fm.replace(/^\t+/gm, (t) => "    ".repeat(t.length))));
 }
 
 function readDir(dir: string): string[] {
