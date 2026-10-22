@@ -6,11 +6,11 @@ descriptor: New York City Design and Product Leader
 positioning: "Design leadership for *products* that can’t afford to be wrong."
 links:
   - label: Download résumé (PDF)
-	href: /about/resume
+    href: /about/resume
   - label: LinkedIn
-	href: https://www.linkedin.com/in/chrisavore/
+    href: https://www.linkedin.com/in/chrisavore/
   - label: Email
-	href: mailto:avore@erova.com
+    href: mailto:avore@erova.com
 portrait:
   src: /images/portrait/chris-cutout.webp
   width: 475

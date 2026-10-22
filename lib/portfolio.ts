@@ -35,6 +35,11 @@ export type Quote = {
   order: number;
 };
 
+// Some Markdown editors (Ulysses) turn frontmatter indentation into tabs, which YAML rejects.
+function parse(raw: string) {
+  return matter(raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, (fm) => fm.replace(/^\t+/gm, (t) => "  ".repeat(t.length))));
+}
+
 function readDir(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
@@ -43,7 +48,7 @@ function readDir(dir: string): string[] {
 export function getCases(): Case[] {
   return readDir(CASES_DIR)
     .map((file) => {
-      const { data: d } = matter(fs.readFileSync(path.join(CASES_DIR, file), "utf8"));
+      const { data: d } = parse(fs.readFileSync(path.join(CASES_DIR, file), "utf8"));
       return {
         slug: file.replace(/\.md$/, ""),
         title: String(d.title ?? ""),
@@ -70,7 +75,7 @@ export function getCases(): Case[] {
 export function getQuotes(): Quote[] {
   return readDir(QUOTES_DIR)
     .map((file) => {
-      const { data: d } = matter(fs.readFileSync(path.join(QUOTES_DIR, file), "utf8"));
+      const { data: d } = parse(fs.readFileSync(path.join(QUOTES_DIR, file), "utf8"));
       return {
         quote: String(d.quote ?? "").trim(),
         name: String(d.name ?? ""),
@@ -95,7 +100,7 @@ const PORTFOLIO_DIR = path.join(process.cwd(), "content", "portfolio");
 /** Read one file from content/portfolio. Frontmatter is `data`, the markdown below it is `body`. */
 export function readPortfolio<T = Record<string, any>>(name: string): { data: T; body: string } {
   const raw = fs.readFileSync(path.join(PORTFOLIO_DIR, `${name}.md`), "utf8");
-  const { data, content } = matter(raw);
+  const { data, content } = parse(raw);
   return { data: data as T, body: content.trim() };
 }
 
@@ -119,7 +124,7 @@ export function getEarlier(): EarlierJob[] {
     .readdirSync(dir)
     .filter((f) => f.endsWith(".md"))
     .map((f) => {
-      const { data, content } = matter(fs.readFileSync(path.join(dir, f), "utf8"));
+      const { data, content } = parse(fs.readFileSync(path.join(dir, f), "utf8"));
       return { title: String(data.title ?? f), order: Number(data.order ?? 99), body: content.trim() };
     })
     .sort((a, b) => a.order - b.order);
