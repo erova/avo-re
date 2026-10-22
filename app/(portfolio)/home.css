@@ -189,6 +189,8 @@
 .hero h1 {
   font-size: clamp(3rem, 1.2rem + 5.6vw, 6.5rem);
   max-width: 8em;
+  /* Loose enough that the italic p's descender clears the apostrophe on the next line. */
+  line-height: 1.12;
   margin-bottom: auto;
 }
 .hero-lower {
