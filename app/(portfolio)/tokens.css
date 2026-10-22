@@ -25,7 +25,7 @@
 
   --font-display: var(--font-gloock), Georgia, serif;
   --font-body: var(--font-source-serif), Georgia, serif;
-  --font-ui: var(--font-public-sans), system-ui, sans-serif;
+  --font-ui: var(--font-schibsted), system-ui, sans-serif;
 
   --text-sm: 0.875rem;
   --text-base: clamp(1.1rem, 1.05rem + 0.2vw, 1.1875rem);

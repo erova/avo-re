@@ -218,7 +218,7 @@ Branch `portfolio-build`. The full spec is `docs/avo-re-portfolio-brief.md` (goa
 Set by the user, recorded in `PRODUCT.md` (read it before any design work). The brief's §6 "board book" concept, its palette, fonts and don't list are **rejected**; do not reintroduce them.
 - Lane: serious long-form magazine (Asterisk, Works in Progress, Quanta). Anti-references: pudding.cool (playful, loud) and chelseawatson.com (portfolio template: self-descriptor headline, trait grid under tracked-caps labels, logo strip).
 - Color: committed large fields, deep green and rose, plus warm paper. Tokens and field roles are in `app/(portfolio)/tokens.css` (OKLCH). Use the roles (`--bg`, `--fg`, `--fg-muted`, `--accent`), never raw palette values. Pink and green must differ in lightness.
-- Type: Gloock (display), Source Serif 4 (body and italic emphasis), Public Sans (small UI only). Gloock has no italic; emphasis words use Source Serif italic.
+- Type: Gloock (display), Source Serif 4 (body and italic emphasis), Schibsted Grotesk (small UI only). Gloock has no italic; emphasis words use Source Serif italic.
 - Depth and motion are welcome when they have a job: staggered hero entrance, scroll-driven parallax with floating panels (native CSS `animation-timeline: view()`), the margin rail. One easing curve and a few durations (`--ease`, `--dur*`). Animate `transform`/`opacity`/`translate`/`scale` only. Everything behind `prefers-reduced-motion: no-preference`.
 - Avoid: tracked all-caps eyebrow labels, trait grids, logo strips, stat cards, side-stripe borders, gradient text, identical card grids, emoji/cartoon illustration.
 

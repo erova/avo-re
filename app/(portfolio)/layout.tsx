@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Gloock, Public_Sans, Source_Serif_4 } from "next/font/google";
+import { Gloock, Schibsted_Grotesk, Source_Serif_4 } from "next/font/google";
 import "./tokens.css";
 import "./home.css";
 
@@ -19,10 +19,10 @@ const sourceSerif = Source_Serif_4({
   variable: "--font-source-serif",
 });
 
-const publicSans = Public_Sans({
+const schibsted = Schibsted_Grotesk({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-public-sans",
+  variable: "--font-schibsted",
 });
 
 export const metadata: Metadata = {
@@ -45,7 +45,7 @@ export default function PortfolioLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${gloock.variable} ${sourceSerif.variable} ${publicSans.variable}`}>
+    <html lang="en" className={`${gloock.variable} ${sourceSerif.variable} ${schibsted.variable}`}>
       <body>
         <a className="skip-link" href="#main">
           Skip to content
