@@ -1,6 +1,8 @@
 ---
 # Wrap one word in *asterisks* to set it in the pink italic.
 name: Chris Avore
+# Shown after the name in the masthead bar, set off by a pipe.
+descriptor: New York City Design and Product Leader
 positioning: "Design leadership for *products* that can’t afford to be wrong."
 links:
   - label: Download résumé (PDF)

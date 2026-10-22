@@ -113,6 +113,7 @@ export default function Home() {
   const titles = readPortfolio<Record<string, string>>("sections").data;
   const hero = readPortfolio<{
     name: string;
+    descriptor?: string;
     positioning: string;
     links: Link[];
     portrait: Img;
@@ -162,7 +163,17 @@ export default function Home() {
         </div>
         <div className="container hero-inner">
           <div className="masthead-bar rise" style={{ "--i": 0 } as React.CSSProperties}>
-            <p className="masthead">{hero.data.name}</p>
+            <p className="masthead">
+              <span className="masthead-name">{hero.data.name}</span>
+              {hero.data.descriptor && (
+                <>
+                  <span className="masthead-pipe" aria-hidden="true">
+                    |
+                  </span>
+                  <span className="masthead-desc">{hero.data.descriptor}</span>
+                </>
+              )}
+            </p>
             <nav className="hero-actions" aria-label="Résumé and contact">
               {hero.data.links.map((l) => (
                 <a key={l.href} href={l.href}>

@@ -130,6 +130,27 @@
   margin: 0;
   padding-block: 0.75rem;
 }
+.masthead-pipe {
+  margin-inline: 0.75rem;
+  color: var(--fg-muted);
+  font-weight: 400;
+}
+.masthead-desc {
+  font-weight: 400;
+  color: var(--fg-muted);
+}
+@media (max-width: 599px) {
+  .masthead {
+    flex-wrap: wrap;
+    font-size: 0.9375rem;
+  }
+  .masthead-pipe {
+    display: none;
+  }
+  .masthead-name {
+    flex-basis: 100%;
+  }
+}
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
