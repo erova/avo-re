@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Gloock, Schibsted_Grotesk, Source_Serif_4 } from "next/font/google";
 import "./tokens.css";
 import "./home.css";
+import "./article.css";
 
 const gloock = Gloock({
   subsets: ["latin"],
