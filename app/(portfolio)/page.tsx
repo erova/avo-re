@@ -127,7 +127,7 @@ export default function Home() {
   const speaking = readPortfolio<{
     photo: Img & { srcSet: string; credit: string };
     card: { lede: string; linkLabel: string; linkHref: string };
-    video: { id: string; title: string; heading: string; caption: string };
+    videos: { id: string; title: string; heading: string; caption: string }[];
   }>("speaking");
   const talks = readPortfolio<{ title: string }>("talks");
   const pubs = readPortfolio<{ title: string; cover: Img }>("publications");
@@ -308,9 +308,11 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="panel speaking-video">
-                  <VideoFacade {...speaking.data.video} />
-                </div>
+                {speaking.data.videos.map((v, i) => (
+                  <div className={`panel speaking-video speaking-video-${i + 1}`} key={v.id}>
+                    <VideoFacade {...v} />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

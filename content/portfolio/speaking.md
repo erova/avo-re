@@ -1,5 +1,5 @@
 ---
-# The stage at the top of "Writing & speaking": photo, a small card, and the video.
+# The stage at the top of "Writing & speaking": photo, a small card, and the videos.
 photo:
   src: /images/speaking/dls-stage-2400.webp
   srcSet: /images/speaking/dls-stage-1200.webp 1200w, /images/speaking/dls-stage-2400.webp 2400w
@@ -11,11 +11,15 @@ card:
   lede: "Speaking since 2010: 24+ conferences in 10 countries."
   linkLabel: Book a talk
   linkHref: https://erova.com/public-speaking
-video:
-  id: pqI1OIaHbVg
-  title: AI, Anxiety, and Actual Impact
-  heading: Watch the talk
-  caption: Design Leadership Summit, Toronto, 2025
+videos:
+  - id: pqI1OIaHbVg
+    title: AI, Anxiety, and Actual Impact
+    heading: AI, Anxiety, and Actual Impact
+    caption: Design Leadership Summit, Toronto, 2025
+  - id: WgL6gRl031g
+    title: Design Success in Turbulent, Ambiguous Spaces
+    heading: Design Success in Turbulent, Ambiguous Spaces
+    caption: UX Lisbon, 2023
 ---
 **AI, Anxiety, and Actual Impact: Leading Design Teams Through the AI Era.** Most recent delivery: Design Leadership Summit, Budapest, October 2026.
 

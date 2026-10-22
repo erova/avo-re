@@ -664,14 +664,29 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   --depth: 50px;
   left: -2.5%;
   bottom: -14%;
-  width: min(44%, 30rem);
+  width: min(36%, 28rem);
 }
 .speaking-video {
+  overflow: hidden;
+  width: 29%;
+}
+.speaking-video .video-poster {
+  padding-right: 4.25rem;
+}
+.speaking-video .video-title {
+  font-size: clamp(1.1rem, 0.7rem + 0.9vw, 1.5rem);
+  line-height: 1.1;
+  max-width: none;
+}
+.speaking-video-1 {
+  --depth: 60px;
+  right: 28%;
+  bottom: -11%;
+}
+.speaking-video-2 {
   --depth: 90px;
   right: -2.5%;
   bottom: -18%;
-  width: min(42%, 29rem);
-  overflow: hidden;
 }
 @media (max-width: 759px) {
   .speaking-info,
