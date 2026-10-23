@@ -50,5 +50,5 @@ export function formatArticleDate(value: unknown): string {
 
 // Same tab tolerance as lib/portfolio.ts: some editors indent YAML with tabs.
 export function parseArticle(raw: string) {
-  return matter(raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, (fm) => fm.replace(/^\t+/gm, (t) => "    ".repeat(t.length))));
+  return matter(raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, (fm) => fm.replace(/^\t+/gm, (t) => "    ".repeat(t.length)).replace(/:\s+\\([>|][-+]?)\s*$/gm, ": $1")));
 }

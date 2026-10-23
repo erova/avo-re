@@ -35,9 +35,9 @@ export type Quote = {
   order: number;
 };
 
-// Some Markdown editors (Ulysses) turn frontmatter indentation into tabs, which YAML rejects.
+// Some Markdown editors (Ulysses) turn frontmatter indentation into tabs and escape block markers (\>-), which YAML rejects.
 function parse(raw: string) {
-  return matter(raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, (fm) => fm.replace(/^\t+/gm, (t) => "    ".repeat(t.length))));
+  return matter(raw.replace(/^---\r?\n[\s\S]*?\r?\n---/, (fm) => fm.replace(/^\t+/gm, (t) => "    ".repeat(t.length)).replace(/:\s+\\([>|][-+]?)\s*$/gm, ": $1")));
 }
 
 function readDir(dir: string): string[] {

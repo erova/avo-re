@@ -923,3 +923,136 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   margin: 0.6rem 0 0;
   min-height: 1.4em;
 }
+
+/* ───── Rules ─────
+   Every hairline is a pseudo-element drawn over a transparent border, so layout
+   never moves. Above the fold they sweep in left to right on load, each a little
+   later and slower than the one before (--r is the line's order). Further down
+   they draw as you scroll them into view. Without motion, they are simply there. */
+:is(.masthead-bar, .hero-now, .case-head, .case-facts, .case-row, .rows details) {
+  position: relative;
+}
+.masthead-bar,
+.case-facts {
+  border-block-color: transparent;
+}
+.hero-now,
+.case-head,
+.case-row,
+.rows details {
+  border-top-color: transparent;
+}
+.case-row:last-child,
+.rows details:last-child {
+  border-bottom-color: transparent;
+}
+:is(.masthead-bar, .hero-now, .case-head, .case-facts, .case-row, .rows details)::before,
+:is(.masthead-bar, .case-facts, .case-row:last-child, .rows details:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--hairline);
+  transform-origin: left center;
+  pointer-events: none;
+}
+:is(.masthead-bar, .hero-now, .case-head, .case-facts, .case-row, .rows details)::before {
+  top: -1px;
+}
+:is(.masthead-bar, .case-facts, .case-row:last-child, .rows details:last-child)::after {
+  bottom: -1px;
+}
+.case-head::before {
+  background: currentColor;
+}
+.case-row:first-child::before {
+  content: none;
+}
+@media (min-width: 760px) {
+  .glance dt,
+  .glance dd {
+    position: relative;
+    border-top-color: transparent;
+  }
+  .glance dt::before,
+  .glance dd::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--hairline);
+    transform-origin: left center;
+  }
+}
+@media (max-width: 599px) {
+  .hero-actions {
+    position: relative;
+    border-top-color: transparent;
+  }
+  .hero-actions::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--hairline);
+    transform-origin: left center;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes rule-draw {
+    from {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+  }
+
+  /* On load: top rule finishes first, the rest follow */
+  .masthead-bar::before,
+  .hero-actions::before,
+  .masthead-bar::after,
+  .hero-now::before,
+  .article-head .case-head::before,
+  .article-head .case-facts::before,
+  .article-head .case-facts::after {
+    animation: rule-draw calc(650ms + var(--r, 0) * 200ms) var(--ease) both;
+    animation-delay: calc(120ms + var(--r, 0) * 130ms);
+  }
+  .masthead-bar::before { --r: 0; }
+  .hero-actions::before,
+  .masthead-bar::after { --r: 1; }
+  .hero-now::before,
+  .article-head .case-head::before { --r: 2; }
+  .article-head .case-facts::before { --r: 3; }
+  .article-head .case-facts::after { --r: 4; }
+
+  /* Below the fold: drawn as they scroll into view */
+  @supports (animation-timeline: view()) {
+    .glance dt::before,
+    .glance dd::before,
+    .case-head::before,
+    .case-facts::before,
+    .case-facts::after,
+    .case-row::before,
+    .case-row::after,
+    .rows details::before,
+    .rows details::after {
+      animation: rule-draw linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 22%;
+    }
+    .article-head .case-head::before,
+    .article-head .case-facts::before,
+    .article-head .case-facts::after {
+      animation: rule-draw calc(650ms + var(--r, 0) * 200ms) var(--ease) both;
+      animation-delay: calc(120ms + var(--r, 0) * 130ms);
+      animation-timeline: auto;
+      animation-range: normal;
+    }
+  }
+}

@@ -49,8 +49,28 @@
   font-size: clamp(1.75rem, 1.25rem + 1.6vw, 2.5rem);
   margin: clamp(2.75rem, 5vw, 4rem) 0 1.25rem;
   padding-top: 1.25rem;
-  border-top: 1px solid var(--hairline);
+  border-top: 1px solid transparent;
+  position: relative;
   scroll-margin-top: 1.5rem;
+}
+.prose h2::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--hairline);
+  transform-origin: left center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .prose h2::before {
+      animation: rule-draw linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 22%;
+    }
+  }
 }
 .prose > h2:first-child {
   margin-top: 0;
