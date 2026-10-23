@@ -1,5 +1,5 @@
 ---
-title: Leading an org through AI, honestly
+title: Leading an org through AI
 company: Diligent
 years: 2024–26
 tags: ["Org design", "AI adoption", "Leadership"]
@@ -10,7 +10,7 @@ deepDive: false
 situation: >-
   "AI first" was a goal everyone was evaluated on and nobody had defined. Designers didn't know what it meant or how they'd be judged, while the industry was busy announcing design layoffs.
 did: >-
-  I defined what AI use looks like at every level, from junior to staff. I wrote a triad playbook with product and engineering that treats AI prototypes as hypotheses, not proof, and makes clear when design enters the work. I built a readiness model: six systems (design system, AI infrastructure, workflow and deployment, triad accountability, track record, customer readiness), each rated 0–5, where the weakest sets the ceiling. And I measured the gap instead of assuming it.
+  I defined what AI use looks like at every level, from junior to staff. I wrote a triad playbook with product and engineering that treats AI prototypes as hypotheses, not proof, and makes clear when design enters the work. I built a readiness model: six systems (design system, AI infrastructure, workflow and deployment, triad accountability, track record, customer readiness), each rated 0–5, where the weakest sets the ceiling.
 outcomes:
   - We replaced opinion with a shared scorecard.
   - "AI gives design teams 50–70% gains upstream (discovery, ideation, first drafts) but close to none in final design and handoff. Net, end to end, it's about 25–30%."
