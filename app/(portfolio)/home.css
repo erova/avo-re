@@ -1031,28 +1031,28 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   .article-head .case-facts::before { --r: 3; }
   .article-head .case-facts::after { --r: 4; }
 
-  /* Below the fold: drawn as they scroll into view */
-  @supports (animation-timeline: view()) {
-    .glance dt::before,
-    .glance dd::before,
-    .case-head::before,
-    .case-facts::before,
-    .case-facts::after,
-    .case-row::before,
-    .case-row::after,
-    .rows details::before,
-    .rows details::after {
-      animation: rule-draw linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 22%;
-    }
-    .article-head .case-head::before,
-    .article-head .case-facts::before,
-    .article-head .case-facts::after {
-      animation: rule-draw calc(650ms + var(--r, 0) * 200ms) var(--ease) both;
-      animation-delay: calc(120ms + var(--r, 0) * 130ms);
-      animation-timeline: auto;
-      animation-range: normal;
-    }
+}
+
+/* Below the fold: armed by Rules.tsx, then drawn the first time they scroll into view */
+@media (prefers-reduced-motion: no-preference) {
+  [data-rule]::before,
+  [data-rule]::after,
+  [data-rule] dt::before,
+  [data-rule] dd::before {
+    transform: scaleX(0);
+    opacity: 0;
+    transition:
+      transform 1000ms var(--ease) var(--d, 0ms),
+      opacity 700ms var(--ease) var(--d, 0ms);
+  }
+  [data-rule]::after {
+    transition-delay: calc(var(--d, 0ms) + 160ms);
+  }
+  [data-rule][data-in]::before,
+  [data-rule][data-in]::after,
+  [data-rule][data-in] dt::before,
+  [data-rule][data-in] dd::before {
+    transform: none;
+    opacity: 1;
   }
 }

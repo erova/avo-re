@@ -63,18 +63,6 @@
   background: var(--hairline);
   transform-origin: left center;
 }
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .prose h2::before {
-      animation: rule-draw linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 22%;
-    }
-  }
-}
-.prose > h2:first-child {
-  margin-top: 0;
-}
 .prose h3 {
   font-family: var(--font-ui);
   font-size: 1.0625rem;

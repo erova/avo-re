@@ -3,6 +3,7 @@ import { Gloock, Schibsted_Grotesk, Source_Serif_4 } from "next/font/google";
 import "./tokens.css";
 import "./home.css";
 import "./article.css";
+import { Rules } from "./_components/Rules";
 
 const gloock = Gloock({
   subsets: ["latin"],
@@ -52,6 +53,7 @@ export default function PortfolioLayout({
           Skip to content
         </a>
         <main id="main">{children}</main>
+        <Rules />
       </body>
     </html>
   );
