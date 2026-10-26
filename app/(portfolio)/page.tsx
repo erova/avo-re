@@ -61,7 +61,7 @@ function CaseRows({ c }: { c: Case }) {
         </div>
       </section>
       <section className="case-row">
-        <h4>What I did</h4>
+        <h4>My role</h4>
         <div>
           <p>{c.did}</p>
         </div>
