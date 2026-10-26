@@ -36,6 +36,13 @@ showcase:
           alt: The VibeSharing home view listing pinned collections and the prototypes a person is watching, with green markers and counts of new comments on prototypes that have fresh feedback.
     - id: mcp
       label: MCP
+    - id: admin
+      label: Admin
+      main:
+        src: /images/work/vibesharing/admin-audit.webp
+        width: 2000
+        height: 1116
+        alt: The VibeSharing admin Audit Log, a table of timestamped events such as project access and feedback created, with a Download CSV button. User names are removed.
 link: https://vibesharing.app
 linkLabel: vibesharing.app
 ---
