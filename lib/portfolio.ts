@@ -7,6 +7,11 @@ const QUOTES_DIR = path.join(process.cwd(), "content", "quotes");
 
 export type StageImage = { src: string; width: number; height: number; alt: string };
 export type Stage = { main: StageImage; panels: StageImage[] };
+export type ShowcaseTab = { id: string; label: string } & (
+  | { main: StageImage; panels?: StageImage[] }
+  | { main?: undefined; panels?: undefined }
+);
+export type Showcase = { label: string; tabs: ShowcaseTab[] };
 
 export type Case = {
   slug: string;
@@ -25,6 +30,7 @@ export type Case = {
   link?: string;
   linkLabel?: string;
   stage?: Stage;
+  showcase?: Showcase;
 };
 
 export type Quote = {
@@ -66,6 +72,7 @@ export function getCases(): Case[] {
         link: d.link ? String(d.link) : undefined,
         linkLabel: d.linkLabel ? String(d.linkLabel) : undefined,
         stage: d.stage ? (d.stage as Stage) : undefined,
+        showcase: d.showcase ? (d.showcase as Showcase) : undefined,
       } satisfies Case;
     })
     .filter((c) => c.title)

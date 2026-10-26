@@ -11,6 +11,8 @@ import { getAllWritingMeta } from "@/lib/writing";
 import { Rail } from "./_components/Rail";
 import { GatedStage } from "./_components/GatedStage";
 import { Placeholder } from "./_components/Placeholder";
+import { ShowcaseTabs } from "./_components/ShowcaseTabs";
+import { McpMap, type McpData } from "./_components/McpMap";
 import { VideoFacade } from "./_components/VideoFacade";
 import { Md, MdInline, Emph } from "./_components/Md";
 
@@ -105,6 +107,25 @@ function CaseRows({ c }: { c: Case }) {
   );
 }
 
+function Showcase({ c, mcp }: { c: Case; mcp: McpData }) {
+  if (!c.showcase) return null;
+  const tabs = c.showcase.tabs.map((t) => ({
+    id: t.id,
+    label: t.label,
+    content: t.main ? (
+      <div className="stage">
+        <img className="stage-main" {...t.main} decoding="async" />
+        {(t.panels ?? []).map((p, i) => (
+          <img key={p.src} className={`panel panel-${i === 0 ? "a" : "b"}`} {...p} decoding="async" loading="lazy" />
+        ))}
+      </div>
+    ) : (
+      <McpMap data={mcp} />
+    ),
+  }));
+  return <ShowcaseTabs label={c.showcase.label} tabs={tabs} />;
+}
+
 export default function Home() {
   const cases = getCases();
   const quotes = getQuotes();
@@ -140,6 +161,7 @@ export default function Home() {
     error: string;
   }>("gate");
   const contact = readPortfolio<{ links: Link[] }>("contact");
+  const mcp = readPortfolio<McpData>("mcp-map").data;
 
   const rail = [
     { id: "top", label: hero.data.name },
@@ -225,6 +247,8 @@ export default function Home() {
                 <CaseHead c={c} n={i + 1} total={cases.length} />
                 {c.stage ? (
                   <GatedStage main={c.stage.main} panels={c.stage.panels} gate={gate.data} />
+                ) : c.showcase ? (
+                  <Showcase c={c} mcp={mcp} />
                 ) : (
                   <Placeholder label={c.media} />
                 )}
