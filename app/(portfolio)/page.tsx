@@ -78,7 +78,7 @@ function CaseRows({ c }: { c: Case }) {
       </section>
       {c.asking && (
         <section className="case-row">
-          <h4>What I&rsquo;m still asking</h4>
+          <h4>Open questions</h4>
           <div>
             <p className="case-asking">{c.asking}</p>
           </div>
