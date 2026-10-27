@@ -1,10 +1,5 @@
 ---
 # The "MCP" view in the VibeSharing case study. Groups read left to right as a prototype's life.
-eyebrow: VibeSharing MCP server
-title: From idea to closed loop, inside your editor
-tally: Over 30 MCP functions
-highlightNote: Highlighted are the signature moves
-highlighted: [quick_prototype, get_feedback, close_feedback_loop]
 notes:
   create_campaign: studies
 groups:
