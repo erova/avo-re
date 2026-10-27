@@ -107,6 +107,8 @@ function CaseRows({ c }: { c: Case }) {
   );
 }
 
+const img = ({ src, width, height, alt }: Img) => ({ src, width, height, alt });
+
 function Showcase({ c, mcp }: { c: Case; mcp: McpData }) {
   if (!c.showcase) return null;
   const tabs = c.showcase.tabs.map((t) => ({
@@ -115,7 +117,8 @@ function Showcase({ c, mcp }: { c: Case; mcp: McpData }) {
     content: t.main ? (
       <div className="stage">
         <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
-          <img {...t.main} decoding="async" />
+          <img {...img(t.main)} decoding="async" />
+          {t.main.caption && <span className="pane-label">{t.main.caption}</span>}
         </div>
         {(t.panels ?? []).map((p, i) => (
           <div
@@ -123,7 +126,8 @@ function Showcase({ c, mcp }: { c: Case; mcp: McpData }) {
             className={`panel pane panel-${i === 0 ? "a" : "b"}`}
             style={{ aspectRatio: `${p.width} / ${p.height}` }}
           >
-            <img {...p} decoding="async" loading="lazy" />
+            <img {...img(p)} decoding="async" loading="lazy" />
+            {p.caption && <span className="pane-label">{p.caption}</span>}
           </div>
         ))}
       </div>

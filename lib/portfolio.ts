@@ -5,7 +5,7 @@ import matter from "gray-matter";
 const CASES_DIR = path.join(process.cwd(), "content", "cases");
 const QUOTES_DIR = path.join(process.cwd(), "content", "quotes");
 
-export type StageImage = { src: string; width: number; height: number; alt: string };
+export type StageImage = { src: string; width: number; height: number; alt: string; caption?: string };
 export type Stage = { main: StageImage; panels: StageImage[] };
 export type ShowcaseTab = { id: string; label: string } & (
   | { main: StageImage; panels?: StageImage[] }
