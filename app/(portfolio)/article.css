@@ -38,10 +38,6 @@
 .article-grid {
   display: block;
 }
-.prose {
-  max-width: 52rem;
-}
-
 .prose > :first-child {
   margin-top: 0;
 }
