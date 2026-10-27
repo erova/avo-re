@@ -13,6 +13,7 @@ import { GatedStage } from "./_components/GatedStage";
 import { Placeholder } from "./_components/Placeholder";
 import { ShowcaseTabs } from "./_components/ShowcaseTabs";
 import { McpMap, type McpData } from "./_components/McpMap";
+import { AtlasView, type AtlasData } from "./_components/AtlasFigures";
 import { VideoFacade } from "./_components/VideoFacade";
 import { Md, MdInline, Emph } from "./_components/Md";
 
@@ -109,7 +110,7 @@ function CaseRows({ c }: { c: Case }) {
 
 const img = ({ src, width, height, alt }: Img) => ({ src, width, height, alt });
 
-function Showcase({ c, mcp }: { c: Case; mcp: McpData }) {
+function Showcase({ c, mcp, atlas }: { c: Case; mcp: McpData; atlas: AtlasData }) {
   if (!c.showcase) return null;
   const tabs = c.showcase.tabs.map((t) => ({
     id: t.id,
@@ -131,6 +132,8 @@ function Showcase({ c, mcp }: { c: Case; mcp: McpData }) {
           </div>
         ))}
       </div>
+    ) : t.view?.startsWith("atlas-") ? (
+      <AtlasView view={t.view} data={atlas} />
     ) : (
       <McpMap data={mcp} />
     ),
@@ -174,6 +177,7 @@ export default function Home() {
   }>("gate");
   const contact = readPortfolio<{ links: Link[] }>("contact");
   const mcp = readPortfolio<McpData>("mcp-map").data;
+  const atlas = readPortfolio<AtlasData>("atlas-figures").data;
 
   const rail = [
     { id: "top", label: hero.data.name },
@@ -260,7 +264,7 @@ export default function Home() {
                 {c.stage ? (
                   <GatedStage main={c.stage.main} panels={c.stage.panels} gate={gate.data} />
                 ) : c.showcase ? (
-                  <Showcase c={c} mcp={mcp} />
+                  <Showcase c={c} mcp={mcp} atlas={atlas} />
                 ) : (
                   <Placeholder label={c.media} />
                 )}

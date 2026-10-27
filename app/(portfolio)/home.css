@@ -1290,3 +1290,324 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
     text-align: left;
   }
 }
+
+/* ───── Atlas views: usage line, layer diagram, adoption bars. Real SVG/HTML, theme-aware. ───── */
+.afig {
+  margin-block: clamp(2.5rem, 5vw, 4rem) clamp(5rem, 9vw, 8rem);
+}
+.afig-title {
+  margin: 0 0 0.5rem;
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.afig-lede {
+  margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+  max-width: 60ch;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+.afig figcaption {
+  margin-top: 1.25rem;
+  max-width: 70ch;
+  font: 400 0.8125rem / 1.5 var(--font-ui);
+  color: var(--fg-muted);
+}
+.afig-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 1.1rem 0 0;
+  font: 400 0.8125rem / 1.4 var(--font-ui);
+  color: var(--fg-muted);
+}
+.afig-legend i {
+  display: inline-block;
+  width: 1.1rem;
+  height: 0.65rem;
+  margin-right: 0.35rem;
+  vertical-align: -1px;
+  border: 1px solid var(--fg-muted);
+  border-radius: 2px;
+}
+.afig-legend i.dash {
+  border-style: dashed;
+}
+
+/* usage */
+.usage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12.5rem;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: end;
+}
+.usage svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.usage-base {
+  stroke: var(--hairline);
+}
+.usage-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.usage-dot {
+  fill: color-mix(in oklab, var(--fg) 7%, var(--bg));
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+.usage-dot.is-last {
+  fill: var(--accent);
+}
+.usage-val {
+  font: 600 15px var(--font-ui);
+  fill: var(--fg);
+}
+.usage-axis {
+  font: 500 13px var(--font-ui);
+  fill: var(--fg-muted);
+}
+.usage-note {
+  font: italic 400 17px var(--font-body);
+  fill: var(--accent);
+}
+.side-stats {
+  display: grid;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+}
+.side-stats > div {
+  border-top: 1px solid var(--hairline);
+  padding-top: 0.75rem;
+}
+.side-stats strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font: 400 2.125rem / 1 var(--font-display);
+}
+.side-stats span {
+  display: block;
+  font: 400 0.875rem / 1.4 var(--font-ui);
+  color: var(--fg-muted);
+}
+
+/* layers */
+.layers {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr 1fr;
+  align-items: stretch;
+}
+.layer-col {
+  padding: 0 1.25rem;
+}
+.layer-col:first-child {
+  padding-left: 0;
+}
+.layer-col:last-child {
+  padding-right: 0;
+}
+.layer-col h5 {
+  margin: 0 0 0.9rem;
+  font: 500 0.8125rem / 1.3 var(--font-ui);
+  color: var(--fg-muted);
+}
+.layer-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.layer-col li {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  font: 400 0.9375rem / 1.35 var(--font-ui);
+}
+.layer-col li.next {
+  border-style: dashed;
+  color: var(--fg-muted);
+}
+.layer-col li small {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+}
+.atlas-core {
+  padding: 1.25rem 1.25rem 1.1rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+}
+.atlas-core h5 {
+  color: var(--accent);
+}
+.atlas-name {
+  margin: 0 0 1rem;
+  font: 400 1.875rem / 1 var(--font-display);
+}
+.atlas-core li {
+  border-color: color-mix(in oklab, var(--accent) 38%, transparent);
+}
+.served {
+  margin: 0.9rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in oklab, var(--accent) 38%, transparent);
+  font: 400 0.875rem / 1.4 var(--font-ui);
+}
+.served span {
+  color: var(--fg-muted);
+}
+.flow {
+  position: relative;
+}
+.flow::before,
+.flow::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 1.25rem;
+  height: 1px;
+  background: var(--accent);
+}
+.flow::before {
+  left: 0;
+}
+.flow::after {
+  right: 0;
+}
+
+/* adoption */
+.bars {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1.4rem;
+}
+.bar-row {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+.bar-label {
+  font: 400 0.9375rem / 1.3 var(--font-ui);
+}
+.bar-label small {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+}
+.track {
+  display: flex;
+  height: 1.9rem;
+}
+.seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  border-right: 2px solid color-mix(in oklab, var(--fg) 7%, var(--bg));
+  font: 600 0.8125rem / 1 var(--font-ui);
+}
+.seg:last-child {
+  border-right: 0;
+}
+.s-lens {
+  background: var(--fg);
+  color: var(--bg);
+}
+.s-ld {
+  background: var(--accent);
+  color: var(--bg);
+}
+.s-legacy {
+  background: color-mix(in oklab, var(--fg) 28%, transparent);
+  color: var(--fg);
+}
+.s-none {
+  border: 1px dashed var(--fg-muted);
+  color: var(--fg-muted);
+}
+.bars-legend i {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 0;
+  border-radius: 0;
+}
+.bars-legend .k-lens {
+  background: var(--fg);
+}
+.bars-legend .k-ld {
+  background: var(--accent);
+}
+.bars-legend .k-legacy {
+  background: color-mix(in oklab, var(--fg) 28%, transparent);
+}
+.bars-legend .k-none {
+  border: 1px dashed var(--fg-muted);
+}
+.afig-total {
+  margin: 1.6rem 0 0;
+  max-width: 60ch;
+  font: 400 1.125rem / 1.5 var(--font-body);
+}
+.afig-total b {
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .usage {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .side-stats {
+    grid-template-columns: 1fr 1fr;
+    padding-bottom: 0;
+  }
+  .usage-axis {
+    font-size: 22px;
+  }
+  .usage-val {
+    font-size: 26px;
+  }
+  .usage-note {
+    font-size: 26px;
+  }
+  .layers {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+  .layer-col {
+    padding: 0;
+  }
+  .flow::before,
+  .flow::after {
+    left: 50%;
+    top: auto;
+    width: 1px;
+    height: 1.75rem;
+  }
+  .flow::before {
+    top: -1.75rem;
+  }
+  .flow::after {
+    bottom: -1.75rem;
+    right: auto;
+  }
+  .bar-row {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+}

@@ -9,7 +9,7 @@ export type StageImage = { src: string; width: number; height: number; alt: stri
 export type Stage = { main: StageImage; panels: StageImage[] };
 export type ShowcaseTab = { id: string; label: string } & (
   | { main: StageImage; panels?: StageImage[] }
-  | { main?: undefined; panels?: undefined }
+  | { main?: undefined; panels?: undefined; view?: string }
 );
 export type Showcase = { label: string; tabs: ShowcaseTab[] };
 

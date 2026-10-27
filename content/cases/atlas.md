@@ -12,10 +12,22 @@ situation: >-
 did: >-
   I ran Atlas as a product. We shipped a production MCP server that serves tokens, patterns, and components to engineers and AI agents, with Figma-to-code parity on semantic tokens. I set code-level adoption governance: a drift taxonomy and an exception-by-approval model for custom components. When designers left other teams, I routed backfills to Atlas instead of asking for new headcount.
 outcomes:
-  - 85% of engineers use the Atlas MCP server; daily usage is up 20× since launch.
+  - 85% of engineers use the Atlas MCP server; daily calls grew about 10× in two quarters.
   - 88% of calls are agents pulling live Atlas data.
   - 58 production-ready components in design and code; 12 native AI patterns shipped in 2026.
-  - Light and dark themes adopted across 12 products in four business units.
+  - 22 of 39 products run an Atlas theme, and all five new products this year started on Atlas.
 asking: ""
 media: ""
+showcase:
+  label: Views of Atlas
+  tabs:
+    - id: usage
+      label: Usage
+      view: atlas-usage
+    - id: architecture
+      label: Architecture
+      view: atlas-layers
+    - id: adoption
+      label: Adoption
+      view: atlas-adoption
 ---
