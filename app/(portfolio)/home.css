@@ -440,6 +440,16 @@ li::marker {
   bottom: -11%;
   width: 64%;
 }
+/* Showcase frames: the screenshot sits in a clipped frame so it can pan inside it. */
+.pane {
+  overflow: hidden;
+}
+.pane img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 @media (max-width: 759px) {
   .panel-a {
     display: none;
@@ -468,6 +478,32 @@ li::marker {
       animation-range:
         entry 5% entry 65%,
         cover;
+    }
+    /* Each screenshot also pans inside its frame, in its own direction, so the
+       reader sees different parts of it as the page moves. */
+    .pane img {
+      scale: 1.24;
+      animation: pan-y linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+    .panel-a img {
+      animation-name: pan-x;
+    }
+    .panel-b img {
+      animation-name: pan-y-rev;
+    }
+    @keyframes pan-y {
+      from { translate: 0 9%; }
+      to { translate: 0 -9%; }
+    }
+    @keyframes pan-y-rev {
+      from { translate: 0 -9%; }
+      to { translate: 0 9%; }
+    }
+    @keyframes pan-x {
+      from { translate: -9% 0; }
+      to { translate: 9% 0; }
     }
     @keyframes drift-main {
       from { translate: 0 3%; }

@@ -114,9 +114,17 @@ function Showcase({ c, mcp }: { c: Case; mcp: McpData }) {
     label: t.label,
     content: t.main ? (
       <div className="stage">
-        <img className="stage-main" {...t.main} decoding="async" />
+        <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
+          <img {...t.main} decoding="async" />
+        </div>
         {(t.panels ?? []).map((p, i) => (
-          <img key={p.src} className={`panel panel-${i === 0 ? "a" : "b"}`} {...p} decoding="async" loading="lazy" />
+          <div
+            key={p.src}
+            className={`panel pane panel-${i === 0 ? "a" : "b"}`}
+            style={{ aspectRatio: `${p.width} / ${p.height}` }}
+          >
+            <img {...p} decoding="async" loading="lazy" />
+          </div>
         ))}
       </div>
     ) : (

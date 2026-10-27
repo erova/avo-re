@@ -39,19 +39,19 @@ showcase:
     - id: admin
       label: Admin
       main:
-        src: /images/work/vibesharing/admin-analytics.webp
+        src: /images/work/vibesharing/admin-audit.webp
         width: 2000
-        height: 1106
-        alt: The VibeSharing admin Analytics page, with counts of members, prototypes, feedback, deployments and MCP calls, charts of deploys and feedback over 30 days, and a reliability section covering success rate, errors and the slowest deploys. Project and organization names are removed.
+        height: 1116
+        alt: The VibeSharing admin Audit Log, a table of timestamped events such as project access and feedback created, with a Download CSV button. User names are removed.
       panels:
         - src: /images/work/vibesharing/admin-members.webp
           width: 1400
           height: 775
           alt: The admin Members page, with an invite form, GitHub access controls and a table of admins showing last activity, MCP use and deploys. Other members' names are removed.
-        - src: /images/work/vibesharing/admin-audit-sm.webp
+        - src: /images/work/vibesharing/admin-analytics-sm.webp
           width: 1400
-          height: 781
-          alt: The admin Audit Log, a table of timestamped events such as project access and feedback created, with a Download CSV button. User names are removed.
+          height: 774
+          alt: The admin Analytics page, with counts of members, prototypes, feedback, deployments and MCP calls, charts of deploys and feedback over 30 days, and a reliability section covering success rate, errors and the slowest deploys. Project and organization names are removed.
 link: https://vibesharing.app
 linkLabel: vibesharing.app
 ---
