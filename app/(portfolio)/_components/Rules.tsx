@@ -5,17 +5,17 @@ import { useEffect } from "react";
 // Hairlines below the fold draw in once, the first time their section scrolls into view.
 // Elements are only hidden after this runs, so without JS (or with reduced motion) every line is simply there.
 const TARGETS =
-  ".glance-row, .feature .case-head, .feature .case-facts, .feature .case-row, .rows details, .prose h2";
+  ".glance-row, .feature .case-head, .feature .case-facts, .feature .case-row, .rows details, .prose h2, .prose hr, .stats, .disclaimer";
 
 export function Rules() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const els = [...document.querySelectorAll<HTMLElement>(TARGETS)].filter(
-      (el) => !el.closest(".article-head"),
+      (el) => !el.closest(".article-head, .hero"),
     );
-    // Anything already on screen at load is handled by the load animation, not hidden.
-    const vh = window.innerHeight;
-    const pending = els.filter((el) => el.getBoundingClientRect().top > vh * 0.9);
+    // The header's lines have their own load animation; everything else, including
+    // lines already in view at load, is armed and drawn by the observer.
+    const pending = els;
     pending.forEach((el) => el.setAttribute("data-rule", ""));
 
     const io = new IntersectionObserver(

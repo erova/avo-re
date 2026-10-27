@@ -1113,6 +1113,30 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
     transform: none;
     opacity: 1;
   }
+  /* Stat dividers draw top to bottom, a beat after the rules around them */
+  .stats[data-rule] > div + div::before {
+    transform: scaleY(0);
+    opacity: 0;
+    transition:
+      transform 900ms var(--ease) calc(var(--d, 0ms) + 260ms),
+      opacity 600ms var(--ease) calc(var(--d, 0ms) + 260ms);
+  }
+  .stats[data-rule][data-in] > div + div::before {
+    transform: none;
+    opacity: 1;
+  }
+  .prose hr[data-rule] {
+    transform: scaleX(0);
+    transform-origin: left center;
+    opacity: 0;
+    transition:
+      transform 1000ms var(--ease) var(--d, 0ms),
+      opacity 700ms var(--ease) var(--d, 0ms);
+  }
+  .prose hr[data-rule][data-in] {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 /* ───── Showcase: pills switch between views of one product ───── */
