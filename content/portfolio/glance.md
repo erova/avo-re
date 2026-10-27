@@ -20,7 +20,7 @@
 
 ## Nasdaq, 2011–18
 
-Built the UX team from 1 to 35 designing tools for Investor Relations, the C-Suite, and later boardroom, risk, and trading platforms.
+**AVP & Head of Design.** Built the UX team from 1 to 35 designing tools for Investor Relations, the C-Suite, and later boardroom, risk, and trading platforms.
 
 ## Author
 
