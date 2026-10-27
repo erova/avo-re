@@ -845,11 +845,13 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
       animation-timeline: view();
       animation-range: exit 0% exit 100%;
     }
+    /* Both sink into the hero's bottom edge (clipped by .hero), so they trail the
+       page at different rates but never lift off it and expose a gap. */
     @keyframes figure-lift {
-      to { translate: 0 -70px; }
+      to { translate: 0 44px; }
     }
     @keyframes slab-lift {
-      to { translate: 0 -20px; }
+      to { translate: 0 16px; }
     }
   }
 }
