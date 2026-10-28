@@ -27,25 +27,28 @@ asking: A better destination doesn’t make change easy. How do you get teams to
 showcase:
   label: Views of Boards
   tabs:
-    - id: before-after
-      label: Before and after
+    - id: legacy
+      label: Legacy Home
       main:
         src: /images/work/boards/home-before.webp
         width: 2000
         height: 1456
-        caption: "Before: no actions, news in a sidebar"
+        caption: "Legacy Home: no actions, news in a sidebar"
         alt: "The legacy Boards Home. A navy header and a ten-item sidebar, an Actions section that reads there are no actions at the moment, a Books and reports list, and a News and insights column on the right."
       panels:
-        - src: /images/work/boards/home-after.webp
-          width: 1614
-          height: 1500
-          caption: "After: what needs your review, and ask across every book"
-          alt: "The new Boards Home. A seven-item sidebar, a prompt box that asks what would you like to know across current and archived books, a Waiting for your review list with 44 approvals, and books with upcoming meetings."
         - src: /images/work/boards/news-before.webp
           width: 1600
           height: 775
-          caption: "News & Analytics, once a destination, now curated on Home"
+          caption: "Legacy News & Analytics, now curated on Home"
           alt: "The legacy News and Analytics page. It is mostly a newsletter signup, with topic toggles, a required email field and a submit button, above a list of global news."
+    - id: home
+      label: New Home
+      main:
+        src: /images/work/boards/home-after.webp
+        width: 1614
+        height: 1030
+        caption: "New Home: what needs your review, and ask across every book"
+        alt: "The new Boards Home. A seven-item sidebar, a prompt box that asks what would you like to know across current and archived books, and a Waiting for your review list with 44 approvals."
     - id: reading
       label: Reading
       main:
