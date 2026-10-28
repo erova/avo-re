@@ -12,7 +12,6 @@ usage:
     - { label: Q3 2026, value: 691 }
   stats:
     - { value: "130", label: people using it on the busiest day }
-    - { value: "13", label: "people with more than 1,000 calls each" }
 layers:
   title: Atlas sits between intent and output
   lede: Every tool that builds UI reads from the same source, so the rules travel with the work instead of living in a Figma file.

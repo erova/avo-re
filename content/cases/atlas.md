@@ -1,6 +1,6 @@
 ---
 title: The design system as AI infrastructure
-company: Atlas
+company: Diligent
 years: 2025–26
 tags: ["Design systems", "MCP", "AI infrastructure"]
 rail: Atlas
