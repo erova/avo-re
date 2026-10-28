@@ -63,13 +63,14 @@ function Usage({ d, source }: { d: AtlasData["usage"]; source: string }) {
       <div className="usage">
         <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={aria}>
           <line className="usage-base" x1="20" y1={base} x2="590" y2={base} />
-          <polyline className="usage-line" points={xs.map((x, i) => `${x},${ys[i]}`).join(" ")} />
+          <polyline className="usage-line" pathLength={1} points={xs.map((x, i) => `${x},${ys[i]}`).join(" ")} />
           {d.points.map((p, i) => (
-            <circle key={p.label} className={i === last ? "usage-dot is-last" : "usage-dot"} cx={xs[i]} cy={ys[i]} r={i === last ? 6 : 5} />
+            <circle key={p.label} style={{ "--i": i } as React.CSSProperties} className={i === last ? "usage-dot is-last" : "usage-dot"} cx={xs[i]} cy={ys[i]} r={i === last ? 6 : 5} />
           ))}
           {d.points.map((p, i) => (
             <text
               key={`v${p.label}`}
+              style={{ "--i": i } as React.CSSProperties}
               className="usage-val"
               x={i === last ? xs[i] - 20 : xs[i]}
               y={i === last ? ys[i] + 5 : ys[i] - 17}

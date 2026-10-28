@@ -2,7 +2,7 @@
 # The three views in the Atlas case study: usage, architecture, adoption. Numbers here are the source of truth for the case copy.
 source: "Source: Internal Atlas data, October 2026."
 usage:
-  title: Agents started reaching for Atlas on their own
+  title: More teams now build with AI through Atlas
   lede: Average calls to the Atlas MCP server per working day, by quarter. Weekday traffic now holds between 480 and 700 calls.
   note: About 10× in two quarters
   points:

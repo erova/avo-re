@@ -5,7 +5,7 @@ import { useEffect } from "react";
 // Hairlines below the fold draw in once, the first time their section scrolls into view.
 // Elements are only hidden after this runs, so without JS (or with reduced motion) every line is simply there.
 const TARGETS =
-  ".glance-row, .feature .case-head, .feature .case-facts, .feature .case-row, .rows details, .prose h2, .prose hr, .stats, .disclaimer";
+  ".glance-row, .feature .case-head, .feature .case-facts, .feature .case-row, .rows details, .prose h2, .prose hr, .stats, .disclaimer, .usage";
 
 export function Rules() {
   useEffect(() => {
