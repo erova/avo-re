@@ -151,6 +151,52 @@
     flex-basis: 100%;
   }
 }
+/* A second row in the masthead bar: the newest essay, so it is visible without scrolling. */
+.latest {
+  position: relative;
+  flex-basis: 100%;
+  max-width: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.75rem;
+  row-gap: 0.15rem;
+  margin: 0;
+  padding-block: 0.7rem;
+  font-family: var(--font-ui);
+  font-size: 0.9375rem;
+}
+.latest::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--hairline);
+  transform-origin: left center;
+}
+.latest-kicker {
+  color: var(--fg-muted);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.latest a {
+  font-weight: 600;
+  text-decoration: none;
+}
+.latest a::after {
+  content: " \2192";
+}
+.latest a:hover,
+.latest a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.latest-date {
+  color: var(--fg-muted);
+}
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1074,6 +1120,7 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   .masthead-bar::before,
   .hero-actions::before,
   .masthead-bar::after,
+  .latest::before,
   .hero-now::before,
   .article-head .case-head::before,
   .article-head .case-facts::before,
@@ -1083,6 +1130,7 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   }
   .masthead-bar::before { --r: 0; }
   .hero-actions::before,
+  .latest::before,
   .masthead-bar::after { --r: 1; }
   .hero-now::before,
   .article-head .case-head::before { --r: 2; }

@@ -146,6 +146,8 @@ export default function Home() {
   const quotes = getQuotes();
   const essays = getAllWritingMeta().filter((e) => !HIDDEN_ESSAYS.has(e.slug));
 
+  const latest = essays[0];
+
   const titles = readPortfolio<Record<string, string>>("sections").data;
   const hero = readPortfolio<{
     name: string;
@@ -219,6 +221,13 @@ export default function Home() {
                 </a>
               ))}
             </nav>
+            {latest && (
+              <p className="latest">
+                <span className="latest-kicker">Latest writing</span>
+                <a href={`/writing/${latest.slug}`}>{latest.title}</a>
+                <span className="latest-date">{formatMonthYear(latest.date)}</span>
+              </p>
+            )}
           </div>
           <h1 className="rise" style={{ "--i": 1 } as React.CSSProperties}>
             <Emph text={hero.data.positioning} />
