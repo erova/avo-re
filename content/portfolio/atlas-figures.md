@@ -13,8 +13,8 @@ usage:
   stats:
     - { value: "130", label: people using it on the busiest day }
 layers:
-  title: Atlas sits between intent and output
-  lede: Every tool that builds UI reads from the same source, so the rules travel with the work instead of living in a Figma file.
+  title: The design system reifies intent into output
+  lede: Every tool that builds UI is based on a single source, so consistency, speed, and efficiency aren’t just soundbites.
   from:
     heading: What teams start from
     items: [Product requirements, Prompts to coding agents, Figma designs]
