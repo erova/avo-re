@@ -39,7 +39,7 @@ showcase:
         - src: /images/work/boards/news-before.webp
           width: 1600
           height: 775
-          caption: "Legacy News & Analytics, now curated on Home"
+          caption: "Legacy News & Analytics: now curated on Home"
           alt: "The legacy News and Analytics page. It is mostly a newsletter signup, with topic toggles, a required email field and a submit button, above a list of global news."
     - id: home
       label: New Home
@@ -55,7 +55,7 @@ showcase:
         src: /images/work/boards/reader-search.webp
         width: 2000
         height: 1423
-        caption: "Structured navigation and relevance-ordered search"
+        caption: "Reading: structured navigation and relevance-ordered search"
         alt: "The Boards reader open on a board book. The left panel shows the agenda as a structured outline, the page has search terms highlighted in yellow, and the right panel lists search results in relevance order with the matching text in bold."
     - id: approvals
       label: Approvals
@@ -63,7 +63,7 @@ showcase:
         src: /images/work/boards/approvals.webp
         width: 1892
         height: 1344
-        caption: "Approvals that understand independent directors"
+        caption: "Approvals: they understand independent directors"
         alt: "The administrator Approvals page in the Decision Hub. A list of approvals with status and progress, and one expanded to show who approved, rejected, abstained or has not responded, with separate counts for all participants and for independent directors."
     - id: governai
       label: GovernAI
@@ -71,7 +71,7 @@ showcase:
         src: /images/work/boards/governai-dark.webp
         width: 1652
         height: 1176
-        caption: "The foundation made room for AI, with cited sources"
+        caption: "GovernAI: the foundation made room for AI, with cited sources"
         alt: "A board book open in the dark theme, with the GovernAI panel on the right. A director asks for a one-paragraph briefing note, and the answer lists the source documents it drew from."
 ---
 

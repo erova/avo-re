@@ -110,28 +110,54 @@ function CaseRows({ c }: { c: Case }) {
 
 const img = ({ src, width, height, alt }: Img) => ({ src, width, height, alt });
 
+/** Captions for a view's screenshots, set above the images so none is mistaken for part of the UI. "Name: what it shows." */
+function StageKey({ items }: { items: (string | undefined)[] }) {
+  const rows = items.map((c, i) => ({ c, i })).filter((r): r is { c: string; i: number } => !!r.c);
+  if (rows.length === 0) return null;
+  return (
+    <ul className="stage-key">
+      {rows.map(({ c, i }) => {
+        const cut = c.indexOf(": ");
+        return (
+          <li key={i} className={i === 1 ? "key-a" : undefined}>
+            {cut > 0 ? (
+              <>
+                <strong>{c.slice(0, cut)}</strong>
+                <span>{c.slice(cut + 2)}</span>
+              </>
+            ) : (
+              <span>{c}</span>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 function Showcase({ c, mcp, atlas }: { c: Case; mcp: McpData; atlas: AtlasData }) {
   if (!c.showcase) return null;
   const tabs = c.showcase.tabs.map((t) => ({
     id: t.id,
     label: t.label,
     content: t.main ? (
-      <div className="stage">
-        <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
-          <img {...img(t.main)} decoding="async" />
-          {t.main.caption && <span className="pane-label">{t.main.caption}</span>}
-        </div>
-        {(t.panels ?? []).map((p, i) => (
-          <div
-            key={p.src}
-            className={`panel pane panel-${i === 0 ? "a" : "b"}`}
-            style={{ aspectRatio: `${p.width} / ${p.height}` }}
-          >
-            <img {...img(p)} decoding="async" loading="lazy" />
-            {p.caption && <span className="pane-label">{p.caption}</span>}
+      <>
+        <StageKey items={[t.main.caption, ...(t.panels ?? []).map((p) => p.caption)]} />
+        <div className="stage">
+          <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
+            <img {...img(t.main)} decoding="async" />
           </div>
-        ))}
-      </div>
+          {(t.panels ?? []).map((p, i) => (
+            <div
+              key={p.src}
+              className={`panel pane panel-${i === 0 ? "a" : "b"}`}
+              style={{ aspectRatio: `${p.width} / ${p.height}` }}
+            >
+              <img {...img(p)} decoding="async" loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </>
     ) : t.view?.startsWith("atlas-") ? (
       <AtlasView view={t.view} data={atlas} />
     ) : (
