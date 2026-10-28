@@ -16,10 +16,10 @@ layers:
   title: The design system reifies intent into output
   lede: Every tool that builds UI is based on a single source, so consistency, speed, and efficiency aren’t just soundbites.
   from:
-    heading: What teams start from
+    heading: Intent
     items: [Product requirements, Prompts to coding agents, Figma designs]
   core:
-    heading: The contract layer
+    heading: The Design System
     name: Atlas
     items:
       - { name: Semantic tokens, note: "One CSS theme, light and dark" }
@@ -29,7 +29,7 @@ layers:
     served: Served through a production MCP server
     servedMore: and agents for Claude
   to:
-    heading: Where it lands
+    heading: Output
     items:
       - { name: "Claude Code, Cursor, Figma Make" }
       - { name: Product UI across 39 products }
