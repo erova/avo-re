@@ -555,6 +555,12 @@ li::marker {
     .panel-b img {
       animation-name: pan-y-rev;
     }
+    /* A view that is one screenshot, with nothing floating over it, is shown whole:
+       cropping it would hide the detail it exists to show. */
+    .stage:not(:has(.panel)) .pane img {
+      scale: 1;
+      animation: none;
+    }
     @keyframes pan-y {
       from { translate: 0 9%; }
       to { translate: 0 -9%; }
