@@ -34,22 +34,12 @@ showcase:
         alt: "The command center home for a fictional company, Meridian Holdings. A banner offers a Diligent AI Board Member, a greeting asks what is on your plate, a summary strip counts what needs you today, and a prompt box suggests a task, with starter cards for appointing a director, drafting a resolution and verifying signing authority."
     - id: calendar
       label: Shared Calendar
-      views:
-        - label: Cards
-          src: /protected/work/agentic/s-cal-cards.webp
-          width: 2000
-          height: 1399
-          alt: "The shared calendar in cards view, with columns for the last few events, the next few, team and peer milestones, and corporate and market dates, above a row of suggested tasks."
-        - label: Timeline
-          src: /protected/work/agentic/s-cal-timeline.webp
-          width: 2000
-          height: 1407
-          alt: "The same calendar as a timeline. A line marks today, October 7. Events above it just happened, events below are coming up, colored by whether they come from the team, from peers or from the market."
-        - label: Week
-          src: /protected/work/agentic/s-cal-week.webp
-          width: 2000
-          height: 1439
-          alt: "The calendar in a two-week view. A popover on the D&O questionnaires event explains that two directors have not returned theirs, links the tracker, and offers AI-suggested next steps, noting that each action waits for confirmation."
+      main:
+        src: /protected/work/agentic/s-cal-poster.webp
+        video: /protected/work/agentic/s-cal.mp4
+        width: 1440
+        height: 792
+        alt: "The shared calendar changing view in place. It starts as cards in four columns: the last few events, the next few, team and peer milestones, and corporate and market dates. It becomes a timeline around today, October 7, then a two-week calendar. Hovering the D&O questionnaires event opens a popover saying two directors have not returned theirs, with a link to the tracker and AI-suggested next steps, each waiting for confirmation. It then returns to cards."
     - id: entities
       label: Agentic Entity Management
       layers:

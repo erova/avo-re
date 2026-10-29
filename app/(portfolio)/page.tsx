@@ -13,7 +13,6 @@ import { GatedStage, GatedShowcase, Pic, Clip, type GateText } from "./_componen
 import { Placeholder } from "./_components/Placeholder";
 import { ShowcaseTabs } from "./_components/ShowcaseTabs";
 import { ScrollStory } from "./_components/ScrollStory";
-import { ViewSwitch } from "./_components/ViewSwitch";
 import { McpMap, type McpData } from "./_components/McpMap";
 import { AtlasView, type AtlasData } from "./_components/AtlasFigures";
 import { VideoFacade } from "./_components/VideoFacade";
@@ -142,9 +141,7 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
   const tabs = (c.showcase.tabs ?? []).map((t) => ({
     id: t.id,
     label: t.label,
-    content: t.views ? (
-      <ViewSwitch label={t.label} views={t.views} />
-    ) : t.layers ? (
+    content: t.layers ? (
       <div className="stage stage-layers" style={t.ratio ? { aspectRatio: t.ratio } : undefined}>
         {t.layers.map((l, i) =>
           i === 0 ? (
@@ -202,7 +199,7 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
   );
   const first = story
     ? story[0]
-    : (c.showcase.tabs ?? []).map((t) => t.main ?? t.views?.[0] ?? t.layers?.[0]).find(Boolean);
+    : (c.showcase.tabs ?? []).map((t) => t.main ?? t.layers?.[0]).find(Boolean);
   return c.showcase.gated && first ? (
     <GatedShowcase probe={first.src} ratio={`${first.width} / ${first.height}`} gate={gate}>
       {tabsEl}

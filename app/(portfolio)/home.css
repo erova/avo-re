@@ -1807,64 +1807,6 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   opacity: 0;
 }
 
-/* Showcase: one frame with a switch for the views inside it. */
-.views-switch {
-  display: flex;
-  width: fit-content;
-  margin: clamp(1.5rem, 3vw, 2.25rem) auto 0;
-  padding: 3px;
-  gap: 2px;
-  border: 1px solid var(--hairline);
-  border-radius: 999px;
-}
-.views-switch button {
-  font: 500 0.8125rem/1 var(--font-ui);
-  padding: 0.5rem 1rem;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--fg-muted);
-  cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
-}
-.views-switch button:hover {
-  color: var(--fg);
-}
-.views-switch button[aria-pressed="true"] {
-  background: var(--fg);
-  color: var(--bg);
-}
-.views-switch button:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 2px;
-}
-.views .stage {
-  margin-top: clamp(1.25rem, 2.5vw, 2rem);
-}
-.views-frame {
-  display: grid;
-}
-.views-shot {
-  grid-area: 1 / 1;
-  align-self: start;
-  visibility: hidden;
-  opacity: 0;
-}
-.views-shot[data-on] {
-  visibility: visible;
-  opacity: 1;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .views-shot {
-    transition: opacity 400ms var(--ease), visibility 0s linear 400ms;
-  }
-  .views-shot[data-on] {
-    transition: opacity 400ms var(--ease), visibility 0s;
-  }
-}
-.stage-layers .panel {
-  max-width: 100%;
-}
 /* Layered screens are shown whole; only the frames drift. */
 .stage-layers .pane img {
   scale: 1;
