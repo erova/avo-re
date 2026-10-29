@@ -21,6 +21,3 @@ videos:
     heading: Design Success in Turbulent, Ambiguous Spaces
     caption: UX Lisbon, 2023
 ---
-**AI, Anxiety, and Actual Impact: Leading Design Teams Through the AI Era.** Most recent delivery: Design Leadership Summit, Budapest, October 2026.
-
-[DECIDE: two-sentence abstract, and slides if available.]
