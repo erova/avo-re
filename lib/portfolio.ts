@@ -26,10 +26,20 @@ export type StageImage = {
   speed?: number;
 };
 export type Stage = { main: StageImage; panels: StageImage[] };
-export type ShowcaseTab = { id: string; label: string } & (
-  | { main: StageImage; panels?: StageImage[] }
-  | { main?: undefined; panels?: undefined; view?: string }
-);
+/**
+ * A pill's content is one of: `main` with floating `panels`; `views` (one frame, a switcher that
+ * crossfades between them); `layers` (the first fills the stage, the rest float over it at `x` and
+ * `w` percent across and `y` (0 to 1) down); or a named `view`.
+ */
+export type ShowcaseTab = {
+  id: string;
+  label: string;
+  main?: StageImage;
+  panels?: StageImage[];
+  views?: (StageImage & { label: string })[];
+  layers?: StageImage[];
+  view?: string;
+};
 /**
  * `gated`: the screenshots are served from /protected and shown only after the access code.
  * `layout: story`: no pills; `images` play in order as the reader scrolls.

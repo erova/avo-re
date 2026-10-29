@@ -13,6 +13,7 @@ import { GatedStage, GatedShowcase, Pic, type GateText } from "./_components/Gat
 import { Placeholder } from "./_components/Placeholder";
 import { ShowcaseTabs } from "./_components/ShowcaseTabs";
 import { ScrollStory } from "./_components/ScrollStory";
+import { ViewSwitch } from "./_components/ViewSwitch";
 import { McpMap, type McpData } from "./_components/McpMap";
 import { AtlasView, type AtlasData } from "./_components/AtlasFigures";
 import { VideoFacade } from "./_components/VideoFacade";
@@ -141,7 +142,31 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
   const tabs = (c.showcase.tabs ?? []).map((t) => ({
     id: t.id,
     label: t.label,
-    content: t.main ? (
+    content: t.views ? (
+      <ViewSwitch label={t.label} views={t.views} />
+    ) : t.layers ? (
+      <div className="stage stage-layers">
+        {t.layers.map((l, i) =>
+          i === 0 ? (
+            <div
+              key={l.src}
+              className="stage-main pane"
+              style={{ aspectRatio: `${l.width} / ${l.height}`, width: `${l.w ?? 100}%`, marginLeft: `${l.x ?? 0}%` }}
+            >
+              <Pic {...img(l)} decoding="async" />
+            </div>
+          ) : (
+            <div
+              key={l.src}
+              className="panel pane"
+              style={{ aspectRatio: `${l.width} / ${l.height}`, left: `${l.x ?? 0}%`, top: `${(l.y ?? 0) * 100}%`, width: `${l.w ?? 40}%`, "--depth": `${l.speed ?? 90}px` } as React.CSSProperties}
+            >
+              <Pic {...img(l)} decoding="async" loading="lazy" />
+            </div>
+          ),
+        )}
+      </div>
+    ) : t.main ? (
       <>
         <StageKey items={[t.main.caption, ...(t.panels ?? []).map((p) => p.caption)]} />
         <div className="stage">
@@ -171,7 +196,9 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
   ) : (
     <ShowcaseTabs label={c.showcase.label} tabs={tabs} />
   );
-  const first = story ? story[0] : (c.showcase.tabs ?? []).find((t) => t.main)?.main;
+  const first = story
+    ? story[0]
+    : (c.showcase.tabs ?? []).map((t) => t.main ?? t.views?.[0] ?? t.layers?.[0]).find(Boolean);
   return c.showcase.gated && first ? (
     <GatedShowcase probe={first.src} ratio={`${first.width} / ${first.height}`} gate={gate}>
       {tabsEl}
