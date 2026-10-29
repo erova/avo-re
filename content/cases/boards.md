@@ -37,7 +37,7 @@ showcase:
     - src: /protected/work/boards/s-home-director-dark.webp
       width: 1600
       height: 2176
-      swap: 2.9
+      swap: 3.2
       alt: ""
     - src: /protected/work/boards/s-book-builder.webp
       width: 1556
@@ -51,25 +51,25 @@ showcase:
     - src: /protected/work/boards/s-governai-tools.webp
       width: 2000
       height: 1159
-      at: 2.0
+      at: 1.9
       x: 40
       w: 56
-      y: 0.74
+      y: 0.45
       speed: 1.0
       alt: "A filing open in the reader with the GovernAI panel on the right, listing AI tools: Smart Summary, Smart Prep and Smart Risk Scanner, each marked hidden from directors."
     - src: /protected/work/boards/s-governai-briefing.webp
       width: 1668
       height: 1192
-      at: 2.5
+      at: 2.8
       x: 33
       w: 62
-      y: 0.40
+      y: 0.52
       speed: 1.3
       alt: "A board book open in the light theme, with the GovernAI panel on the right. A director asks for a one-paragraph briefing note, and the answer lists the source documents it drew from."
     - src: /protected/work/boards/s-approvals-light.webp
       width: 1896
       height: 1348
-      at: 3.6
+      at: 3.8
       x: 22
       w: 56
       y: 0.58
@@ -78,7 +78,7 @@ showcase:
     - src: /protected/work/boards/s-reader-search.webp
       width: 2000
       height: 1427
-      at: 4.6
+      at: 4.7
       x: 38
       w: 58
       y: 0.50
