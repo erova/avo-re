@@ -31,7 +31,7 @@ showcase:
         video: /protected/work/agentic/s-home.mp4
         width: 1440
         height: 792
-        alt: "The command center home for a fictional company, Meridian Holdings. A banner offers a Diligent AI Board Member, a greeting asks what is on your plate, a summary strip counts what needs you today, and a prompt box suggests a task, with starter cards for appointing a director, drafting a resolution and verifying signing authority."
+        alt: "The command center home for a fictional company, Meridian Holdings. A summary strip counts what needs you today, including four suggested risks. Scrolling to a risk posture card and choosing Review suggested risks opens a risk workspace, where each suggested risk shows its evidence, owner, due date, severity and confidence. Accepting one turns it into a managed risk and moves the progress to one of four signals reviewed."
     - id: config
       label: Configuration Manager
       note: "An admin sets up Home by answering a few questions. The agent turns the answers into a Home for each role, and nothing is final. Everything can be fine-tuned afterwards, or by asking."
