@@ -1793,3 +1793,12 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
     0 40px 80px -20px oklch(0.12 0.05 8 / 0.7),
     0 0 0 1px oklch(1 0 0 / 0.1);
 }
+.story-swap {
+  display: none;
+}
+.story[data-live] .story-swap {
+  display: block;
+  position: absolute;
+  inset: 0 auto auto 0;
+  opacity: 0;
+}

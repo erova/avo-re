@@ -9,6 +9,7 @@ type Img = {
   height: number;
   alt: string;
   base?: boolean;
+  swap?: number;
   at?: number;
   x?: number;
   w?: number;
@@ -36,7 +37,8 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
   const floats = useRef<(HTMLDivElement | null)[]>([]);
 
   const base = images.find((i) => i.base) ?? images[0];
-  const over = images.filter((i) => i !== base);
+  const swap = images.find((i) => i !== base && i.swap !== undefined);
+  const over = images.filter((i) => i !== base && i !== swap);
   const last = Math.max(...over.map((i) => i.at ?? 1), 1);
   const steps = last + 0.9;
 
@@ -56,10 +58,12 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
       const p = t * steps; // 0..steps
 
       const frame = baseFrame.current;
-      const bi = frame?.querySelector<HTMLElement>("img");
-      if (frame && bi) {
-        const room = Math.max(bi.offsetHeight - frame.clientHeight, 0);
-        bi.style.transform = `translate3d(0, ${-room * clamp(p / steps)}px, 0)`;
+      if (frame) {
+        frame.querySelectorAll<HTMLElement>("img").forEach((bi, n) => {
+          const room = Math.max(bi.offsetHeight - frame.clientHeight, 0);
+          bi.style.transform = `translate3d(0, ${-room * clamp(p / steps)}px, 0)`;
+          if (n === 1 && swap) bi.style.opacity = String(smooth(clamp((p - (swap.swap ?? 0) + 0.3) / 0.6)));
+        });
       }
 
       over.forEach((im, i) => {
@@ -89,7 +93,7 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
       } else {
         el.removeAttribute("data-live");
         floats.current.forEach((n) => n?.removeAttribute("style"));
-        baseFrame.current?.querySelector("img")?.removeAttribute("style");
+        baseFrame.current?.querySelectorAll("img").forEach((i) => i.removeAttribute("style"));
       }
     }
     arm();
@@ -117,6 +121,7 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
         <div className="story-stage">
           <div className="story-base" ref={baseFrame}>
             <Pic src={base.src} width={base.width} height={base.height} alt={base.alt} decoding="async" />
+            {swap && <Pic className="story-swap" src={swap.src} width={swap.width} height={swap.height} alt="" aria-hidden="true" decoding="async" loading="lazy" />}
           </div>
           {over.map((im, i) => (
             <div

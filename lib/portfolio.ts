@@ -6,7 +6,8 @@ const CASES_DIR = path.join(process.cwd(), "content", "cases");
 const QUOTES_DIR = path.join(process.cwd(), "content", "quotes");
 
 /**
- * `base`, `at`, `x`, `w`, `y`, `speed` choreograph a scroll story. The base image stays pinned and pans;
+ * `base`, `swap`, `at`, `x`, `w`, `y`, `speed` choreograph a scroll story. The base image stays pinned and pans;
+ * an image with `swap` (a scroll step) fades in over the base at that step, in the same frame;
  * every other image floats over it: centered at scroll step `at`, `x`% from the left, `w`% wide,
  * `y` (0 to 1) down the screen, and moving `speed` times as fast as the page.
  */
@@ -17,6 +18,7 @@ export type StageImage = {
   alt: string;
   caption?: string;
   base?: boolean;
+  swap?: number;
   at?: number;
   x?: number;
   w?: number;
