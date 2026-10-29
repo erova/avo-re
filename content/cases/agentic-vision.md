@@ -39,7 +39,7 @@ showcase:
         video: /protected/work/agentic/s-cal.mp4
         width: 1440
         height: 792
-        alt: "The shared calendar changing view in place. It starts as cards in four columns: the last few events, the next few, team and peer milestones, and corporate and market dates. It becomes a timeline around today, October 7, then a two-week calendar. Hovering the D&O questionnaires event opens a popover saying two directors have not returned theirs, with a link to the tracker and AI-suggested next steps, each waiting for confirmation. It then returns to cards."
+        alt: "The shared calendar. It changes view in place, from cards to a timeline to a two-week calendar. Hovering the D&O questionnaires event opens a popover saying two directors have not returned theirs, with a link to the tracker and AI-suggested next steps. Choosing to remind the two directors asks for confirmation before anything is sent, then confirms. Hovering the annual report event shows different suggested steps. The calendar then returns to cards."
     - id: headless
       label: Headless UI
       split:
