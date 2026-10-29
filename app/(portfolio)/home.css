@@ -1724,17 +1724,18 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   }
 }
 
-/* Scroll story: screenshots pinned in view, each rising over the last as the page scrolls.
-   Without JS (or with reduced motion) the pin is off and they stack as plain figures. */
+/* Scroll story: one screen pinned and panning, the others floating over it at different depths.
+   Without JS, on a narrow screen or with reduced motion, the pin is off and they stack as plain figures. */
 .story {
   width: min(100%, 1040px);
   margin: clamp(2.5rem, 5vw, 4rem) auto clamp(4rem, 8vw, 7rem);
 }
-.story-frame {
+.story-stage {
   display: grid;
   gap: clamp(1.5rem, 3vw, 2.5rem);
 }
-.story-item img {
+.story-base img,
+.story-float img {
   display: block;
   width: 100%;
   height: auto;
@@ -1743,68 +1744,52 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
     0 50px 90px -40px oklch(0.2 0.06 8 / 0.6),
     0 0 0 1px oklch(1 0 0 / 0.08);
 }
-.story-progress {
-  display: none;
-}
 .story[data-live] {
-  /* each screenshot gets 70% of a screen of scrolling, plus one screen to pin */
-  height: calc(var(--n) * 70svh + 100svh);
+  /* full-bleed: the screens enter and leave at the edges of the window */
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  height: calc(var(--len) + 100svh);
 }
 .story[data-live] .story-pin {
   position: sticky;
   top: 0;
   height: 100svh;
-  display: grid;
-  align-content: center;
-  gap: 1.25rem;
+  overflow: clip;
 }
-.story[data-live] .story-frame {
+.story[data-live] .story-stage {
   position: relative;
   display: block;
-  height: min(76svh, 770px);
+  width: min(100%, 1200px);
+  height: 100%;
+  margin-inline: auto;
 }
-.story[data-live] .story-item {
+.story[data-live] .story-base {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  will-change: transform, opacity;
-}
-.story[data-live] .story-item:not(:first-child) {
-  visibility: hidden;
-}
-.story[data-live] .story-item img {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: min(76svh, 770px);
-}
-/* A tall screen fills the frame's width and pans inside it; it is clipped by the frame, not the card. */
-.story[data-live] .story-item[data-tall] {
-  place-items: start center;
+  left: 0;
+  top: 8%;
+  width: 50%;
+  height: 84%;
   overflow: hidden;
   border-radius: 14px;
   box-shadow:
     0 50px 90px -40px oklch(0.2 0.06 8 / 0.6),
     0 0 0 1px oklch(1 0 0 / 0.08);
 }
-.story[data-live] .story-item[data-tall] img {
-  width: 100%;
-  max-height: none;
+.story[data-live] .story-base img {
   border-radius: 0;
   box-shadow: none;
   will-change: transform;
 }
-.story[data-live] .story-progress {
-  display: block;
-  height: 1px;
-  background: var(--hairline);
-  overflow: hidden;
+.story[data-live] .story-float {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: var(--w);
+  visibility: hidden;
+  will-change: transform, opacity;
 }
-.story[data-live] .story-progress span {
-  display: block;
-  height: 100%;
-  background: var(--fg-muted);
-  transform-origin: left;
-  transform: scaleX(0);
+.story[data-live] .story-float img {
+  box-shadow:
+    0 40px 80px -20px oklch(0.12 0.05 8 / 0.7),
+    0 0 0 1px oklch(1 0 0 / 0.1);
 }

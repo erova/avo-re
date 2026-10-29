@@ -5,7 +5,24 @@ import matter from "gray-matter";
 const CASES_DIR = path.join(process.cwd(), "content", "cases");
 const QUOTES_DIR = path.join(process.cwd(), "content", "quotes");
 
-export type StageImage = { src: string; width: number; height: number; alt: string; caption?: string };
+/**
+ * `base`, `at`, `x`, `w`, `y`, `speed` choreograph a scroll story. The base image stays pinned and pans;
+ * every other image floats over it: centered at scroll step `at`, `x`% from the left, `w`% wide,
+ * `y` (0 to 1) down the screen, and moving `speed` times as fast as the page.
+ */
+export type StageImage = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  caption?: string;
+  base?: boolean;
+  at?: number;
+  x?: number;
+  w?: number;
+  y?: number;
+  speed?: number;
+};
 export type Stage = { main: StageImage; panels: StageImage[] };
 export type ShowcaseTab = { id: string; label: string } & (
   | { main: StageImage; panels?: StageImage[] }

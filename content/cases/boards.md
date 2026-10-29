@@ -32,39 +32,62 @@ showcase:
     - src: /protected/work/boards/s-home-director.webp
       width: 916
       height: 1246
+      base: true
       alt: "The Boards Home as a director sees it. A prompt box asks what would you like to know across current and archived books, and below it sit a Waiting for your review list of 44 approvals, books with upcoming meetings, and competitor updates summarized by AI."
-    - src: /protected/work/boards/s-home-admin.webp
-      width: 1614
-      height: 1982
-      alt: "The Boards Home as an administrator sees it, with a seven-item sidebar. The same prompt box and Waiting for your review list sit above books with upcoming meetings and competitor updates."
-    - src: /protected/work/boards/s-agendas.webp
-      width: 1898
-      height: 1354
-      alt: "The Agendas page in card view. Meetings are laid out in three yearly columns, each card showing the meeting, its plan and its committee."
-    - src: /protected/work/boards/s-approvals-light.webp
-      width: 1896
-      height: 1348
-      alt: "The administrator Approvals page in the Decision Hub. Each approval shows status and progress, and an expanded one shows who approved, rejected, abstained or has not responded, with separate counts for all participants and for independent directors."
-    - src: /protected/work/boards/s-approvals-dark.webp
-      width: 1084
-      height: 868
-      alt: "The same Approvals page in the dark theme."
     - src: /protected/work/boards/s-book-builder.webp
       width: 1556
       height: 1108
+      at: 1.0
+      x: 27
+      w: 58
+      y: 0.58
+      speed: 1.15
       alt: "A book open for review. An agenda outline sits in a left panel, with a cover page and a spread of the report beside it, and Publish and GovernAI buttons at the top."
-    - src: /protected/work/boards/s-reader-search.webp
-      width: 2000
-      height: 1427
-      alt: "The Boards reader open on a board book. The left panel shows the agenda as a structured outline, the page has search terms highlighted in yellow, and the right panel lists search results in relevance order with the matching text in bold."
     - src: /protected/work/boards/s-governai-tools.webp
       width: 2000
       height: 1159
+      at: 2.0
+      x: 40
+      w: 56
+      y: 0.74
+      speed: 1.0
       alt: "A filing open in the reader with the GovernAI panel on the right, listing AI tools: Smart Summary, Smart Prep and Smart Risk Scanner, each marked hidden from directors."
     - src: /protected/work/boards/s-governai-briefing.webp
       width: 1668
       height: 1192
+      at: 2.5
+      x: 33
+      w: 62
+      y: 0.40
+      speed: 1.3
       alt: "A board book open in the light theme, with the GovernAI panel on the right. A director asks for a one-paragraph briefing note, and the answer lists the source documents it drew from."
+    - src: /protected/work/boards/s-approvals-light.webp
+      width: 1896
+      height: 1348
+      at: 3.6
+      x: 22
+      w: 56
+      y: 0.58
+      speed: 1.1
+      alt: "The administrator Approvals page in the Decision Hub. Each approval shows status and progress, and an expanded one shows who approved, rejected, abstained or has not responded, with separate counts for all participants and for independent directors."
+    - src: /protected/work/boards/s-reader-search.webp
+      width: 2000
+      height: 1427
+      at: 4.6
+      x: 38
+      w: 58
+      y: 0.50
+      speed: 1.25
+      alt: "The Boards reader open on a board book. The left panel shows the agenda as a structured outline, the page has search terms highlighted in yellow, and the right panel lists search results in relevance order with the matching text in bold."
+    - src: /protected/work/boards/s-agendas.webp
+      width: 1898
+      height: 1354
+      at: 5.6
+      x: 24
+      w: 58
+      y: 0.52
+      speed: 1.1
+      alt: "The Agendas page in card view. Meetings are laid out in three yearly columns, each card showing the meeting, its plan and its committee."
 ---
 
 <!--

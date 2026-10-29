@@ -3,68 +3,94 @@
 import { useEffect, useRef } from "react";
 import { Pic } from "./GatedStage";
 
-type Img = { src: string; width: number; height: number; alt: string };
+type Img = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  base?: boolean;
+  at?: number;
+  x?: number;
+  w?: number;
+  y?: number;
+  speed?: number;
+};
 
-/** A screenshot taller than this (width over height) is shown at full width and panned, not shrunk to fit. */
-const TALL = 0.95;
-/** How much of each step is spent cross-fading into the next screenshot. */
-const BLEND = 0.22;
+/** Scroll distance per step, in screens of height. */
+const STEP = 0.85;
+/** How far from its step (in steps) a floating screen is fully visible, and where it has faded out. */
+const HOLD = 0.5;
+const GONE = 0.95;
+
+const clamp = (n: number, lo = 0, hi = 1) => Math.min(Math.max(n, lo), hi);
+const smooth = (t: number) => t * t * (3 - 2 * t);
 
 /**
- * Screenshots that play in order as the page scrolls: one is pinned in view and the next
- * rises over it. No captions; the pictures carry it. Tall screens pan top to bottom while
- * they hold. Without JS, or with reduced motion, it is a plain stack of images.
+ * One screen pinned in view and panning slowly, with the others floating over it at different
+ * depths: each rises into place, holds, and drifts up and away as the page scrolls. No captions.
+ * Without JS, on a narrow screen, or with reduced motion, it is a plain stack of images.
  */
 export function ScrollStory({ label, images }: { label: string; images: Img[] }) {
   const root = useRef<HTMLDivElement>(null);
-  const bar = useRef<HTMLSpanElement>(null);
-  const items = useRef<(HTMLDivElement | null)[]>([]);
+  const baseFrame = useRef<HTMLDivElement>(null);
+  const floats = useRef<(HTMLDivElement | null)[]>([]);
+
+  const base = images.find((i) => i.base) ?? images[0];
+  const over = images.filter((i) => i !== base);
+  const last = Math.max(...over.map((i) => i.at ?? 1), 1);
+  const steps = last + 0.9;
 
   useEffect(() => {
     const el = root.current;
     if (!el) return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mq = window.matchMedia("(min-width: 760px) and (prefers-reduced-motion: no-preference)");
     let raf = 0;
 
     function paint() {
       raf = 0;
       if (!el) return;
+      const vh = window.innerHeight;
       const r = el.getBoundingClientRect();
-      const travel = r.height - window.innerHeight;
-      const n = images.length;
-      const p = travel > 0 ? Math.min(Math.max(-r.top / travel, 0), 1) * n : 0; // 0..n
-      if (bar.current) bar.current.style.transform = `scaleX(${p / n})`;
-      items.current.forEach((node, i) => {
+      const travel = r.height - vh;
+      const t = travel > 0 ? clamp(-r.top / travel) : 0;
+      const p = t * steps; // 0..steps
+
+      const frame = baseFrame.current;
+      const bi = frame?.querySelector<HTMLElement>("img");
+      if (frame && bi) {
+        const room = Math.max(bi.offsetHeight - frame.clientHeight, 0);
+        bi.style.transform = `translate3d(0, ${-room * clamp(p / steps)}px, 0)`;
+      }
+
+      over.forEach((im, i) => {
+        const node = floats.current[i];
         if (!node) return;
-        const t = p - i; // <0 not yet, 0..1 holding, >1 gone
-        const into = Math.min(Math.max(t / BLEND, 0), 1);
-        const out = i < n - 1 ? Math.min(Math.max((t - (1 - BLEND)) / BLEND, 0), 1) : 0;
-        const ease = (x: number) => 1 - Math.pow(1 - x, 3);
-        const opacity = i === 0 ? 1 - ease(out) : ease(into) * (1 - ease(out));
-        const rise = (1 - ease(into)) * 56 - ease(out) * 28;
-        const scale = 0.965 + 0.035 * ease(into) - 0.02 * ease(out);
-        node.style.opacity = String(opacity);
-        node.style.transform = `translate3d(0, ${i === 0 ? -ease(out) * 28 : rise}px, 0) scale(${i === 0 ? 1 - 0.02 * ease(out) : scale})`;
-        node.style.visibility = opacity > 0.01 ? "visible" : "hidden";
-        const img = node.querySelector<HTMLElement>("img");
-        if (img && node.dataset.tall) {
-          const room = Math.max(img.offsetHeight - node.clientHeight, 0);
-          const hold = Math.min(Math.max((t - BLEND * 0.5) / (1 - BLEND * 1.5), 0), 1);
-          img.style.transform = `translate3d(0, ${-room * hold}px, 0)`;
-        }
+        const at = im.at ?? 1;
+        const isLast = at === last;
+        const d = isLast ? Math.min(p - at, 0) : p - at; // the last screen stays where it lands
+        const a = Math.abs(d);
+        const vis = a <= HOLD ? 1 : a >= GONE ? 0 : 1 - smooth((a - HOLD) / (GONE - HOLD));
+        const speed = im.speed ?? 1.1;
+        const y = (im.y ?? 0.5) * vh - d * vh * STEP * speed - node.offsetHeight / 2;
+        const scale = 1 - 0.04 * clamp(a);
+        node.style.opacity = String(vis);
+        node.style.visibility = vis > 0.01 ? "visible" : "hidden";
+        node.style.transform = `translate3d(0, ${y}px, 0) scale(${scale})`;
       });
     }
     const queue = () => {
       if (!raf) raf = requestAnimationFrame(paint);
     };
     function arm() {
+      if (!el) return;
       if (mq.matches) {
-        el!.removeAttribute("data-live");
-        items.current.forEach((n) => n && n.removeAttribute("style"));
-        return;
+        el.setAttribute("data-live", "");
+        queue();
+      } else {
+        el.removeAttribute("data-live");
+        floats.current.forEach((n) => n?.removeAttribute("style"));
+        baseFrame.current?.querySelector("img")?.removeAttribute("style");
       }
-      el!.setAttribute("data-live", "");
-      queue();
     }
     arm();
     mq.addEventListener("change", arm);
@@ -76,28 +102,35 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
       window.removeEventListener("resize", queue);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [images.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images.length, steps]);
 
   return (
-    <div className="story" ref={root} style={{ "--n": images.length } as React.CSSProperties} role="group" aria-label={label}>
+    <div
+      className="story"
+      ref={root}
+      style={{ "--len": `${Math.round(steps * STEP * 100)}svh` } as React.CSSProperties}
+      role="group"
+      aria-label={label}
+    >
       <div className="story-pin">
-        <div className="story-frame">
-          {images.map((im, i) => (
+        <div className="story-stage">
+          <div className="story-base" ref={baseFrame}>
+            <Pic src={base.src} width={base.width} height={base.height} alt={base.alt} decoding="async" />
+          </div>
+          {over.map((im, i) => (
             <div
               key={im.src}
-              className="story-item"
-              data-tall={im.width / im.height < TALL ? "" : undefined}
+              className="story-float"
+              style={{ "--x": `${im.x ?? 30}%`, "--w": `${im.w ?? 56}%`, zIndex: i + 2 } as React.CSSProperties}
               ref={(n) => {
-                items.current[i] = n;
+                floats.current[i] = n;
               }}
             >
-              <Pic src={im.src} width={im.width} height={im.height} alt={im.alt} decoding="async" loading={i < 2 ? "eager" : "lazy"} />
+              <Pic src={im.src} width={im.width} height={im.height} alt={im.alt} decoding="async" loading="lazy" />
             </div>
           ))}
         </div>
-        <span className="story-progress" aria-hidden="true">
-          <span ref={bar} />
-        </span>
       </div>
     </div>
   );
