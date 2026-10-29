@@ -318,6 +318,21 @@
   font-size: 0.9375rem;
   margin-top: 1.25rem;
 }
+.glance dt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.glance-co {
+  font-size: 1.0625rem;
+  line-height: 1.25;
+}
+.glance-yrs {
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
 .glance dd {
   margin: 0;
   color: var(--fg-muted);
@@ -329,7 +344,7 @@
 }
 @media (min-width: 760px) {
   .glance {
-    grid-template-columns: 17rem 1fr;
+    grid-template-columns: 14rem 1fr;
   }
   .glance dt,
   .glance dd {

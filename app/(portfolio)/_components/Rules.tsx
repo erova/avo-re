@@ -18,12 +18,14 @@ export function Rules() {
     const pending = els;
     pending.forEach((el) => el.setAttribute("data-rule", ""));
 
+    // A `display: contents` row has no box to intersect, so its first child stands in for it.
+    const owner = new Map<Element, Element>();
     const io = new IntersectionObserver(
       (entries) => {
         let n = 0;
         for (const e of entries) {
           if (!e.isIntersecting) continue;
-          const el = e.target as HTMLElement;
+          const el = (owner.get(e.target) ?? e.target) as HTMLElement;
           el.style.setProperty("--d", `${n++ * 110}ms`);
           el.setAttribute("data-in", "");
           io.unobserve(el);
@@ -31,7 +33,11 @@ export function Rules() {
       },
       { rootMargin: "0px 0px -10% 0px" },
     );
-    pending.forEach((el) => io.observe(el));
+    pending.forEach((el) => {
+      const watched = getComputedStyle(el).display === "contents" && el.firstElementChild ? el.firstElementChild : el;
+      if (watched !== el) owner.set(watched, el);
+      io.observe(watched);
+    });
     return () => io.disconnect();
   }, []);
   return null;

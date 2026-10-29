@@ -314,7 +314,19 @@ export default function Home() {
           <dl className="glance">
             {glance.map((g) => (
               <div className="glance-row" key={g.title}>
-                <dt>{g.title}</dt>
+                <dt>
+                  {(() => {
+                    const m = /^(.*?),\s*(\d.*)$/.exec(g.title);
+                    return m ? (
+                      <>
+                        <span className="glance-co">{m[1]}</span>
+                        <span className="glance-yrs">{m[2]}</span>
+                      </>
+                    ) : (
+                      g.title
+                    );
+                  })()}
+                </dt>
                 <dd>
                   <MdInline source={g.body} />
                 </dd>
