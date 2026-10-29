@@ -1766,9 +1766,11 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
 .story[data-live] .story-base {
   position: absolute;
   left: 0;
-  top: 8%;
+  top: 50%;
+  translate: 0 -50%;
   width: 50%;
-  height: 84%;
+  /* as tall as the image at this width, but never taller than the window allows: it pans only when it must */
+  max-height: 84%;
   overflow: hidden;
   border-radius: 14px;
   box-shadow:
