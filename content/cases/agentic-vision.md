@@ -59,11 +59,11 @@ showcase:
           text: The same kind of agent works over iMessage. It asks the general counsel two questions with tap-to-choose answers, then comes back when a to-do goes overdue to ask how to follow up.
           images:
             - src: /protected/work/agentic/s-phone-questions.webp
-              width: 698
-              height: 1482
-              alt: "An iPhone text thread. Cowork, the AI assistant, asks the general counsel two questions with tap-to-choose answers: whether to set up and assign two to-dos to an associate, and whether the updated plan should go to the Audit Committee."
+              width: 740
+              height: 1548
+              alt: "An iPhone text thread. the GRC Agent asks the general counsel two questions with tap-to-choose answers: whether to set up and assign two to-dos to an associate, and whether the updated plan should go to the Audit Committee."
             - src: /protected/work/agentic/s-phone-nudge.webp
-              width: 698
-              height: 1482
-              alt: "Later in the same iPhone thread, Cowork reports that the associate missed an 8-K sign-off deadline and asks how to follow up, offering to nudge them, give more time, or leave it to the general counsel."
+              width: 740
+              height: 1548
+              alt: "Later in the same iPhone thread, the GRC Agent reports that the associate missed an 8-K sign-off deadline and asks how to follow up, offering to nudge them, give more time, or leave it to the general counsel."
 ---

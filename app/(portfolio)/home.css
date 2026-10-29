@@ -1862,17 +1862,17 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
     0 0 0 1px oklch(1 0 0 / 0.08);
 }
 /* Phones are cut out, so they get a shadow that follows their outline, and sit side by side. */
-.split-shots[data-n="2"]:has(img[height="1482"]) {
+.split-shots[data-n="2"]:has(.shot-phone) {
   grid-template-columns: 1fr 1fr;
   align-items: start;
   gap: 1rem;
 }
-.split-shots img[height="1482"] {
+.split-shots .shot-phone {
   border-radius: 0;
   box-shadow: none;
   filter: drop-shadow(0 26px 30px oklch(0.12 0.05 8 / 0.5));
 }
-.split-shots img[height="1482"]:nth-child(2) {
+.split-shots .shot-phone:nth-child(2) {
   margin-top: 2.5rem;
 }
 

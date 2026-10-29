@@ -149,7 +149,7 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
             <p>{col.text}</p>
             <div className="split-shots" data-n={col.images.length}>
               {col.images.map((im) => (
-                <Pic key={im.src} {...img(im)} decoding="async" loading="lazy" />
+                <Pic key={im.src} {...img(im)} className={im.height > im.width * 1.5 ? "shot-phone" : undefined} decoding="async" loading="lazy" />
               ))}
             </div>
           </section>
