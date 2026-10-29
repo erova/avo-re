@@ -32,6 +32,15 @@ showcase:
         width: 1440
         height: 792
         alt: "The command center home for a fictional company, Meridian Holdings. A banner offers a Diligent AI Board Member, a greeting asks what is on your plate, a summary strip counts what needs you today, and a prompt box suggests a task, with starter cards for appointing a director, drafting a resolution and verifying signing authority."
+    - id: config
+      label: Configuration Manager
+      note: "An admin sets up Home by answering a few questions. The agent turns the answers into a Home for each role, and nothing is final. Everything can be fine-tuned afterwards, or by asking."
+      main:
+        src: /protected/work/agentic/s-config-poster.webp
+        video: /protected/work/agentic/s-config.mp4
+        width: 1440
+        height: 792
+        alt: "The Configuration Manager. A setup conversation asks whether to give everyone the same Home or tailor it by role. An admin chooses to tailor it, picks filings and deadlines for Corporate Secretaries and risk and legal matters for General Counsel, and chooses how much their team can change on their own. The agent summarizes the setup, and the Manager opens with a preview of the resulting deadline-first Home."
     - id: calendar
       label: Next Best Actions
       note: One timeline for you and your team, in the view that suits you. Hover any event to see what it links to and what the agent suggests next. Every action waits for your confirmation.
