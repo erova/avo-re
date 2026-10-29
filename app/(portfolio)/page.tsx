@@ -12,6 +12,7 @@ import { Rail } from "./_components/Rail";
 import { GatedStage, GatedShowcase, Pic, type GateText } from "./_components/GatedStage";
 import { Placeholder } from "./_components/Placeholder";
 import { ShowcaseTabs } from "./_components/ShowcaseTabs";
+import { ScrollStory } from "./_components/ScrollStory";
 import { McpMap, type McpData } from "./_components/McpMap";
 import { AtlasView, type AtlasData } from "./_components/AtlasFigures";
 import { VideoFacade } from "./_components/VideoFacade";
@@ -137,35 +138,10 @@ function StageKey({ items }: { items: (string | undefined)[] }) {
 
 function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: AtlasData; gate: GateText }) {
   if (!c.showcase) return null;
-  const tabs = c.showcase.tabs.map((t) => ({
+  const tabs = (c.showcase.tabs ?? []).map((t) => ({
     id: t.id,
     label: t.label,
-    content: t.compare ? (
-      <>
-        <div className="compare">
-          {t.compare.map((im) => {
-            const cut = im.caption?.indexOf(": ") ?? -1;
-            return (
-              <figure key={im.src}>
-                {im.caption && (
-                  <figcaption>
-                    {cut > 0 ? (
-                      <>
-                        <strong>{im.caption.slice(0, cut)}</strong>
-                        <span>{im.caption.slice(cut + 2)}</span>
-                      </>
-                    ) : (
-                      <span>{im.caption}</span>
-                    )}
-                  </figcaption>
-                )}
-                <Pic {...img(im)} decoding="async" loading="lazy" />
-              </figure>
-            );
-          })}
-        </div>
-      </>
-    ) : t.main ? (
+    content: t.main ? (
       <>
         <StageKey items={[t.main.caption, ...(t.panels ?? []).map((p) => p.caption)]} />
         <div className="stage">
@@ -189,8 +165,13 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
       <McpMap data={mcp} />
     ),
   }));
-  const tabsEl = <ShowcaseTabs label={c.showcase.label} tabs={tabs} />;
-  const first = c.showcase.tabs.find((t) => t.main)?.main;
+  const story = c.showcase.layout === "story" ? (c.showcase.images ?? []) : null;
+  const tabsEl = story ? (
+    <ScrollStory label={c.showcase.label} images={story} />
+  ) : (
+    <ShowcaseTabs label={c.showcase.label} tabs={tabs} />
+  );
+  const first = story ? story[0] : (c.showcase.tabs ?? []).find((t) => t.main)?.main;
   return c.showcase.gated && first ? (
     <GatedShowcase probe={first.src} ratio={`${first.width} / ${first.height}`} gate={gate}>
       {tabsEl}

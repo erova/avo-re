@@ -27,52 +27,44 @@ asking: A better destination doesn’t make change easy. How do you get teams to
 showcase:
   label: Views of Boards
   gated: true
-  tabs:
-    - id: home
-      label: New Home
-      main:
-        src: /protected/work/boards/home-after.webp
-        width: 1614
-        height: 1030
-        caption: "New Home: what needs your review, and ask across every book"
-        alt: "The new Boards Home. A seven-item sidebar, a prompt box that asks what would you like to know across current and archived books, and a Waiting for your review list with 44 approvals."
-    - id: reading
-      label: Reading
-      main:
-        src: /protected/work/boards/reader-search.webp
-        width: 2000
-        height: 1423
-        caption: "Reading: structured navigation and relevance-ordered search"
-        alt: "The Boards reader open on a board book. The left panel shows the agenda as a structured outline, the page has search terms highlighted in yellow, and the right panel lists search results in relevance order with the matching text in bold."
-    - id: approvals
-      label: Approvals
-      main:
-        src: /protected/work/boards/approvals.webp
-        width: 1892
-        height: 1344
-        caption: "Approvals: they understand independent directors"
-        alt: "The administrator Approvals page in the Decision Hub. A list of approvals with status and progress, and one expanded to show who approved, rejected, abstained or has not responded, with separate counts for all participants and for independent directors."
-    - id: governai
-      label: GovernAI
-      main:
-        src: /protected/work/boards/governai-dark.webp
-        width: 1652
-        height: 1176
-        caption: "GovernAI: the foundation made room for AI, with cited sources"
-        alt: "A board book open in the dark theme, with the GovernAI panel on the right. A director asks for a one-paragraph briefing note, and the answer lists the source documents it drew from."
-    - id: legacy
-      label: Legacy Home
-      compare:
-        - src: /protected/work/boards/home-before.webp
-          width: 2000
-          height: 1456
-          caption: "Legacy Home: no actions, news in a sidebar"
-          alt: "The legacy Boards Home. A navy header and a ten-item sidebar, an Actions section that reads there are no actions at the moment, a Books and reports list, and a News and insights column on the right."
-        - src: /protected/work/boards/home-after.webp
-          width: 1614
-          height: 1030
-          caption: "New Home: what needs your review, and ask across every book"
-          alt: "The new Boards Home. A seven-item sidebar, a prompt box that asks what would you like to know across current and archived books, and a Waiting for your review list with 44 approvals."
+  layout: story
+  images:
+    - src: /protected/work/boards/s-home-director.webp
+      width: 916
+      height: 1246
+      alt: "The Boards Home as a director sees it. A prompt box asks what would you like to know across current and archived books, and below it sit a Waiting for your review list of 44 approvals, books with upcoming meetings, and competitor updates summarized by AI."
+    - src: /protected/work/boards/s-home-admin.webp
+      width: 1614
+      height: 1982
+      alt: "The Boards Home as an administrator sees it, with a seven-item sidebar. The same prompt box and Waiting for your review list sit above books with upcoming meetings and competitor updates."
+    - src: /protected/work/boards/s-agendas.webp
+      width: 1898
+      height: 1354
+      alt: "The Agendas page in card view. Meetings are laid out in three yearly columns, each card showing the meeting, its plan and its committee."
+    - src: /protected/work/boards/s-approvals-light.webp
+      width: 1896
+      height: 1348
+      alt: "The administrator Approvals page in the Decision Hub. Each approval shows status and progress, and an expanded one shows who approved, rejected, abstained or has not responded, with separate counts for all participants and for independent directors."
+    - src: /protected/work/boards/s-approvals-dark.webp
+      width: 1084
+      height: 868
+      alt: "The same Approvals page in the dark theme."
+    - src: /protected/work/boards/s-book-builder.webp
+      width: 1556
+      height: 1108
+      alt: "A book open for review. An agenda outline sits in a left panel, with a cover page and a spread of the report beside it, and Publish and GovernAI buttons at the top."
+    - src: /protected/work/boards/s-reader-search.webp
+      width: 2000
+      height: 1427
+      alt: "The Boards reader open on a board book. The left panel shows the agenda as a structured outline, the page has search terms highlighted in yellow, and the right panel lists search results in relevance order with the matching text in bold."
+    - src: /protected/work/boards/s-governai-tools.webp
+      width: 2000
+      height: 1159
+      alt: "A filing open in the reader with the GovernAI panel on the right, listing AI tools: Smart Summary, Smart Prep and Smart Risk Scanner, each marked hidden from directors."
+    - src: /protected/work/boards/s-governai-briefing.webp
+      width: 1668
+      height: 1192
+      alt: "A board book open in the light theme, with the GovernAI panel on the right. A director asks for a one-paragraph briefing note, and the answer lists the source documents it drew from."
 ---
 
 <!--

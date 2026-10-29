@@ -1724,44 +1724,87 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   }
 }
 
-/* Legacy Home: the old and new side by side, old on the left. Each figure carries its own ruled caption. */
-.compare {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1rem, 2.5vw, 2rem);
-  align-items: start;
+/* Scroll story: screenshots pinned in view, each rising over the last as the page scrolls.
+   Without JS (or with reduced motion) the pin is off and they stack as plain figures. */
+.story {
   width: min(100%, 1040px);
-  margin: clamp(2.5rem, 5vw, 4rem) auto clamp(5rem, 9vw, 8rem);
+  margin: clamp(2.5rem, 5vw, 4rem) auto clamp(4rem, 8vw, 7rem);
 }
-.compare figure {
-  margin: 0;
+.story-frame {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
 }
-.compare figcaption {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 0.6rem;
-  padding: 0.75rem 0 0;
-  margin-bottom: 1.25rem;
-  border-top: 1px solid var(--hairline);
-  font: 400 0.875rem/1.45 var(--font-ui);
-}
-.compare figcaption strong {
-  font-weight: 600;
-}
-.compare figcaption span {
-  color: var(--fg-muted);
-}
-.compare img {
+.story-item img {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow:
-    0 40px 70px -35px oklch(0.2 0.06 8 / 0.6),
+    0 50px 90px -40px oklch(0.2 0.06 8 / 0.6),
     0 0 0 1px oklch(1 0 0 / 0.08);
 }
-@media (max-width: 759px) {
-  .compare {
-    grid-template-columns: 1fr;
-  }
+.story-progress {
+  display: none;
+}
+.story[data-live] {
+  /* each screenshot gets 70% of a screen of scrolling, plus one screen to pin */
+  height: calc(var(--n) * 70svh + 100svh);
+}
+.story[data-live] .story-pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  align-content: center;
+  gap: 1.25rem;
+}
+.story[data-live] .story-frame {
+  position: relative;
+  display: block;
+  height: min(76svh, 770px);
+}
+.story[data-live] .story-item {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  will-change: transform, opacity;
+}
+.story[data-live] .story-item:not(:first-child) {
+  visibility: hidden;
+}
+.story[data-live] .story-item img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(76svh, 770px);
+}
+/* A tall screen fills the frame's width and pans inside it; it is clipped by the frame, not the card. */
+.story[data-live] .story-item[data-tall] {
+  place-items: start center;
+  overflow: hidden;
+  border-radius: 14px;
+  box-shadow:
+    0 50px 90px -40px oklch(0.2 0.06 8 / 0.6),
+    0 0 0 1px oklch(1 0 0 / 0.08);
+}
+.story[data-live] .story-item[data-tall] img {
+  width: 100%;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
+  will-change: transform;
+}
+.story[data-live] .story-progress {
+  display: block;
+  height: 1px;
+  background: var(--hairline);
+  overflow: hidden;
+}
+.story[data-live] .story-progress span {
+  display: block;
+  height: 100%;
+  background: var(--fg-muted);
+  transform-origin: left;
+  transform: scaleX(0);
 }

@@ -13,6 +13,8 @@ export type GateText = {
   error: string;
 };
 
+const UNLOCKED = "avo:unlocked";
+
 /** Shared by both gates: asks the server whether the access cookie is already set, and posts the code. */
 function useGate(probe: string) {
   // null while we find out whether the cookie is already set.
@@ -25,8 +27,12 @@ function useGate(probe: string) {
     fetch(probe, { method: "HEAD" })
       .then((r) => live && setOpen(r.ok))
       .catch(() => live && setOpen(false));
+    // One code unlocks every gate on the page, not just the one it was typed into.
+    const onUnlock = () => setOpen(true);
+    window.addEventListener(UNLOCKED, onUnlock);
     return () => {
       live = false;
+      window.removeEventListener(UNLOCKED, onUnlock);
     };
   }, [probe]);
 
@@ -41,7 +47,7 @@ function useGate(probe: string) {
       body: JSON.stringify({ code }),
     }).catch(() => null);
     setBusy(false);
-    if (res?.ok) setOpen(true);
+    if (res?.ok) window.dispatchEvent(new Event(UNLOCKED));
     else setFailed(true);
   }
   return { open, failed, busy, submit };
