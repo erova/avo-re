@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 
 type Img = { src: string; width: number; height: number; alt: string };
 type Gate = GateText;
@@ -128,4 +128,27 @@ export function GatedStage({ main, panels, gate }: { main: Img; panels: Img[]; g
 export function Pic(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
   return <img {...props} />;
+}
+
+/**
+ * A short silent loop in place of a still. It plays only while on screen and never under reduced
+ * motion, where the poster stays. Like `Pic`, it is rendered by the client so nothing asks for
+ * the file before the access code is entered.
+ */
+export function Clip({ src, poster, alt, width, height }: { src: string; poster: string; alt: string; width: number; height: number }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !calm.matches) v.play().catch(() => {});
+      else v.pause();
+    });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <video ref={ref} src={src} poster={poster} width={width} height={height} aria-label={alt} role="img" muted loop playsInline preload="metadata" />
+  );
 }

@@ -17,6 +17,8 @@ export type StageImage = {
   height: number;
   alt: string;
   caption?: string;
+  /** A silent loop (gated like the image); `src` is then its poster. */
+  video?: string;
   base?: boolean;
   swap?: number;
   at?: number;

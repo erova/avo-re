@@ -9,7 +9,7 @@ import {
 } from "@/lib/portfolio";
 import { getAllWritingMeta } from "@/lib/writing";
 import { Rail } from "./_components/Rail";
-import { GatedStage, GatedShowcase, Pic, type GateText } from "./_components/GatedStage";
+import { GatedStage, GatedShowcase, Pic, Clip, type GateText } from "./_components/GatedStage";
 import { Placeholder } from "./_components/Placeholder";
 import { ShowcaseTabs } from "./_components/ShowcaseTabs";
 import { ScrollStory } from "./_components/ScrollStory";
@@ -171,7 +171,11 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
         <StageKey items={[t.main.caption, ...(t.panels ?? []).map((p) => p.caption)]} />
         <div className="stage">
           <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
-            <Pic {...img(t.main)} decoding="async" />
+            {t.main.video ? (
+              <Clip src={t.main.video} poster={t.main.src} alt={t.main.alt} width={t.main.width} height={t.main.height} />
+            ) : (
+              <Pic {...img(t.main)} decoding="async" />
+            )}
           </div>
           {(t.panels ?? []).map((p, i) => (
             <div

@@ -10,9 +10,10 @@ const TYPES: Record<string, string> = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".avif": "image/avif",
+  ".mp4": "video/mp4",
 };
 
-export async function GET(_req: Request, ctx: { params: Promise<{ path: string[] }> }) {
+export async function GET(req: Request, ctx: { params: Promise<{ path: string[] }> }) {
   const jar = await cookies();
   if (!cookieIsValid(jar.get(ACCESS_COOKIE)?.value)) {
     return new Response("Locked", { status: 401, headers: { "Cache-Control": "no-store" } });
@@ -23,9 +24,22 @@ export async function GET(_req: Request, ctx: { params: Promise<{ path: string[]
   if (!type || !file.startsWith(ROOT + path.sep)) return new Response("Not found", { status: 404 });
   try {
     const data = await fs.readFile(file);
-    return new Response(new Uint8Array(data), {
-      headers: { "Content-Type": type, "Cache-Control": "private, no-store" },
-    });
+    const headers = { "Content-Type": type, "Cache-Control": "private, no-store", "Accept-Ranges": "bytes" };
+    // Safari will not play a video unless it can ask for byte ranges.
+    const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.get("range") ?? "");
+    if (range && (range[1] || range[2])) {
+      const size = data.length;
+      const start = range[1] ? Number(range[1]) : Math.max(size - Number(range[2]), 0);
+      const end = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
+      if (start > end || start >= size) {
+        return new Response(null, { status: 416, headers: { ...headers, "Content-Range": `bytes */${size}` } });
+      }
+      return new Response(new Uint8Array(data.subarray(start, end + 1)), {
+        status: 206,
+        headers: { ...headers, "Content-Range": `bytes ${start}-${end}/${size}`, "Content-Length": String(end - start + 1) },
+      });
+    }
+    return new Response(new Uint8Array(data), { headers: { ...headers, "Content-Length": String(data.length) } });
   } catch {
     return new Response("Not found", { status: 404 });
   }
