@@ -1187,7 +1187,7 @@ export default function EntitiesIntelligencePage() {
               overflowY: "auto",
             }}>
               {/* Root Entity */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "max-content", minWidth: "100%" }}>
                 <EntityCard 
                   entity={ENTITIES[0]} 
                   isSelected={selectedEntity === ENTITIES[0].id}

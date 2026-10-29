@@ -54,46 +54,47 @@ showcase:
       layers:
         - src: /protected/work/agentic/s-entities.webp
           width: 2000
-          height: 1429
+          height: 1355
           alt: "An entity structure explorer for a fictional company. An org chart sits beside an AI insights panel with complexity indicators and benchmarks against peer organizations."
         - src: /protected/work/agentic/s-cross-sell.webp
           width: 2000
           height: 1077
-          x: 40
-          y: 0.74
-          w: 58
+          x: 22
+          y: 0.64
+          w: 52
           speed: 110
           alt: "A board book open with the GovernAI panel. A slide lists six entities as plain text, and the panel suggests that Diligent Entities could show them as an org chart. The slide shows a preview of that chart, built from public information."
     - id: headless
       label: Headless UI
+      ratio: "1 / 0.84"
       layers:
         - src: /protected/work/agentic/s-teams.webp
           width: 2000
           height: 1309
-          w: 78
+          w: 58
           alt: "A Diligent Risk Agent inside Microsoft Teams. It reports three emerging risks with severity, recommends an owner for each, and offers buttons to assign the recommended owners or choose different ones."
         - src: /protected/work/agentic/s-slack.webp
           width: 2000
           height: 1247
-          x: 2
-          y: 0.6
-          w: 46
+          x: 0
+          y: 0.5
+          w: 58
           speed: 70
           alt: "The same agent in Slack."
         - src: /protected/work/agentic/s-phone-questions.webp
           width: 698
           height: 1482
-          x: 62
+          x: 60
           y: 0
-          w: 20
+          w: 21
           speed: 120
           alt: "An iPhone text thread. Cowork, the AI assistant, asks the general counsel two questions with tap-to-choose answers: whether to set up and assign two to-dos to an associate, and whether the updated plan should go to the Audit Committee."
         - src: /protected/work/agentic/s-phone-nudge.webp
           width: 698
           height: 1482
-          x: 80
-          y: 0.17
-          w: 20
+          x: 79
+          y: 0.43
+          w: 21
           speed: 90
           alt: "Later in the same iPhone thread, Cowork reports that the associate missed an 8-K sign-off deadline and asks how to follow up, offering to nudge them, give more time, or leave it to the general counsel."
 ---

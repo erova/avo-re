@@ -145,7 +145,7 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
     content: t.views ? (
       <ViewSwitch label={t.label} views={t.views} />
     ) : t.layers ? (
-      <div className="stage stage-layers">
+      <div className="stage stage-layers" style={t.ratio ? { aspectRatio: t.ratio } : undefined}>
         {t.layers.map((l, i) =>
           i === 0 ? (
             <div

@@ -38,6 +38,8 @@ export type ShowcaseTab = {
   panels?: StageImage[];
   views?: (StageImage & { label: string })[];
   layers?: StageImage[];
+  /** `layers` only: the stage's aspect ratio, when the layers extend below the first. */
+  ratio?: string;
   view?: string;
 };
 /**
