@@ -18,19 +18,69 @@ outcomes:
   - We showed it onstage at Diligent's April 2026 customer conference.
 asking: On 0-to-1 work, is cross-product consistency a hill worth dying on?
 media: "Interactive state viewer of the prototype (step 3)"
-stage:
-  main:
-    src: /protected/work/agentic-vision/frame.webp
-    width: 2208
-    height: 1380
-    alt: "The prototype's home screen in a calm state. The headline reads 'Everything looks good right now', with a prompt box and recent activity below."
-  panels:
-    - src: /protected/work/agentic-vision/prompt.webp
-      width: 1720
-      height: 410
-      alt: "A prompt panel that has already framed the question: 'What should we review about INC-2847?', with suggested next steps."
-    - src: /protected/work/agentic-vision/incident.webp
-      width: 1720
-      height: 480
-      alt: "An active security incident card marked high urgency. An agent has completed 5 of 8 response steps, with Assign and Review actions."
+showcase:
+  label: Prototypes across the company
+  gated: true
+  layout: story
+  images:
+    - src: /protected/work/agentic/s-home.webp
+      width: 2000
+      height: 1454
+      base: true
+      w: 60
+      alt: "The command center home for a fictional company, Meridian Holdings. A banner offers a Diligent AI Board Member, a greeting asks what is on your plate, a summary strip counts what needs you today, and a prompt box suggests a task, with starter cards for appointing a director, drafting a resolution and verifying signing authority."
+    - src: /protected/work/agentic/s-cal-cards.webp
+      width: 2000
+      height: 1399
+      at: 1.0
+      x: 36
+      w: 60
+      y: 0.62
+      speed: 1.15
+      alt: "The shared calendar in cards view, with columns for the last few events, the next few, team and peer milestones, and corporate and market dates, above a row of suggested tasks."
+    - src: /protected/work/agentic/s-cal-timeline.webp
+      width: 2000
+      height: 1407
+      at: 2.0
+      x: 28
+      w: 58
+      y: 0.45
+      speed: 1.0
+      alt: "The same calendar as a timeline. A line marks today, October 7. Events above it just happened, events below are coming up, colored by whether they come from the team, from peers or from the market."
+    - src: /protected/work/agentic/s-cal-week.webp
+      width: 2000
+      height: 1439
+      at: 3.0
+      x: 38
+      w: 58
+      y: 0.6
+      speed: 1.25
+      alt: "The calendar in a two-week view. A popover on the D&O questionnaires event explains that two directors have not returned theirs, links the tracker, and offers AI-suggested next steps, noting that each action waits for confirmation."
+    - src: /protected/work/agentic/s-cross-sell.webp
+      width: 2000
+      height: 1077
+      at: 4.0
+      x: 24
+      w: 66
+      y: 0.5
+      speed: 1.1
+      alt: "A board book open with the GovernAI panel. A slide lists six entities as plain text, and the panel suggests that Diligent Entities could show them as an org chart. The slide shows a preview of that chart, built from public information."
+    - src: /protected/work/agentic/s-teams.webp
+      width: 2000
+      height: 1309
+      at: 5.0
+      x: 36
+      w: 60
+      y: 0.55
+      speed: 1.2
+      alt: "A Diligent Risk Agent inside Microsoft Teams. It reports three emerging risks with severity, recommends an owner for each, and offers buttons to assign the recommended owners or choose different ones."
+    - src: /protected/work/agentic/s-entities.webp
+      width: 2000
+      height: 1429
+      at: 6.0
+      x: 30
+      w: 64
+      y: 0.5
+      speed: 1.1
+      alt: "An entity structure explorer for a fictional company. An org chart sits beside an AI insights panel with complexity indicators and benchmarks against peer organizations."
 ---

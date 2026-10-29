@@ -120,7 +120,7 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
     >
       <div className="story-pin">
         <div className="story-stage">
-          <div className="story-base" ref={baseFrame} style={{ aspectRatio: `${base.width} / ${base.height}` }}>
+          <div className="story-base" ref={baseFrame} style={{ aspectRatio: `${base.width} / ${base.height}`, "--bw": `${base.w ?? 50}%` } as React.CSSProperties}>
             <Pic src={base.src} width={base.width} height={base.height} alt={base.alt} decoding="async" />
             {swap && <Pic className="story-swap" src={swap.src} width={swap.width} height={swap.height} alt="" aria-hidden="true" decoding="async" loading="lazy" />}
           </div>
