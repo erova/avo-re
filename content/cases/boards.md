@@ -34,6 +34,11 @@ showcase:
       height: 1246
       base: true
       alt: "The Boards Home as a director sees it. A prompt box asks what would you like to know across current and archived books, and below it sit a Waiting for your review list of 44 approvals, books with upcoming meetings, and competitor updates summarized by AI."
+    - src: /protected/work/boards/s-home-director-dark.webp
+      width: 1600
+      height: 2176
+      swap: 2.9
+      alt: ""
     - src: /protected/work/boards/s-book-builder.webp
       width: 1556
       height: 1108
