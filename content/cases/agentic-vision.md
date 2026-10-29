@@ -26,6 +26,7 @@ showcase:
   tabs:
     - id: home
       label: Agentic Home
+      note: "The General Counsel can see possible risks monitored in different Diligent tools and can now begin the risk management process without navigating to several disparate systems. The AI identifies the possible risk, offers suggestions, and lets the GC decide how to proceed."
       main:
         src: /protected/work/agentic/s-home-poster.webp
         video: /protected/work/agentic/s-home.mp4
