@@ -35,7 +35,6 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
   const root = useRef<HTMLDivElement>(null);
   const baseFrame = useRef<HTMLDivElement>(null);
   const floats = useRef<(HTMLDivElement | null)[]>([]);
-  const dim = useRef<HTMLDivElement>(null);
 
   const base = images.find((i) => i.base) ?? images[0];
   const swap = images.find((i) => i !== base && i.swap !== undefined);
@@ -67,8 +66,6 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
         });
       }
 
-      // the base darkens a little as screens pass in front of it
-      let front = 0;
 
       over.forEach((im, i) => {
         const node = floats.current[i];
@@ -81,12 +78,10 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
         const speed = im.speed ?? 1.1;
         const y = (im.y ?? 0.5) * vh - d * vh * STEP * speed - node.offsetHeight / 2;
         const scale = 1 - 0.04 * clamp(a);
-        front = Math.max(front, vis * (1 - clamp(a / HOLD) * 0.6));
         node.style.opacity = String(vis);
         node.style.visibility = vis > 0.01 ? "visible" : "hidden";
         node.style.transform = `translate3d(0, ${y}px, 0) scale(${scale})`;
       });
-      if (dim.current) dim.current.style.opacity = String(0.26 * front);
     }
     const queue = () => {
       if (!raf) raf = requestAnimationFrame(paint);
@@ -100,7 +95,6 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
         el.removeAttribute("data-live");
         floats.current.forEach((n) => n?.removeAttribute("style"));
         baseFrame.current?.querySelectorAll("img").forEach((i) => i.removeAttribute("style"));
-        [dim].forEach((r) => r.current?.removeAttribute("style"));
       }
     }
     arm();
@@ -128,7 +122,6 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
         <div className="story-stage">
           <div className="story-base" ref={baseFrame} style={{ aspectRatio: `${base.width} / ${base.height}` }}>
             <Pic src={base.src} width={base.width} height={base.height} alt={base.alt} decoding="async" />
-            <div className="story-dim" ref={dim} aria-hidden="true" />
             {swap && <Pic className="story-swap" src={swap.src} width={swap.width} height={swap.height} alt="" aria-hidden="true" decoding="async" loading="lazy" />}
           </div>
           {over.map((im, i) => (

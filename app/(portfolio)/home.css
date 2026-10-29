@@ -1797,18 +1797,6 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
     0 calc(6px * var(--d)) calc(14px * var(--d)) oklch(0.1 0.05 8 / 0.28),
     0 0 0 1px oklch(1 0 0 / 0.1);
 }
-.story-dim {
-  display: none;
-}
-.story[data-live] .story-dim {
-  display: block;
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  background: oklch(0.14 0.05 8);
-  opacity: 0;
-}
 .story-swap {
   display: none;
 }
