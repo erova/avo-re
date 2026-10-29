@@ -6,7 +6,7 @@ photo:
   width: 2400
   height: 1597
   alt: Chris Avore speaking on a stage lit in magenta and blue, in a blue sweater and jeans, standing behind oversized concrete letters, with a laptop on a table to his right.
-  credit: "[DECIDE: photographer credit and event]"
+  credit: "Photo: Crafthub"
 card:
   lede: "Speaking since 2010: 24+ conferences in 10 countries."
   linkLabel: Book a talk
