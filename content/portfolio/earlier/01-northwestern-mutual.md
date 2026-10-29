@@ -7,5 +7,5 @@ Took over a 120-person org with 36% annual attrition and low partner confidence.
 
 Programs my org partnered on: the Planning Experience reached 90% advisor adoption and 30,000+ plans in its first 90 days; accelerated underwriting cut issuance from four weeks to three days (MIT Sloan Management Review, March 2023); the mobile redesign grew MAU 20.3% YoY.
 
-[Balancing vision and delivery in a flagship mobile redesign](/work/nm-mobile)  
-[Field Experience Blueprint](/work/nm-blueprint)
+[Balancing vision and delivery in a flagship mobile redesign](/writing/nm-mobile)  
+[Field Experience Blueprint](/writing/nm-blueprint)

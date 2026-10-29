@@ -9,8 +9,15 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_TAMBO_API_KEY: process.env.NEXT_PUBLIC_TAMBO_API_KEY,
   },
   async redirects() {
-    if (!portfolioHost) return [];
+    // Northwestern Mutual case studies moved from /work to /writing.
+    const moved = ["nm-mobile", "nm-blueprint"].map((slug) => ({
+      source: `/work/${slug}`,
+      destination: `/writing/${slug}`,
+      permanent: true,
+    }));
+    if (!portfolioHost) return moved;
     return [
+      ...moved,
       {
         // Only the front door. Prototype and content URLs under avo.re keep working.
         source: "/",
