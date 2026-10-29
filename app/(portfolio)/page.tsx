@@ -141,27 +141,19 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
   const tabs = (c.showcase.tabs ?? []).map((t) => ({
     id: t.id,
     label: t.label,
-    content: t.layers ? (
-      <div className="stage stage-layers" style={t.ratio ? { aspectRatio: t.ratio } : undefined}>
-        {t.layers.map((l, i) =>
-          i === 0 ? (
-            <div
-              key={l.src}
-              className="stage-main pane"
-              style={{ aspectRatio: `${l.width} / ${l.height}`, width: `${l.w ?? 100}%`, marginLeft: `${l.x ?? 0}%` }}
-            >
-              <Pic {...img(l)} decoding="async" />
+    content: t.split ? (
+      <div className="split">
+        {t.split.map((col) => (
+          <section className="split-col" key={col.title}>
+            <h4>{col.title}</h4>
+            <p>{col.text}</p>
+            <div className="split-shots" data-n={col.images.length}>
+              {col.images.map((im) => (
+                <Pic key={im.src} {...img(im)} decoding="async" loading="lazy" />
+              ))}
             </div>
-          ) : (
-            <div
-              key={l.src}
-              className="panel pane"
-              style={{ aspectRatio: `${l.width} / ${l.height}`, left: `${l.x ?? 0}%`, top: `${(l.y ?? 0) * 100}%`, width: `${l.w ?? 40}%`, "--depth": `${l.speed ?? 90}px` } as React.CSSProperties}
-            >
-              <Pic {...img(l)} decoding="async" loading="lazy" />
-            </div>
-          ),
-        )}
+          </section>
+        ))}
       </div>
     ) : t.main ? (
       <>
@@ -199,7 +191,7 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
   );
   const first = story
     ? story[0]
-    : (c.showcase.tabs ?? []).map((t) => t.main ?? t.layers?.[0]).find(Boolean);
+    : (c.showcase.tabs ?? []).map((t) => t.main ?? t.split?.[0]?.images[0]).find(Boolean);
   return c.showcase.gated && first ? (
     <GatedShowcase probe={first.src} ratio={`${first.width} / ${first.height}`} gate={gate}>
       {tabsEl}

@@ -40,52 +40,29 @@ showcase:
         width: 1440
         height: 792
         alt: "The shared calendar changing view in place. It starts as cards in four columns: the last few events, the next few, team and peer milestones, and corporate and market dates. It becomes a timeline around today, October 7, then a two-week calendar. Hovering the D&O questionnaires event opens a popover saying two directors have not returned theirs, with a link to the tracker and AI-suggested next steps, each waiting for confirmation. It then returns to cards."
-    - id: entities
-      label: Agentic Entity Management
-      layers:
-        - src: /protected/work/agentic/s-entities.webp
-          width: 2000
-          height: 1355
-          alt: "An entity structure explorer for a fictional company. An org chart sits beside an AI insights panel with complexity indicators and benchmarks against peer organizations."
-        - src: /protected/work/agentic/s-cross-sell.webp
-          width: 2000
-          height: 1077
-          x: 22
-          y: 0.64
-          w: 52
-          speed: 110
-          alt: "A board book open with the GovernAI panel. A slide lists six entities as plain text, and the panel suggests that Diligent Entities could show them as an org chart. The slide shows a preview of that chart, built from public information."
     - id: headless
       label: Headless UI
-      ratio: "1 / 0.84"
-      layers:
-        - src: /protected/work/agentic/s-teams.webp
-          width: 2000
-          height: 1309
-          w: 58
-          alt: "A Diligent Risk Agent inside Microsoft Teams. It reports three emerging risks with severity, recommends an owner for each, and offers buttons to assign the recommended owners or choose different ones."
-        - src: /protected/work/agentic/s-slack.webp
-          width: 2000
-          height: 1247
-          x: 0
-          y: 0.5
-          w: 58
-          speed: 70
-          alt: "The same agent in Slack."
-        - src: /protected/work/agentic/s-phone-questions.webp
-          width: 698
-          height: 1482
-          x: 60
-          y: 0
-          w: 21
-          speed: 120
-          alt: "An iPhone text thread. Cowork, the AI assistant, asks the general counsel two questions with tap-to-choose answers: whether to set up and assign two to-dos to an associate, and whether the updated plan should go to the Audit Committee."
-        - src: /protected/work/agentic/s-phone-nudge.webp
-          width: 698
-          height: 1482
-          x: 79
-          y: 0.43
-          w: 21
-          speed: 90
-          alt: "Later in the same iPhone thread, Cowork reports that the associate missed an 8-K sign-off deadline and asks how to follow up, offering to nudge them, give more time, or leave it to the general counsel."
+      split:
+        - title: In Teams and Slack
+          text: The agent has no app of its own. In Teams and Slack, the Risk Agent reports three emerging risks, recommends an owner for each, and waits for one click to assign them.
+          images:
+            - src: /protected/work/agentic/s-teams.webp
+              width: 1976
+              height: 1288
+              alt: "A Diligent Risk Agent inside Microsoft Teams. It reports three emerging risks with severity, recommends an owner for each, and offers buttons to assign the recommended owners or choose different ones."
+            - src: /protected/work/agentic/s-slack.webp
+              width: 2000
+              height: 1247
+              alt: "The same agent in Slack, with the same three risks, the same recommended owners and the same two buttons."
+        - title: By text message
+          text: The same kind of agent works over iMessage. It asks the general counsel two questions with tap-to-choose answers, then comes back when a to-do goes overdue to ask how to follow up.
+          images:
+            - src: /protected/work/agentic/s-phone-questions.webp
+              width: 698
+              height: 1482
+              alt: "An iPhone text thread. Cowork, the AI assistant, asks the general counsel two questions with tap-to-choose answers: whether to set up and assign two to-dos to an associate, and whether the updated plan should go to the Audit Committee."
+            - src: /protected/work/agentic/s-phone-nudge.webp
+              width: 698
+              height: 1482
+              alt: "Later in the same iPhone thread, Cowork reports that the associate missed an 8-K sign-off deadline and asks how to follow up, offering to nudge them, give more time, or leave it to the general counsel."
 ---

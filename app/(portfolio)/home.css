@@ -1822,8 +1822,56 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   opacity: 0;
 }
 
-/* Layered screens are shown whole; only the frames drift. */
-.stage-layers .pane img {
-  scale: 1;
-  animation: none;
+/* Showcase: two columns, each a line of context above its screens. */
+.split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(3rem, 6vw, 4rem);
+  width: min(100%, 1040px);
+  margin: clamp(2.5rem, 5vw, 4rem) auto clamp(5rem, 9vw, 8rem);
+}
+@media (min-width: 760px) {
+  .split {
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+}
+.split-col h4 {
+  font: 600 0.9375rem/1.3 var(--font-ui);
+  margin: 0 0 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--hairline);
+}
+.split-col p {
+  margin: 0 0 1.75rem;
+  max-width: 34rem;
+  color: var(--fg-muted);
+  font: 400 0.9375rem/1.5 var(--font-ui);
+}
+.split-shots {
+  display: grid;
+  gap: 1.25rem;
+}
+.split-shots img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow:
+    0 30px 60px -28px oklch(0.15 0.05 8 / 0.65),
+    0 0 0 1px oklch(1 0 0 / 0.08);
+}
+/* Phones are cut out, so they get a shadow that follows their outline, and sit side by side. */
+.split-shots[data-n="2"]:has(img[height="1482"]) {
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 1rem;
+}
+.split-shots img[height="1482"] {
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 26px 30px oklch(0.12 0.05 8 / 0.5));
+}
+.split-shots img[height="1482"]:nth-child(2) {
+  margin-top: 2.5rem;
 }

@@ -29,17 +29,16 @@ export type StageImage = {
 };
 export type Stage = { main: StageImage; panels: StageImage[] };
 /**
- * A pill's content is one of: `main` with floating `panels`; `layers` (the first fills the stage,
- * the rest float over it at `x` and `w` percent across and `y` (0 to 1) down); or a named `view`.
+ * A pill's content is one of: `main` with floating `panels`; `split` (side-by-side columns, each
+ * with a heading, a line of context and its screens); or a named `view`.
  */
+export type SplitColumn = { title: string; text: string; images: StageImage[] };
 export type ShowcaseTab = {
   id: string;
   label: string;
   main?: StageImage;
   panels?: StageImage[];
-  layers?: StageImage[];
-  /** `layers` only: the stage's aspect ratio, when the layers extend below the first. */
-  ratio?: string;
+  split?: SplitColumn[];
   view?: string;
 };
 /**
