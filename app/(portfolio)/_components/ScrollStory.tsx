@@ -35,8 +35,6 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
   const root = useRef<HTMLDivElement>(null);
   const baseFrame = useRef<HTMLDivElement>(null);
   const floats = useRef<(HTMLDivElement | null)[]>([]);
-  const glowA = useRef<HTMLDivElement>(null);
-  const glowB = useRef<HTMLDivElement>(null);
   const dim = useRef<HTMLDivElement>(null);
 
   const base = images.find((i) => i.base) ?? images[0];
@@ -69,9 +67,7 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
         });
       }
 
-      // light behind the stage drifts slower than anything on it; the base darkens a little as screens pass in front
-      if (glowA.current) glowA.current.style.transform = `translate3d(0, ${(0.5 - t) * 160}px, 0)`;
-      if (glowB.current) glowB.current.style.transform = `translate3d(0, ${(t - 0.5) * 110}px, 0)`;
+      // the base darkens a little as screens pass in front of it
       let front = 0;
 
       over.forEach((im, i) => {
@@ -104,7 +100,7 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
         el.removeAttribute("data-live");
         floats.current.forEach((n) => n?.removeAttribute("style"));
         baseFrame.current?.querySelectorAll("img").forEach((i) => i.removeAttribute("style"));
-        [glowA, glowB, dim].forEach((r) => r.current?.removeAttribute("style"));
+        [dim].forEach((r) => r.current?.removeAttribute("style"));
       }
     }
     arm();
@@ -129,8 +125,6 @@ export function ScrollStory({ label, images }: { label: string; images: Img[] })
       aria-label={label}
     >
       <div className="story-pin">
-        <div className="story-glow story-glow-a" ref={glowA} aria-hidden="true" />
-        <div className="story-glow story-glow-b" ref={glowB} aria-hidden="true" />
         <div className="story-stage">
           <div className="story-base" ref={baseFrame} style={{ aspectRatio: `${base.width} / ${base.height}` }}>
             <Pic src={base.src} width={base.width} height={base.height} alt={base.alt} decoding="async" />
