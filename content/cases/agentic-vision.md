@@ -58,7 +58,7 @@ showcase:
           width: 2000
           height: 1077
           x: 40
-          y: 0.64
+          y: 0.74
           w: 58
           speed: 110
           alt: "A board book open with the GovernAI panel. A slide lists six entities as plain text, and the panel suggests that Diligent Entities could show them as an org chart. The slide shows a preview of that chart, built from public information."
@@ -82,7 +82,7 @@ showcase:
           width: 698
           height: 1482
           x: 62
-          y: -0.05
+          y: 0
           w: 20
           speed: 120
           alt: "An iPhone text thread. Cowork, the AI assistant, asks the general counsel two questions with tap-to-choose answers: whether to set up and assign two to-dos to an associate, and whether the updated plan should go to the Audit Committee."
