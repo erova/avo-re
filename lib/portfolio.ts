@@ -8,10 +8,12 @@ const QUOTES_DIR = path.join(process.cwd(), "content", "quotes");
 export type StageImage = { src: string; width: number; height: number; alt: string; caption?: string };
 export type Stage = { main: StageImage; panels: StageImage[] };
 export type ShowcaseTab = { id: string; label: string } & (
-  | { main: StageImage; panels?: StageImage[] }
-  | { main?: undefined; panels?: undefined; view?: string }
+  | { main: StageImage; panels?: StageImage[]; compare?: undefined }
+  | { main?: undefined; panels?: undefined; compare: StageImage[] }
+  | { main?: undefined; panels?: undefined; compare?: undefined; view?: string }
 );
-export type Showcase = { label: string; tabs: ShowcaseTab[] };
+/** `gated`: the screenshots are served from /protected and shown only after the access code. */
+export type Showcase = { label: string; gated?: boolean; tabs: ShowcaseTab[] };
 
 export type Case = {
   slug: string;

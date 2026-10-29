@@ -9,7 +9,7 @@ import {
 } from "@/lib/portfolio";
 import { getAllWritingMeta } from "@/lib/writing";
 import { Rail } from "./_components/Rail";
-import { GatedStage } from "./_components/GatedStage";
+import { GatedStage, GatedShowcase, Pic, type GateText } from "./_components/GatedStage";
 import { Placeholder } from "./_components/Placeholder";
 import { ShowcaseTabs } from "./_components/ShowcaseTabs";
 import { McpMap, type McpData } from "./_components/McpMap";
@@ -135,17 +135,42 @@ function StageKey({ items }: { items: (string | undefined)[] }) {
   );
 }
 
-function Showcase({ c, mcp, atlas }: { c: Case; mcp: McpData; atlas: AtlasData }) {
+function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: AtlasData; gate: GateText }) {
   if (!c.showcase) return null;
   const tabs = c.showcase.tabs.map((t) => ({
     id: t.id,
     label: t.label,
-    content: t.main ? (
+    content: t.compare ? (
+      <>
+        <div className="compare">
+          {t.compare.map((im) => {
+            const cut = im.caption?.indexOf(": ") ?? -1;
+            return (
+              <figure key={im.src}>
+                {im.caption && (
+                  <figcaption>
+                    {cut > 0 ? (
+                      <>
+                        <strong>{im.caption.slice(0, cut)}</strong>
+                        <span>{im.caption.slice(cut + 2)}</span>
+                      </>
+                    ) : (
+                      <span>{im.caption}</span>
+                    )}
+                  </figcaption>
+                )}
+                <Pic {...img(im)} decoding="async" loading="lazy" />
+              </figure>
+            );
+          })}
+        </div>
+      </>
+    ) : t.main ? (
       <>
         <StageKey items={[t.main.caption, ...(t.panels ?? []).map((p) => p.caption)]} />
         <div className="stage">
           <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
-            <img {...img(t.main)} decoding="async" />
+            <Pic {...img(t.main)} decoding="async" />
           </div>
           {(t.panels ?? []).map((p, i) => (
             <div
@@ -153,7 +178,7 @@ function Showcase({ c, mcp, atlas }: { c: Case; mcp: McpData; atlas: AtlasData }
               className={`panel pane panel-${i === 0 ? "a" : "b"}`}
               style={{ aspectRatio: `${p.width} / ${p.height}` }}
             >
-              <img {...img(p)} decoding="async" loading="lazy" />
+              <Pic {...img(p)} decoding="async" loading="lazy" />
             </div>
           ))}
         </div>
@@ -164,7 +189,15 @@ function Showcase({ c, mcp, atlas }: { c: Case; mcp: McpData; atlas: AtlasData }
       <McpMap data={mcp} />
     ),
   }));
-  return <ShowcaseTabs label={c.showcase.label} tabs={tabs} />;
+  const tabsEl = <ShowcaseTabs label={c.showcase.label} tabs={tabs} />;
+  const first = c.showcase.tabs.find((t) => t.main)?.main;
+  return c.showcase.gated && first ? (
+    <GatedShowcase probe={first.src} ratio={`${first.width} / ${first.height}`} gate={gate}>
+      {tabsEl}
+    </GatedShowcase>
+  ) : (
+    tabsEl
+  );
 }
 
 export default function Home() {
@@ -299,7 +332,7 @@ export default function Home() {
                 {c.stage ? (
                   <GatedStage main={c.stage.main} panels={c.stage.panels} gate={gate.data} />
                 ) : c.showcase ? (
-                  <Showcase c={c} mcp={mcp} atlas={atlas} />
+                  <Showcase c={c} mcp={mcp} atlas={atlas} gate={gate.data} />
                 ) : (
                   <Placeholder label={c.media} />
                 )}

@@ -1723,3 +1723,45 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
     gap: 0.4rem;
   }
 }
+
+/* Legacy Home: the old and new side by side, old on the left. Each figure carries its own ruled caption. */
+.compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 2rem);
+  align-items: start;
+  width: min(100%, 1040px);
+  margin: clamp(2.5rem, 5vw, 4rem) auto clamp(5rem, 9vw, 8rem);
+}
+.compare figure {
+  margin: 0;
+}
+.compare figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.6rem;
+  padding: 0.75rem 0 0;
+  margin-bottom: 1.25rem;
+  border-top: 1px solid var(--hairline);
+  font: 400 0.875rem/1.45 var(--font-ui);
+}
+.compare figcaption strong {
+  font-weight: 600;
+}
+.compare figcaption span {
+  color: var(--fg-muted);
+}
+.compare img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow:
+    0 40px 70px -35px oklch(0.2 0.06 8 / 0.6),
+    0 0 0 1px oklch(1 0 0 / 0.08);
+}
+@media (max-width: 759px) {
+  .compare {
+    grid-template-columns: 1fr;
+  }
+}

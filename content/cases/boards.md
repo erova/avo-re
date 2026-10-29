@@ -26,25 +26,12 @@ outcomes:
 asking: A better destination doesn’t make change easy. How do you get teams to ship early and imperfect when it’s never been the norm?
 showcase:
   label: Views of Boards
+  gated: true
   tabs:
-    - id: legacy
-      label: Legacy Home
-      main:
-        src: /images/work/boards/home-before.webp
-        width: 2000
-        height: 1456
-        caption: "Legacy Home: no actions, news in a sidebar"
-        alt: "The legacy Boards Home. A navy header and a ten-item sidebar, an Actions section that reads there are no actions at the moment, a Books and reports list, and a News and insights column on the right."
-      panels:
-        - src: /images/work/boards/news-before.webp
-          width: 1600
-          height: 775
-          caption: "Legacy News & Analytics: now curated on Home"
-          alt: "The legacy News and Analytics page. It is mostly a newsletter signup, with topic toggles, a required email field and a submit button, above a list of global news."
     - id: home
       label: New Home
       main:
-        src: /images/work/boards/home-after.webp
+        src: /protected/work/boards/home-after.webp
         width: 1614
         height: 1030
         caption: "New Home: what needs your review, and ask across every book"
@@ -52,7 +39,7 @@ showcase:
     - id: reading
       label: Reading
       main:
-        src: /images/work/boards/reader-search.webp
+        src: /protected/work/boards/reader-search.webp
         width: 2000
         height: 1423
         caption: "Reading: structured navigation and relevance-ordered search"
@@ -60,7 +47,7 @@ showcase:
     - id: approvals
       label: Approvals
       main:
-        src: /images/work/boards/approvals.webp
+        src: /protected/work/boards/approvals.webp
         width: 1892
         height: 1344
         caption: "Approvals: they understand independent directors"
@@ -68,11 +55,24 @@ showcase:
     - id: governai
       label: GovernAI
       main:
-        src: /images/work/boards/governai-dark.webp
+        src: /protected/work/boards/governai-dark.webp
         width: 1652
         height: 1176
         caption: "GovernAI: the foundation made room for AI, with cited sources"
         alt: "A board book open in the dark theme, with the GovernAI panel on the right. A director asks for a one-paragraph briefing note, and the answer lists the source documents it drew from."
+    - id: legacy
+      label: Legacy Home
+      compare:
+        - src: /protected/work/boards/home-before.webp
+          width: 2000
+          height: 1456
+          caption: "Legacy Home: no actions, news in a sidebar"
+          alt: "The legacy Boards Home. A navy header and a ten-item sidebar, an Actions section that reads there are no actions at the moment, a Books and reports list, and a News and insights column on the right."
+        - src: /protected/work/boards/home-after.webp
+          width: 1614
+          height: 1030
+          caption: "New Home: what needs your review, and ask across every book"
+          alt: "The new Boards Home. A seven-item sidebar, a prompt box that asks what would you like to know across current and archived books, and a Waiting for your review list with 44 approvals."
 ---
 
 <!--
