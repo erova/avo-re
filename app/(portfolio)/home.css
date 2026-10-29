@@ -1791,9 +1791,46 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   will-change: transform, opacity;
 }
 .story[data-live] .story-float img {
+  /* nearer (faster) screens throw longer, softer shadows */
   box-shadow:
-    0 40px 80px -20px oklch(0.12 0.05 8 / 0.7),
+    0 calc(24px * var(--d)) calc(56px * var(--d)) calc(-12px * var(--d)) oklch(0.1 0.05 8 / 0.62),
+    0 calc(6px * var(--d)) calc(14px * var(--d)) oklch(0.1 0.05 8 / 0.28),
     0 0 0 1px oklch(1 0 0 / 0.1);
+}
+.story-glow,
+.story-dim {
+  display: none;
+}
+.story[data-live] .story-glow {
+  display: block;
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  will-change: transform;
+}
+/* a warm light behind the empty right side, and a cooler one low on the left; both well under the screens */
+.story[data-live] .story-glow-a {
+  width: 80vmin;
+  height: 80vmin;
+  right: 6%;
+  top: 10%;
+  background: radial-gradient(closest-side, oklch(0.62 0.14 12 / 0.5), oklch(0.62 0.14 12 / 0));
+}
+.story[data-live] .story-glow-b {
+  width: 70vmin;
+  height: 70vmin;
+  left: 4%;
+  bottom: -8%;
+  background: radial-gradient(closest-side, oklch(0.55 0.1 165 / 0.28), oklch(0.55 0.1 165 / 0));
+}
+.story[data-live] .story-dim {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: oklch(0.14 0.05 8);
+  opacity: 0;
 }
 .story-swap {
   display: none;
