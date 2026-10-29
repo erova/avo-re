@@ -10,10 +10,12 @@ deepDive: false
 situation: >-
   Diligent wanted to go all in on AI. Engineering-led pilots had stalled, and the plan was a Word doc of use cases nobody could picture, estimate, or sequence.
 did: >-
-  I reframed the brief: users shouldn't have to learn to ask AI better questions; the system should already know the question. When a director resigns, the product should know the seat is open, which bylaws apply, and who's qualified, then surface the next step. I stopped writing decks and built a working prototype myself, then put one designer on each use case and held all six to one system across three surfaces: a command center, agents embedded in existing products, and Teams/Slack.
+  I reframed the brief: users shouldn't have to learn to ask AI better questions; the system should already know the question. When a director resigns, the product should know the seat is open, which bylaws apply, and who's qualified, then surface the next step. I stopped writing decks and prototyped instead, building working versions of the vision across the company: an agentic home, a shared calendar, entity management, and agents that show up in Teams, Slack, and iMessage rather than in an app of their own. Each one made a compelling vision concrete enough to react to. Across them the same themes kept recurring: next best actions, smart tooltips that show what else could be done, unobtrusive ways to see the same information the same way, and a path from minimally viable to sophisticated, powerful, and desirable.
 outcomes:
+  - Each prototype brought clarity and alignment that the direction was sound and could be validated with customers.
+  - Partner teams knew how to estimate and sequence the work.
+  - Designers had a north star and knew what good looked like.
   - The CEO, CTO, and BU leaders committed.
-  - Product could scope and engineering could estimate.
   - It became a two-track roadmap of twenty initiatives.
   - We showed it onstage at Diligent's April 2026 customer conference.
 asking: On 0-to-1 work, is cross-product consistency a hill worth dying on?
