@@ -157,6 +157,7 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
       </div>
     ) : t.main ? (
       <>
+        {t.note && <p className="tab-note">{t.note}</p>}
         <StageKey items={[t.main.caption, ...(t.panels ?? []).map((p) => p.caption)]} />
         <div className="stage">
           <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>

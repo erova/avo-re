@@ -36,6 +36,8 @@ export type SplitColumn = { title: string; text: string; images: StageImage[] };
 export type ShowcaseTab = {
   id: string;
   label: string;
+  /** A line of context above `main`. */
+  note?: string;
   main?: StageImage;
   panels?: StageImage[];
   split?: SplitColumn[];

@@ -1875,3 +1875,15 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
 .split-shots img[height="1482"]:nth-child(2) {
   margin-top: 2.5rem;
 }
+
+/* A line of context under the pills, above the screen. */
+.tab-note {
+  max-width: 40rem;
+  margin: clamp(1.5rem, 3vw, 2.25rem) auto 0;
+  text-align: center;
+  color: var(--fg-muted);
+  font: 400 0.9375rem/1.5 var(--font-ui);
+}
+.tab-note + .stage {
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+}

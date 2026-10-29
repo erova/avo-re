@@ -33,7 +33,8 @@ showcase:
         height: 792
         alt: "The command center home for a fictional company, Meridian Holdings. A banner offers a Diligent AI Board Member, a greeting asks what is on your plate, a summary strip counts what needs you today, and a prompt box suggests a task, with starter cards for appointing a director, drafting a resolution and verifying signing authority."
     - id: calendar
-      label: Shared Calendar
+      label: Next Best Actions
+      note: One timeline for you and your team, in the view that suits you. Hover any event to see what it links to and what the agent suggests next. Every action waits for your confirmation.
       main:
         src: /protected/work/agentic/s-cal-poster.webp
         video: /protected/work/agentic/s-cal.mp4
