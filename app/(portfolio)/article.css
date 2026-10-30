@@ -238,3 +238,39 @@
   background: var(--hairline);
   transform-origin: left center;
 }
+
+/* Tables in essays: ruled rows, no boxes. Scrolls sideways on narrow screens rather than squashing. */
+.prose .table-scroll {
+  overflow-x: auto;
+  margin: 0.25rem 0 2.25rem;
+}
+.prose table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  font: 400 0.9375rem / 1.45 var(--font-ui);
+}
+.prose th {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.6rem 1rem 0.6rem 0;
+  border-bottom: 1px solid var(--fg);
+}
+.prose td {
+  padding: 0.7rem 1rem 0.7rem 0;
+  border-bottom: 1px solid var(--hairline);
+  vertical-align: top;
+}
+.prose td:first-child {
+  width: 11rem;
+  color: var(--fg);
+  font-weight: 500;
+}
+.prose td:last-child,
+.prose th:last-child {
+  width: 4.5rem;
+  padding-right: 0;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
