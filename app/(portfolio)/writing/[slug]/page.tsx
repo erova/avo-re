@@ -47,7 +47,7 @@ export default async function WritingPage({ params }: { params: Promise<{ slug: 
       title={String(data.title ?? slug)}
       standfirst={data.summary ? String(data.summary) : undefined}
       facts={facts}
-      back={{ label: "← Writing", href: "/#writing" }}
+      back={{ label: "← Essays", href: "/#essays" }}
       body={content}
     />
   );

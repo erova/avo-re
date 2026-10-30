@@ -254,7 +254,8 @@ export default function Home() {
     ...cases.map((c) => ({ id: `case-${c.slug}`, label: c.rail })),
     { id: "earlier", label: titles.earlier },
     { id: "lead", label: titles.lead },
-    { id: "writing", label: titles.writing },
+    { id: "speaking", label: titles.speaking },
+    { id: "essays", label: titles.essays },
     { id: "contact", label: titles.contact },
   ];
 
@@ -408,10 +409,10 @@ export default function Home() {
           <Md source={wrong.body} />
         </section>
 
-        <section id="writing" aria-labelledby="writing-h">
+        <section id="speaking" aria-labelledby="speaking-h">
           <div className="field field-green speaking">
             <div className="container">
-              <h2 id="writing-h">{titles.writing}</h2>
+              <h2 id="speaking-h">{titles.speaking}</h2>
 
               <div className="speaking-stage">
                 <figure className="speaking-figure">
@@ -447,23 +448,8 @@ export default function Home() {
           <div className="section writing-body">
             <Md source={speaking.body} />
 
-            {essays.length > 0 && (
-              <>
-                <h3 className="sub">{titles.essays}</h3>
-                <ul className="list">
-                  {essays.map((e) => (
-                    <li key={e.slug}>
-                      <a href={`/writing/${e.slug}`}>{e.title}</a>
-                      <span className="item-date">{formatMonthYear(e.date)}</span>
-                      {e.summary && <p>{e.summary}</p>}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-
             <h3 className="sub">{talks.data.title}</h3>
-            <Md className="md-list" source={talks.body} />
+            <Md className="md-list conferences" source={talks.body} />
 
             <h3 className="sub">
               <Emph text={pubs.data.title} />
@@ -472,6 +458,21 @@ export default function Home() {
             <Md source={pubs.body} />
           </div>
         </section>
+
+        {essays.length > 0 && (
+          <section className="section" id="essays" aria-labelledby="essays-h">
+            <h2 id="essays-h">{titles.essays}</h2>
+            <ul className="list">
+              {essays.map((e) => (
+                <li key={e.slug}>
+                  <a href={`/writing/${e.slug}`}>{e.title}</a>
+                  <span className="item-date">{formatMonthYear(e.date)}</span>
+                  {e.summary && <p>{e.summary}</p>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section className="section" id="contact" aria-labelledby="contact-h">
           <h2 id="contact-h">{titles.contact}</h2>

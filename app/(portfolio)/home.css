@@ -2036,3 +2036,24 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   background: #000;
   display: block;
 }
+
+/* Conferences: a short list read across three columns. */
+.conferences ul {
+  max-width: none;
+  columns: 1;
+  column-gap: clamp(1.5rem, 4vw, 3rem);
+}
+.conferences li {
+  margin-bottom: 0.6rem;
+  break-inside: avoid;
+}
+@media (min-width: 480px) {
+  .conferences ul {
+    columns: 2;
+  }
+}
+@media (min-width: 760px) {
+  .conferences ul {
+    columns: 3;
+  }
+}

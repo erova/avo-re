@@ -1,5 +1,5 @@
 ---
-# The stage at the top of "Writing & speaking": photo, a small card, and the videos.
+# The stage at the top of "Public Speaking": photo, a small card, and the videos.
 photo:
   src: /images/speaking/dls-stage-2400.webp
   srcSet: /images/speaking/dls-stage-1200.webp 1200w, /images/speaking/dls-stage-2400.webp 2400w

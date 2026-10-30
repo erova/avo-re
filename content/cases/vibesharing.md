@@ -4,7 +4,7 @@ company: Founder
 years: January 2026–
 tags: ["Side hustle", "Product-Market Fit", "MCP functionality"]
 rail: VibeSharing
-order: 5
+order: 4
 public: true
 deepDive: false
 situation: \>-

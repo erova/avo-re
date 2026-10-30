@@ -1,4 +1,12 @@
+---title: Conferences
 ---
-title: Conferences
----
-UX Lisbon, IA Conference, Interaction, Leading Design Festival London, Design Leadership Summit Toronto, IxDA South America, UXDX, Confab, MX, UX Week.
+- UX Lisbon
+- IA Conference
+- Interaction
+- Leading Design Festival London
+- Design Leadership Summit Toronto
+- IxDA South America
+- UXDX
+- Confab
+- MX
+- UX Week

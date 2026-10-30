@@ -5,7 +5,7 @@ work: Selected work
 others: What others say
 earlier: Earlier work
 lead: How I lead
-writing: Writing & speaking
+speaking: Public Speaking
 essays: Essays
 contact: Contact
 ---
