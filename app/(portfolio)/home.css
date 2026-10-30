@@ -1981,7 +1981,7 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
 .video-poster.has-thumb .video-caption {
   position: relative;
   padding: 1.75rem 1rem 0.7rem;
-  background: linear-gradient(to top, oklch(0.12 0.02 150 / 0.85), transparent);
+  background: linear-gradient(to top, oklch(0.1 0.02 150 / 0.95) 35%, oklch(0.1 0.02 150 / 0.6) 70%, transparent);
   color: oklch(0.96 0.01 90);
   font-size: var(--text-xs, 0.75rem);
 }
