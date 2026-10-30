@@ -10,6 +10,7 @@ import {
 import { getAllWritingMeta } from "@/lib/writing";
 import { Rail } from "./_components/Rail";
 import { GatedStage, GatedShowcase, Pic, Clip, type GateText } from "./_components/GatedStage";
+import { WorkflowRecording } from "./_components/WorkflowRecording";
 import { Placeholder } from "./_components/Placeholder";
 import { ShowcaseTabs } from "./_components/ShowcaseTabs";
 import { ScrollStory } from "./_components/ScrollStory";
@@ -159,24 +160,28 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
       <>
         {t.note && <p className="tab-note">{t.note}</p>}
         <StageKey items={[t.main.caption, ...(t.panels ?? []).map((p) => p.caption)]} />
-        <div className="stage">
-          <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
-            {t.main.video ? (
-              <Clip src={t.main.video} poster={t.main.src} alt={t.main.alt} width={t.main.width} height={t.main.height} />
-            ) : (
-              <Pic {...img(t.main)} decoding="async" />
-            )}
-          </div>
-          {(t.panels ?? []).map((p, i) => (
-            <div
-              key={p.src}
-              className={`panel pane panel-${i === 0 ? "a" : "b"}`}
-              style={{ aspectRatio: `${p.width} / ${p.height}` }}
-            >
-              <Pic {...img(p)} decoding="async" loading="lazy" />
+        {t.steps && t.main.video ? (
+          <WorkflowRecording steps={t.steps} main={{ ...t.main, video: t.main.video }} />
+        ) : (
+          <div className="stage">
+            <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
+              {t.main.video ? (
+                <Clip src={t.main.video} poster={t.main.src} alt={t.main.alt} width={t.main.width} height={t.main.height} />
+              ) : (
+                <Pic {...img(t.main)} decoding="async" />
+              )}
             </div>
-          ))}
-        </div>
+            {(t.panels ?? []).map((p, i) => (
+              <div
+                key={p.src}
+                className={`panel pane panel-${i === 0 ? "a" : "b"}`}
+                style={{ aspectRatio: `${p.width} / ${p.height}` }}
+              >
+                <Pic {...img(p)} decoding="async" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        )}
       </>
     ) : t.view?.startsWith("atlas-") ? (
       <AtlasView view={t.view} data={atlas} />
@@ -226,7 +231,7 @@ export default function Home() {
   const speaking = readPortfolio<{
     photo: Img & { srcSet: string; credit: string };
     card: { lede: string; linkLabel: string; linkHref: string };
-    videos: { id: string; title: string; heading: string; caption: string }[];
+    videos: { id: string; title: string; heading: string; caption: string; thumb?: string }[];
   }>("speaking");
   const talks = readPortfolio<{ title: string }>("talks");
   const pubs = readPortfolio<{ title: string; cover: Img }>("publications");

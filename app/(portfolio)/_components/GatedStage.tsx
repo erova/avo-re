@@ -135,7 +135,7 @@ export function Pic(props: React.ImgHTMLAttributes<HTMLImageElement>) {
  * motion, where the poster stays. Like `Pic`, it is rendered by the client so nothing asks for
  * the file before the access code is entered.
  */
-export function Clip({ src, poster, alt, width, height }: { src: string; poster: string; alt: string; width: number; height: number }) {
+export function Clip({ src, poster, alt, width, height, onTime }: { src: string; poster: string; alt: string; width: number; height: number; onTime?: (seconds: number) => void }) {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const v = ref.current;
@@ -146,8 +146,13 @@ export function Clip({ src, poster, alt, width, height }: { src: string; poster:
       else v.pause();
     });
     io.observe(v);
-    return () => io.disconnect();
-  }, []);
+    const tick = () => onTime?.(v.currentTime);
+    v.addEventListener("timeupdate", tick);
+    return () => {
+      io.disconnect();
+      v.removeEventListener("timeupdate", tick);
+    };
+  }, [onTime]);
   return (
     <video ref={ref} src={src} poster={poster} width={width} height={height} aria-label={alt} role="img" muted loop playsInline preload="metadata" />
   );

@@ -18,22 +18,30 @@ asking: ""
 showcase:
   label: Views of VibeSharing
   tabs:
-	- id: ui
-	  label: UI
+	- id: workflow
+	  label: Workflow
+	  steps:
+	    - title: Ask in plain words
+	      at: 0
+	      text: The builder tells their AI coding tool what to make and where to publish it. The tool builds the page and shares it in one step.
+	    - title: Open the shared link
+	      at: 13
+	      text: Anyone with the link can open it and use it, here by voting in a lunch poll.
+	    - title: Pin feedback to the screen
+	      at: 22
+	      text: They drop a pin on the exact spot and write the comment, the way they would in Figma.
+	    - title: Triage from the terminal
+	      at: 34.4
+	      text: Back in the tool, the builder asks for the feedback and sets its priority and status.
+	    - title: See it on the project page
+	      at: 42.9
+	      text: The comment lands on the project marked In Progress, so everyone can see it was picked up.
 	  main:
-	    src: /images/work/vibesharing/ui-main.webp
-	    width: 2000
-	    height: 1121
-	    alt: A VibeSharing prototype page for a demo analytics dashboard, showing the prototype in a browser frame with feedback, context, activity, versions and code tabs below it.
-	  panels:
-	    - src: /images/work/vibesharing/ui-viewer.webp
-	      width: 1400
-	      height: 787
-	      alt: The same prototype open full screen, with a feedback panel on the right holding a suggested question about deploy history and a Drop Pin button for pinning comments to the screen.
-	    - src: /images/work/vibesharing/ui-list.webp
-	      width: 1400
-	      height: 789
-	      alt: The VibeSharing home view listing pinned collections and the prototypes a person is watching, with green markers and counts of new comments on prototypes that have fresh feedback.
+	    src: /images/work/vibesharing/workflow-poster.webp
+	    video: /images/work/vibesharing/workflow.mp4
+	    width: 1100
+	    height: 684
+	    alt: A screen recording in five steps. A builder types a request in Claude Code to build a Friday lunch poll and publish it to a Demo collection. The shared poll is opened and voted on, and a pinned comment asking for a pizza option is left. Back in the terminal the builder reads the comment and marks it in progress, and the project page then shows it with an In Progress label.
 	- id: mcp
 	  label: MCP
 	- id: admin

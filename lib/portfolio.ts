@@ -40,6 +40,8 @@ export type ShowcaseTab = {
   note?: string;
   main?: StageImage;
   panels?: StageImage[];
+  /** Numbered text beside `main`, saying what the recording shows. */
+  steps?: { title: string; text: string; /** Seconds into the recording where this step begins. */ at: number }[];
   split?: SplitColumn[];
   view?: string;
 };

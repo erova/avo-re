@@ -1887,3 +1887,139 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
 .tab-note + .stage {
   margin-top: clamp(1.25rem, 2.5vw, 2rem);
 }
+
+/* A recording with numbered steps beside it: the steps say what is happening, the video shows it. */
+.workflow-steps {
+  list-style: none;
+  counter-reset: step;
+  margin: clamp(1.25rem, 2.5vw, 2rem) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.1rem;
+  font-family: var(--font-ui);
+}
+.workflow-steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  column-gap: 0.75rem;
+  align-items: baseline;
+}
+.workflow-steps li::before {
+  content: counter(step);
+  font: 600 0.8125rem/1 var(--font-ui);
+  color: var(--fg-muted);
+}
+.workflow-steps strong {
+  grid-column: 2;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+.workflow-steps span {
+  grid-column: 2;
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+@media (min-width: 960px) {
+  .workflow {
+    display: grid;
+    grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr);
+    gap: clamp(1.5rem, 3vw, 3rem);
+    align-items: start;
+  }
+  .workflow .stage {
+    width: 100%;
+    margin-top: clamp(1.25rem, 2.5vw, 2rem);
+  }
+}
+
+.workflow-steps li {
+  transition: opacity 0.3s ease;
+}
+.workflow-steps li[data-dim] {
+  opacity: 0.4;
+}
+.workflow-steps li[data-active]::before,
+.workflow-steps li[data-active] strong {
+  color: var(--fg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .workflow-steps li {
+    transition: none;
+  }
+}
+
+/* Talk cards with a saved still: the still fills the card, the title is already on it. */
+.video-poster.has-thumb,
+.speaking-video .video-poster.has-thumb {
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+}
+.video-poster.has-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.video-poster.has-thumb .video-caption {
+  position: relative;
+  padding: 1.75rem 1rem 0.7rem;
+  background: linear-gradient(to top, oklch(0.12 0.02 150 / 0.85), transparent);
+  color: oklch(0.96 0.01 90);
+  font-size: var(--text-xs, 0.75rem);
+}
+.video-poster.has-thumb .video-play {
+  top: 50%;
+  right: auto;
+  left: 50%;
+  translate: -50% -50%;
+}
+
+/* The player opens over the page, large, and closes on Esc, the button, or a click outside. */
+.lightbox {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  width: min(94vw, 1100px);
+  overflow: visible;
+  color: oklch(0.96 0.01 90);
+}
+.lightbox::backdrop {
+  background: oklch(0.1 0.02 150 / 0.82);
+  backdrop-filter: blur(6px);
+}
+.lightbox-inner {
+  display: grid;
+  gap: 0.6rem;
+}
+.lightbox-close {
+  justify-self: end;
+  font: 500 var(--text-sm, 0.875rem) var(--font-ui);
+  color: inherit;
+  background: transparent;
+  border: 1px solid oklch(1 0 0 / 0.35);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+}
+.lightbox-close:hover {
+  background: oklch(1 0 0 / 0.12);
+}
+.lightbox-close:focus-visible {
+  outline: 2px solid oklch(0.96 0.01 90);
+  outline-offset: 2px;
+}
+.lightbox iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 12px;
+  background: #000;
+  display: block;
+}

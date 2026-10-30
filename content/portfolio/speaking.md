@@ -16,8 +16,10 @@ videos:
     title: AI, Anxiety, and Actual Impact
     heading: AI, Anxiety, and Actual Impact
     caption: Design Leadership Summit, Toronto, 2025
+    thumb: /images/speaking/talk-dls-2025.webp
   - id: WgL6gRl031g
     title: Design Success in Turbulent, Ambiguous Spaces
     heading: Design Success in Turbulent, Ambiguous Spaces
     caption: UX Lisbon, 2023
+    thumb: /images/speaking/talk-uxlx-2023.webp
 ---
