@@ -450,12 +450,6 @@ export default function Home() {
 
             <h3 className="sub">{talks.data.title}</h3>
             <Md className="md-list conferences" source={talks.body} />
-
-            <h3 className="sub">
-              <Emph text={pubs.data.title} />
-            </h3>
-            <img className="book-cover" {...pubs.data.cover} decoding="async" />
-            <Md source={pubs.body} />
           </div>
         </section>
 
@@ -471,6 +465,12 @@ export default function Home() {
                 </li>
               ))}
             </ul>
+
+            <h3 className="sub">
+              <Emph text={pubs.data.title} />
+            </h3>
+            <img className="book-cover" {...pubs.data.cover} decoding="async" />
+            <Md source={pubs.body} />
           </section>
         )}
 
