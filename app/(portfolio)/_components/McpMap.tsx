@@ -1,6 +1,6 @@
 type Group = { name: string; blurb: string; tools: string[] };
 export type McpData = {
-  intro?: string;
+  intro?: string[];
   notes?: Record<string, string>;
   groups: Group[];
 };
@@ -9,7 +9,13 @@ export type McpData = {
 export function McpMap({ data }: { data: McpData }) {
   return (
     <div className="mcp">
-      {data.intro && <p className="tab-note">{data.intro}</p>}
+      {data.intro && (
+        <div className="mcp-intro">
+          {data.intro.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
+        </div>
+      )}
       <div className="mcp-grid">
         {data.groups.map((g) => (
           <section className="mcp-group" key={g.name}>

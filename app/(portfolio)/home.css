@@ -1326,6 +1326,19 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   color: var(--accent);
   font-weight: 600;
 }
+.mcp-intro {
+  max-width: 44rem;
+  margin: 0 0 clamp(1.5rem, 3vw, 2.5rem);
+  text-align: left;
+  font: 400 1rem / 1.55 var(--font-ui);
+  color: var(--fg-muted);
+}
+.mcp-intro p {
+  margin: 0;
+}
+.mcp-intro p + p {
+  margin-top: 0.75rem;
+}
 .mcp-grid {
   display: grid;
   gap: clamp(1.5rem, 3vw, 2.25rem) clamp(1rem, 2vw, 1.75rem);

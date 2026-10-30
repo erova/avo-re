@@ -1,7 +1,9 @@
 ---
 # The "MCP" view in the VibeSharing case study. Groups read left to right as a prototype's life.
-intro: >-
-  MCP (Model Context Protocol) is how AI coding tools such as Claude Code and Cursor call outside services. VibeSharing publishes an MCP server, listed in the official MCP registry, so the same tool that builds a prototype can also publish it, read the feedback and fix what breaks without leaving the terminal. Each group below is one stage of a prototype's life, and each name is a command the tool can run.
+intro:
+  - MCP (Model Context Protocol) is how AI coding tools such as Claude Code and Cursor call outside services.
+  - VibeSharing publishes an MCP server, listed in the official MCP registry. The same tool that builds a prototype can publish it, read the feedback and fix what breaks, without leaving the terminal.
+  - Each group below is one stage of a prototype's life. Each name is a command the tool can run.
 notes:
   create_campaign: studies
 groups:
