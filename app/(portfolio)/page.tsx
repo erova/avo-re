@@ -1,6 +1,5 @@
 import {
   getCases,
-  getEarlier,
   getQuotes,
   formatMonthYear,
   readPortfolio,
@@ -223,7 +222,6 @@ export default function Home() {
     portrait: Img;
   }>("hero");
   const glance = splitSections(readPortfolio("glance").body);
-  const earlier = getEarlier();
   const lead = readPortfolio<{ footnote?: string }>("lead");
   const principles = splitSections(lead.body);
   const people = readPortfolio<{ title: string }>("people");
@@ -252,10 +250,9 @@ export default function Home() {
     { id: "glance", label: titles.glance },
     { id: "work", label: titles.work },
     ...cases.map((c) => ({ id: `case-${c.slug}`, label: c.rail })),
-    { id: "earlier", label: titles.earlier },
-    { id: "lead", label: titles.lead },
-    { id: "speaking", label: titles.speaking },
     { id: "essays", label: titles.essays },
+    { id: "speaking", label: titles.speaking },
+    { id: "lead", label: titles.lead },
     { id: "contact", label: titles.contact },
   ];
 
@@ -335,10 +332,6 @@ export default function Home() {
         </section>
 
         <section id="work" aria-labelledby="work-h">
-          <div className="container work-head">
-            <h2 id="work-h">{titles.work}</h2>
-          </div>
-
           {cases.map((c, i) => (
             <article
               className="field field-rose feature"
@@ -348,6 +341,7 @@ export default function Home() {
               style={{ "--step": i } as React.CSSProperties}
             >
               <div className="container">
+                {i === 0 && <h2 className="work-label" id="work-h">{titles.work}</h2>}
                 <CaseHead c={c} n={i + 1} total={cases.length} />
                 {c.stage ? (
                   <GatedStage main={c.stage.main} panels={c.stage.panels} gate={gate.data} />
@@ -378,36 +372,30 @@ export default function Home() {
           </section>
         )}
 
-        <section className="section" id="earlier" aria-labelledby="earlier-h">
-          <h2 id="earlier-h">{titles.earlier}</h2>
-          <div className="rows">
-            {earlier.map((job) => (
-              <details key={job.title}>
-                <summary>{job.title}</summary>
-                <Md source={job.body} />
-              </details>
-            ))}
-          </div>
-        </section>
+        {essays.length > 0 && (
+          <section className="section" id="essays" aria-labelledby="essays-h">
+            <h2 id="essays-h">{titles.essays}</h2>
+            <div className="essays-layout">
+              <ul className="list">
+                {essays.map((e) => (
+                  <li key={e.slug}>
+                    <a href={`/writing/${e.slug}`}>{e.title}</a>
+                    <span className="item-date">{formatMonthYear(e.date)}</span>
+                    {e.summary && <p>{e.summary}</p>}
+                  </li>
+                ))}
+              </ul>
 
-        <section className="section" id="lead" aria-labelledby="lead-h">
-          <h2 id="lead-h">{titles.lead}</h2>
-          <div className="columns">
-            {principles.map((p) => (
-              <div key={p.title}>
-                <h3>{p.title}</h3>
-                <Md source={p.body} />
-              </div>
-            ))}
-          </div>
-          {lead.data.footnote && <p className="footnote">{lead.data.footnote}</p>}
-
-          <h3 className="sub">{people.data.title}</h3>
-          <Md source={people.body} />
-
-          <h3 className="sub">{wrong.data.title}</h3>
-          <Md source={wrong.body} />
-        </section>
+              <aside className="book" aria-labelledby="book-h">
+                <h3 id="book-h">
+                  <Emph text={pubs.data.title} />
+                </h3>
+                <img className="book-cover" {...pubs.data.cover} decoding="async" />
+                <Md source={pubs.body} />
+              </aside>
+            </div>
+          </section>
+        )}
 
         <section id="speaking" aria-labelledby="speaking-h">
           <div className="field field-green speaking">
@@ -451,30 +439,24 @@ export default function Home() {
           </div>
         </section>
 
-        {essays.length > 0 && (
-          <section className="section" id="essays" aria-labelledby="essays-h">
-            <h2 id="essays-h">{titles.essays}</h2>
-            <div className="essays-layout">
-              <ul className="list">
-                {essays.map((e) => (
-                  <li key={e.slug}>
-                    <a href={`/writing/${e.slug}`}>{e.title}</a>
-                    <span className="item-date">{formatMonthYear(e.date)}</span>
-                    {e.summary && <p>{e.summary}</p>}
-                  </li>
-                ))}
-              </ul>
+        <section className="section" id="lead" aria-labelledby="lead-h">
+          <h2 id="lead-h">{titles.lead}</h2>
+          <div className="columns">
+            {principles.map((p) => (
+              <div key={p.title}>
+                <h3>{p.title}</h3>
+                <Md source={p.body} />
+              </div>
+            ))}
+          </div>
+          {lead.data.footnote && <p className="footnote">{lead.data.footnote}</p>}
 
-              <aside className="book" aria-labelledby="book-h">
-                <h3 id="book-h">
-                  <Emph text={pubs.data.title} />
-                </h3>
-                <img className="book-cover" {...pubs.data.cover} decoding="async" />
-                <Md source={pubs.body} />
-              </aside>
-            </div>
-          </section>
-        )}
+          <h3 className="sub">{people.data.title}</h3>
+          <Md source={people.body} />
+
+          <h3 className="sub">{wrong.data.title}</h3>
+          <Md source={wrong.body} />
+        </section>
 
         <section className="section" id="contact" aria-labelledby="contact-h">
           <h2 id="contact-h">{titles.contact}</h2>

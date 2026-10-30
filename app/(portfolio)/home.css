@@ -358,9 +358,12 @@
 }
 
 /* ───── Work ───── */
-.work-head {
-  padding-top: var(--space-section);
-  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+/* The section title sits inside the first case's field as a quiet eyebrow, so it labels the run of cases without competing with the case headline. */
+.work-label {
+  margin: 0 0 clamp(1rem, 2vw, 1.5rem);
+  font: 500 var(--text-sm) / 1.2 var(--font-ui);
+  letter-spacing: normal;
+  color: var(--fg-muted);
 }
 
 /* Case study frame: ruled header, facts bar, and label/body rows, so each
@@ -1263,17 +1266,22 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   min-width: 0;
   visibility: hidden;
   opacity: 0;
+  /* Hidden panels share the grid cell, so they must not set its height: the tallest tab would leave a gap under the others. */
+  max-height: 0;
+  overflow: clip;
 }
 .showcase-panel[data-active] {
   visibility: visible;
   opacity: 1;
+  max-height: none;
+  overflow: visible;
 }
 @media (prefers-reduced-motion: no-preference) {
   .showcase-panel {
-    transition: opacity 350ms var(--ease), visibility 0s linear 350ms;
+    transition: opacity 350ms var(--ease), visibility 0s linear 350ms, max-height 0s linear 350ms;
   }
   .showcase-panel[data-active] {
-    transition: opacity 450ms var(--ease) 80ms, visibility 0s;
+    transition: opacity 450ms var(--ease) 80ms, visibility 0s, max-height 0s;
   }
 }
 
@@ -1945,6 +1953,7 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   .workflow .stage {
     width: 100%;
     margin-top: clamp(1.25rem, 2.5vw, 2rem);
+    margin-bottom: 0;
   }
 }
 
