@@ -15,4 +15,4 @@ title: Speaking Engagements
 - IxDA South America *2019*
 - Adaptive Path MX Conference *2016*
 - Adaptive Path UX Week *2015*
-- IA Conference *2012*
+- IA Conference *2012, 2019*
