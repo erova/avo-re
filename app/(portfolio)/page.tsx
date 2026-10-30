@@ -442,35 +442,37 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+
+              <div className="conferences-block">
+                <h3 id="conferences-h">{talks.data.title}</h3>
+                <Md className="conferences" source={talks.body} />
+              </div>
             </div>
-          </div>
-
-          <div className="section writing-body">
-            <Md source={speaking.body} />
-
-            <h3 className="sub">{talks.data.title}</h3>
-            <Md className="md-list conferences" source={talks.body} />
           </div>
         </section>
 
         {essays.length > 0 && (
           <section className="section" id="essays" aria-labelledby="essays-h">
             <h2 id="essays-h">{titles.essays}</h2>
-            <ul className="list">
-              {essays.map((e) => (
-                <li key={e.slug}>
-                  <a href={`/writing/${e.slug}`}>{e.title}</a>
-                  <span className="item-date">{formatMonthYear(e.date)}</span>
-                  {e.summary && <p>{e.summary}</p>}
-                </li>
-              ))}
-            </ul>
+            <div className="essays-layout">
+              <ul className="list">
+                {essays.map((e) => (
+                  <li key={e.slug}>
+                    <a href={`/writing/${e.slug}`}>{e.title}</a>
+                    <span className="item-date">{formatMonthYear(e.date)}</span>
+                    {e.summary && <p>{e.summary}</p>}
+                  </li>
+                ))}
+              </ul>
 
-            <h3 className="sub">
-              <Emph text={pubs.data.title} />
-            </h3>
-            <img className="book-cover" {...pubs.data.cover} decoding="async" />
-            <Md source={pubs.body} />
+              <aside className="book" aria-labelledby="book-h">
+                <h3 id="book-h">
+                  <Emph text={pubs.data.title} />
+                </h3>
+                <img className="book-cover" {...pubs.data.cover} decoding="async" />
+                <Md source={pubs.body} />
+              </aside>
+            </div>
           </section>
         )}
 
