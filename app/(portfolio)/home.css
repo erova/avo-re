@@ -8,7 +8,7 @@
 .rail {
   display: none;
 }
-@media (min-width: 1200px) {
+@media (min-width: 1280px) {
   .rail {
     display: block;
     position: fixed;
