@@ -6,6 +6,7 @@ import {
   splitSections,
   type Case,
 } from "@/lib/portfolio";
+import { CommitGraph } from "./_components/CommitGraph";
 import { getAllWritingMeta } from "@/lib/writing";
 import { Rail } from "./_components/Rail";
 import { GatedStage, GatedShowcase, Pic, Clip, type GateText } from "./_components/GatedStage";
@@ -68,6 +69,13 @@ function CaseRows({ c }: { c: Case }) {
         <h4>My role</h4>
         <div>
           <p>{c.did}</p>
+          {c.didBullets && (
+            <ul>
+              {c.didBullets.map((b) => (
+                <li key={b}>{b}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
       <section className="case-row">
@@ -80,6 +88,23 @@ function CaseRows({ c }: { c: Case }) {
           </ul>
         </div>
       </section>
+      {c.commits && (
+        <section className="case-row">
+          <h4>Building cadence</h4>
+          <figure className="case-figure">
+            <CommitGraph label={c.commits} />
+            <figcaption>
+              {c.commits}
+              {c.commitsLink && (
+                <>
+                  {" "}
+                  <a href={c.commitsLink}>{c.commitsLinkLabel ?? c.commitsLink}</a>
+                </>
+              )}
+            </figcaption>
+          </figure>
+        </section>
+      )}
       {c.asking && (
         <section className="case-row">
           <h4>Open questions</h4>
@@ -162,8 +187,8 @@ function Showcase({ c, mcp, atlas, gate }: { c: Case; mcp: McpData; atlas: Atlas
         {t.steps && t.main.video ? (
           <WorkflowRecording steps={t.steps} main={{ ...t.main, video: t.main.video }} />
         ) : (
-          <div className="stage">
-            <div className="stage-main pane" style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
+          <div className="stage" data-flat={t.main.fit ? "" : undefined}>
+            <div className="stage-main pane" data-fit={t.main.fit ? "" : undefined} style={{ aspectRatio: `${t.main.width} / ${t.main.height}` }}>
               {t.main.video ? (
                 <Clip src={t.main.video} poster={t.main.src} alt={t.main.alt} width={t.main.width} height={t.main.height} />
               ) : (

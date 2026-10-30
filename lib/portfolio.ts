@@ -20,6 +20,8 @@ export type StageImage = {
   /** A silent loop (gated like the image); `src` is then its poster. */
   video?: string;
   base?: boolean;
+  /** Show the whole image: no scaling or panning inside its frame. */
+  fit?: boolean;
   swap?: number;
   at?: number;
   x?: number;
@@ -75,6 +77,12 @@ export type Case = {
   linkLabel?: string;
   stage?: Stage;
   showcase?: Showcase;
+  /** Caption for the GitHub contribution graph shown as its own row under the outcomes. */
+  /** Optional bullets that follow `did`, so a long role scans as a list. */
+  didBullets?: string[];
+  commits?: string;
+  commitsLink?: string;
+  commitsLinkLabel?: string;
 };
 
 export type Quote = {
@@ -110,6 +118,7 @@ export function getCases(): Case[] {
         deepDive: d.deepDive === true,
         situation: String(d.situation ?? "").trim(),
         did: String(d.did ?? "").trim(),
+        didBullets: Array.isArray(d.didBullets) ? d.didBullets.map(String) : undefined,
         outcomes: Array.isArray(d.outcomes) ? d.outcomes.map(String) : [],
         asking: String(d.asking ?? "").trim(),
         media: String(d.media ?? ""),
@@ -117,6 +126,9 @@ export function getCases(): Case[] {
         linkLabel: d.linkLabel ? String(d.linkLabel) : undefined,
         stage: d.stage ? (d.stage as Stage) : undefined,
         showcase: d.showcase ? (d.showcase as Showcase) : undefined,
+        commits: d.commits ? String(d.commits) : undefined,
+        commitsLink: d.commitsLink ? String(d.commitsLink) : undefined,
+        commitsLinkLabel: d.commitsLinkLabel ? String(d.commitsLinkLabel) : undefined,
       } satisfies Case;
     })
     .filter((c) => c.title)

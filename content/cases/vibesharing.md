@@ -10,11 +10,21 @@ deepDive: false
 situation: \>-
   VibeSharing answers the problem many product teams face that prototype with AI: how do I keep track of the latest version, and how do I leave feedback? 
 did: \>-
-  I designed and built VibeSharing on nights and weekends with Claude Code, though VibeSharing works with Codex, Lovable and other tools.  Primary features include easy organization of prototypes, Figma-like pin-based feedback, easy ability to build usability tests or A/B tests, stakeholder alerts on new versions, and a published MCP server (listed in the official MCP registry) so AI coding agents can deploy and pull design-system templates directly. Every action is logged and recorded for easy auditing.
+  I designed and built VibeSharing on nights and weekends with Claude Code, though it works with Codex, Lovable and other tools. Features include:
+didBullets:
+  - Easy organization of prototypes.
+  - Figma-like pin-based feedback.
+  - Usability tests and A/B tests, built in.
+  - Stakeholder alerts on new versions.
+  - A published MCP server, listed in the official MCP registry, so AI coding agents can deploy and pull design-system templates directly.
+  - Every action is logged and recorded for easy auditing.
 outcomes:
   - 200+ prototypes deployed since launch across multiple product workstreams.
   - It's also how I learned what my teams are actually up against when they build with AI.
 asking: ""
+commits: "2,555 GitHub contributions in the last year. This graph shows January to October 2026."
+commitsLink: https://github.com/erova
+commitsLinkLabel: github.com/erova
 showcase:
   label: Views of VibeSharing
   tabs:
@@ -46,20 +56,21 @@ showcase:
 	  label: MCP
 	- id: admin
 	  label: Admin
-	  note: "Org-wide usage for 88 members: prototypes, feedback, deploys and MCP calls. The numbers are real; the page holds no names."
+	  note: "Org-wide usage for 88 members: prototypes, feedback, deploys and MCP calls."
 	  main:
 	    src: /images/work/vibesharing/admin-dashboard.webp
-	    width: 1377
-	    height: 868
-	    alt: The VibeSharing admin Analytics page for an organization. Cards show 88 members, 272 prototypes, 129 feedback items, 1,439 deployments at a 96% success rate, and 567 MCP calls from 35 members. Two bar charts below show deploys and feedback over the last 30 days.
-	- id: teams
-	  label: Teams
-	  note: "Admins create teams so a whole group is notified at once. Assign a team to watch a prototype, or @mention it in feedback. People's names are blurred."
+	    width: 2555
+	    height: 1685
+	    fit: true
+	    alt: The VibeSharing admin Analytics page for an organization. Cards show 88 members, 272 prototypes, 129 feedback items, 1,439 deployments at a 96% success rate, and 567 MCP calls from 35 members. Two bar charts show deploys and feedback over the last 30 days, and a reliability section shows success rate, errors, average deploy time, deploy errors per day and an error breakdown. The organization name is blurred.
+	- id: research
+	  label: Research
+	  note: "Studies turn a prototype into research: invite a cohort, ask a few focused questions, and see answers roll up by question."
 	  main:
-	    src: /images/work/vibesharing/admin-teams.webp
-	    width: 1372
-	    height: 893
-	    alt: The admin Teams page, with a New Team button and a list of teams such as Design Leadership Team and Connected Compliance Team, each with a description, member count and Join or Leave control. Creator names are blurred.
+	    src: /images/work/vibesharing/admin-research.webp
+	    width: 2080
+	    height: 1189
+	    alt: The VibeSharing Research page, with a New study button and a five-step diagram of the participant experience, from the email invitation through the study brief, the prototype, a star rating and short questions, to a confirmation screen.
 	- id: design-systems
 	  label: Design systems
 	  note: "Each org keeps its own design system templates, so every prototype starts looking like the product. Reference one by its slug from any AI editor."
