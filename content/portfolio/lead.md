@@ -1,16 +1,16 @@
 ---
-# Three principles, one "##" heading each. The footnote shows under them.
-footnote: "*or try to"
+# A heading, then three principles, one "##" heading each.
+title: Leadership principles
 ---
 
 ## Clarity
 
-Saying what good looks like, and what it doesn’t. Being direct about what design can and can’t do. When strategic clarity isn’t there, building it for the team instead of waiting for it.
+I tell my team what good looks like, and what it doesn’t. I’m direct about what design can and can’t do. When the strategy isn’t clear, I build the clarity for the team instead of waiting for someone to hand it over.
 
 ## Consistency
 
-Being the same leader on good days and bad.\* Not moving the goalposts on quality. Building the same kind of partnership with everyone, not just the people I click with.
+Effective leaders are steady on good days and bad ones, and I work at it. I don’t move the goalposts on quality, and I build real partnerships with everyone, including the people I don’t naturally click with.
 
 ## Curiosity
 
-Asking how something came to be before reacting to it. Changing my mind when the evidence warrants. Asking more questions than I answer.
+Before I react to something, I ask how it came to be. When the evidence changes, I change my mind. I try to ask more questions than I answer.

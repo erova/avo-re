@@ -299,7 +299,7 @@
 .section > h2 {
   margin-bottom: clamp(1.75rem, 4vw, 3rem);
 }
-.section > *:not(h2):not(.rows):not(.columns):not(.glance):not(.media):not(.essays) {
+.section > *:not(h2):not(.rows):not(.columns):not(.glance):not(.media):not(.essays):not(.scope):not(.pull):not(.contact-grid) {
   max-width: var(--measure);
 }
 
@@ -705,8 +705,11 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   }
 }
 .columns h3 {
-  font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
+  font-size: clamp(1.4rem, 1.2rem + 0.6vw, 1.75rem);
   margin-bottom: 0.6rem;
+}
+.sub + .columns {
+  margin-top: 1.75rem;
 }
 .footnote {
   color: var(--fg-muted);
@@ -2358,17 +2361,49 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   margin-top: 1rem;
 }
 
-/* Speaking engagements fade in as they scroll into view: each row a beat after the one above it
-   (top down), and each column a beat after the one to its left (left to right). */
+/* Speaking engagements fade in as the list scrolls into view. The list as a whole is the trigger, so
+   the fade spreads over a few hundred pixels of scrolling; each row starts a little after the one before
+   it, and the rows run down one column and then the next, so it reads top down and left to right. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
+    .conferences ul {
+      view-timeline: --conf block;
+    }
     .conferences li {
       animation: conf-in linear both;
-      animation-timeline: view();
-      animation-range: entry calc(var(--c, 0) * 9%) entry calc(60% + var(--c, 0) * 9%);
+      animation-timeline: --conf;
+      animation-range: cover calc(var(--i, 0) * 1.6%) cover calc(9% + var(--i, 0) * 1.6%);
     }
-    .conferences li:nth-child(n + 5) { --c: 1; }
-    .conferences li:nth-child(n + 9) { --c: 2; }
+    .conferences li:nth-child(1) { --i: 0; }
+    .conferences li:nth-child(2) { --i: 1; }
+    .conferences li:nth-child(3) { --i: 2; }
+    .conferences li:nth-child(4) { --i: 3; }
+    .conferences li:nth-child(5) { --i: 4; }
+    .conferences li:nth-child(6) { --i: 5; }
+    .conferences li:nth-child(7) { --i: 6; }
+    .conferences li:nth-child(8) { --i: 7; }
+    .conferences li:nth-child(9) { --i: 8; }
+    .conferences li:nth-child(10) { --i: 9; }
+    .conferences li:nth-child(11) { --i: 10; }
+    .conferences li:nth-child(12) { --i: 11; }
+    .conferences li:nth-child(13) { --i: 12; }
+    .conferences li:nth-child(14) { --i: 13; }
+    .conferences li:nth-child(15) { --i: 14; }
+    .conferences li:nth-child(16) { --i: 15; }
+    .conferences li:nth-child(17) { --i: 16; }
+    .conferences li:nth-child(18) { --i: 17; }
+    .conferences li:nth-child(19) { --i: 18; }
+    .conferences li:nth-child(20) { --i: 19; }
+    .conferences li:nth-child(21) { --i: 20; }
+    .conferences li:nth-child(22) { --i: 21; }
+    .conferences li:nth-child(23) { --i: 22; }
+    .conferences li:nth-child(24) { --i: 23; }
+    .conferences li:nth-child(25) { --i: 24; }
+    .conferences li:nth-child(26) { --i: 25; }
+    .conferences li:nth-child(27) { --i: 26; }
+    .conferences li:nth-child(28) { --i: 27; }
+    .conferences li:nth-child(29) { --i: 28; }
+    .conferences li:nth-child(30) { --i: 29; }
     @keyframes conf-in {
       from {
         opacity: 0;
@@ -2376,4 +2411,241 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
       }
     }
   }
+}
+
+/* Management scope: one stacked bar per role on a shared scale. */
+.scope {
+  margin: 0 0 clamp(3rem, 7vw, 5rem);
+}
+.scope-head h3 {
+  margin: 0 0 0.4rem;
+}
+.scope-head p {
+  margin: 0;
+  color: var(--fg-muted);
+}
+.scope-key {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  margin: 1.5rem 0 0.5rem;
+  padding: 0;
+  font: 500 var(--text-sm) / 1.3 var(--font-ui);
+  color: var(--fg-muted);
+}
+.scope-key li::before,
+.scope-bar span {
+  background: var(--k);
+}
+.scope-key li::before {
+  content: "";
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.5rem;
+  border-radius: 2px;
+}
+.scope [data-k="directs"] { --k: var(--accent); }
+.scope [data-k="managers"] { --k: color-mix(in oklab, var(--fg) 62%, transparent); }
+.scope [data-k="ics"] { --k: color-mix(in oklab, var(--fg) 22%, transparent); }
+.scope-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid currentColor;
+}
+.scope-row {
+  display: grid;
+  gap: 0.6rem 2rem;
+  padding-block: 1.1rem;
+  border-bottom: 1px solid var(--hairline);
+}
+.scope-org {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-family: var(--font-ui);
+}
+.scope-org span {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.scope-bar {
+  display: flex;
+  height: 1.6rem;
+  gap: 2px;
+}
+.scope-bar span {
+  display: block;
+  min-width: 0;
+  border-radius: 2px;
+}
+.scope-bar span[style*="width: 0%"] {
+  display: none;
+}
+.scope-count {
+  margin: 0.55rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1rem;
+  font: 400 var(--text-sm) / 1.4 var(--font-ui);
+  color: var(--fg-muted);
+  max-width: none;
+}
+.scope-count strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+@media (min-width: 760px) {
+  .scope-row {
+    grid-template-columns: 11rem minmax(0, 1fr);
+    align-items: start;
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scope-bar span {
+      transform-origin: left center;
+      animation: scope-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 90%;
+    }
+    @keyframes scope-grow {
+      from {
+        transform: scaleX(0);
+      }
+    }
+  }
+}
+
+/* A single quote set large above its paragraph, ruled like the rest of the page. */
+.pull {
+  margin: 1.25rem 0 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--hairline);
+}
+.pull blockquote {
+  margin: 0;
+}
+.pull blockquote p {
+  margin: 0;
+  max-width: 34ch;
+  font: 400 clamp(1.75rem, 1.3rem + 2vw, 2.75rem) / 1.2 var(--font-display);
+  text-wrap: balance;
+}
+.pull blockquote p::before {
+  content: "\201C";
+}
+.pull blockquote p::after {
+  content: "\201D";
+}
+.pull figcaption {
+  margin-top: 1rem;
+  font: 500 var(--text-sm) / 1.4 var(--font-ui);
+  color: var(--fg-muted);
+}
+
+/* Leadership runs straight into the rose Contact band, so it only needs a short bottom pad. */
+#lead {
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+/* Contact: a short ask, the email set large, and a sketch of the commute. */
+.contact-grid {
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+}
+@media (min-width: 860px) {
+  .contact-grid {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+.contact-copy {
+  max-width: var(--measure);
+}
+.md-contact p {
+  margin: 0 0 1.25rem;
+}
+.md-contact p:last-child {
+  margin: 0 0 2rem;
+  color: var(--fg-muted);
+}
+.contact-email {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  font: 400 clamp(1.75rem, 1.2rem + 2.4vw, 3rem) / 1.1 var(--font-display);
+  letter-spacing: -0.015em;
+  overflow-wrap: anywhere;
+}
+.contact-copy .actions {
+  margin: 0;
+}
+.route-map {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  justify-self: end;
+  border-radius: 14px;
+}
+/* On wide screens the map bleeds off the right edge at the full height of the band, fading out behind the copy. */
+#contact {
+  position: relative;
+  overflow: hidden;
+}
+@media (min-width: 860px) {
+  .contact-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .contact-copy {
+    position: relative;
+    z-index: 1;
+  }
+  .route-map {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: auto;
+    max-width: none;
+    height: 100%;
+    aspect-ratio: 360 / 497;
+    border-radius: 0;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 9%);
+    mask-image: linear-gradient(to right, transparent, #000 9%);
+  }
+}
+.rm-water {
+  fill: color-mix(in oklab, var(--bg) 78%, #000);
+}
+.rm-land {
+  fill: var(--bg);
+}
+.rm-route {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.rm-dot {
+  fill: var(--accent);
+  stroke: var(--bg);
+  stroke-width: 2.5;
+}
+.rm-area text {
+  fill: color-mix(in oklab, var(--fg) 58%, var(--bg));
+  font: 700 13px var(--font-ui);
+  letter-spacing: 0.08em;
+}
+.rm-stop text {
+  fill: var(--fg);
+  font: 500 13px var(--font-ui);
+}
+.rm-credit {
+  fill: color-mix(in oklab, var(--fg) 55%, var(--bg));
+  font: 400 8px var(--font-ui);
 }

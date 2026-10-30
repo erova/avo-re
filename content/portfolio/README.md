@@ -9,9 +9,8 @@ Everything you read on the home page lives in these files (plus `content/cases/`
 | "At a glance" rows | `glance.md` (each `##` is a term, the text under it is the detail) |
 | A case study | `../cases/<name>.md` |
 | Earlier jobs | `earlier/*.md` (one file per job; `order` sets the sequence) |
-| Clarity / Consistency / Curiosity, and the footnote | `lead.md` |
-| "People I've grown" | `people.md` |
-| "One thing I got wrong" | `wrong.md` |
+| "Leadership principles" heading and Clarity / Consistency / Curiosity | `lead.md` |
+| "Growing leaders" (a pull quote plus a paragraph) | `people.md` |
 | The speaking stage (photo, card, video) and the talk paragraph | `speaking.md` |
 | Earlier talks | `talks.md` |
 | Liftoff! (the book beside Essays) | `publications.md` |

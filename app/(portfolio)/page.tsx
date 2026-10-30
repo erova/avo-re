@@ -7,6 +7,7 @@ import {
   type Case,
 } from "@/lib/portfolio";
 import { CommitGraph } from "./_components/CommitGraph";
+import { ScopeChart } from "./_components/ScopeChart";
 import { getAllWritingMeta } from "@/lib/writing";
 import { Rail } from "./_components/Rail";
 import { GatedStage, GatedShowcase, Pic, Clip, type GateText } from "./_components/GatedStage";
@@ -18,6 +19,7 @@ import { McpMap, type McpData } from "./_components/McpMap";
 import { AtlasView, type AtlasData } from "./_components/AtlasFigures";
 import { VideoFacade } from "./_components/VideoFacade";
 import { Md, MdInline, Emph } from "./_components/Md";
+import { RouteMap } from "./_components/RouteMap";
 
 // Posts that exist at /writing but stay off the home page.
 const HIDDEN_ESSAYS = new Set(["hello-avo"]);
@@ -247,10 +249,10 @@ export default function Home() {
     portrait: Img;
   }>("hero");
   const glance = splitSections(readPortfolio("glance").body);
-  const lead = readPortfolio<{ footnote?: string }>("lead");
+  const scope = readPortfolio<{ title: string; lede?: string; rows: { org: string; years: string; total: number; directs: number; managers: number; note?: string }[] }>("scope");
+  const lead = readPortfolio<{ title: string }>("lead");
   const principles = splitSections(lead.body);
-  const people = readPortfolio<{ title: string }>("people");
-  const wrong = readPortfolio<{ title: string }>("wrong");
+  const people = readPortfolio<{ title: string; quote?: string; quoteSource?: string }>("people");
   const speaking = readPortfolio<{
     photo: Img & { srcSet: string; credit: string };
     card: { lede: string; linkLabel: string; linkHref: string };
@@ -496,6 +498,8 @@ export default function Home() {
 
         <section className="section" id="lead" aria-labelledby="lead-h">
           <h2 id="lead-h">{titles.lead}</h2>
+          <ScopeChart title={scope.data.title} lede={scope.data.lede} rows={scope.data.rows} />
+          <h3 className="sub">{lead.data.title}</h3>
           <div className="columns">
             {principles.map((p) => (
               <div key={p.title}>
@@ -504,25 +508,45 @@ export default function Home() {
               </div>
             ))}
           </div>
-          {lead.data.footnote && <p className="footnote">{lead.data.footnote}</p>}
 
           <h3 className="sub">{people.data.title}</h3>
-          <Md source={people.body} />
+          {people.data.quote && (
+            <figure className="pull">
+              <blockquote>
+                <p>{people.data.quote}</p>
+              </blockquote>
+              {people.data.quoteSource && <figcaption>{people.data.quoteSource}</figcaption>}
+            </figure>
+          )}
+          <div className="columns">
+            {splitSections(people.body).map((p) => (
+              <div key={p.title}>
+                <h3>{p.title}</h3>
+                <Md source={p.body} />
+              </div>
+            ))}
+          </div>
 
-          <h3 className="sub">{wrong.data.title}</h3>
-          <Md source={wrong.body} />
         </section>
 
-        <section className="section" id="contact" aria-labelledby="contact-h">
+        <section className="section field field-rose" id="contact" aria-labelledby="contact-h">
           <h2 id="contact-h">{titles.contact}</h2>
-          <p className="actions">
-            {contact.data.links.map((l) => (
-              <a key={l.href} href={l.href}>
-                {l.label}
+          <div className="contact-grid">
+            <div className="contact-copy">
+              <Md className="md-contact" source={contact.body} />
+              <a className="contact-email" href={contact.data.links[0].href}>
+                {contact.data.links[0].label}
               </a>
-            ))}
-          </p>
-          <Md className="md-contact" source={contact.body} />
+              <p className="actions">
+                {contact.data.links.slice(1).map((l) => (
+                  <a key={l.href} href={l.href}>
+                    {l.label}
+                  </a>
+                ))}
+              </p>
+            </div>
+            <RouteMap />
+          </div>
         </section>
       </div>
     </div>
