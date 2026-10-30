@@ -35,7 +35,8 @@ export default async function WritingPage({ params }: { params: Promise<{ slug: 
   const tags = Array.isArray(data.tags) ? data.tags.map(String) : [];
 
   const facts = [
-    data.date && { label: "Published", value: formatArticleDate(data.date) },
+    data.workYear && { label: "Work from", value: String(data.workYear) },
+    data.date && { label: data.workYear ? "Written" : "Published", value: formatArticleDate(data.date) },
     { label: "Reading time", value: `${readingMinutes(content)} min` },
     tags.length > 0 && { label: "Topics", value: tags.join(" · ") },
   ].filter(Boolean) as { label: string; value: string }[];
@@ -49,6 +50,7 @@ export default async function WritingPage({ params }: { params: Promise<{ slug: 
       facts={facts}
       back={{ label: "← Essays", href: "/#essays" }}
       body={content}
+      image={data.image?.src ? { src: String(data.image.src), width: Number(data.image.width), height: Number(data.image.height), alt: String(data.image.alt ?? "") } : undefined}
     />
   );
 }

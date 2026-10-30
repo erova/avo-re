@@ -299,7 +299,7 @@
 .section > h2 {
   margin-bottom: clamp(1.75rem, 4vw, 3rem);
 }
-.section > *:not(h2):not(.rows):not(.columns):not(.glance):not(.media):not(.essays-layout) {
+.section > *:not(h2):not(.rows):not(.columns):not(.glance):not(.media):not(.essays) {
   max-width: var(--measure);
 }
 
@@ -2047,7 +2047,7 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   display: block;
 }
 
-/* Conferences sit in the green field under the talks. Each name stays on one line, so a wrap never reads as two items. */
+/* Conferences sit in the green field under the talks. A long name wraps inside its own row; the year stays fixed at the right, with a hairline between rows, so a wrap never reads as two items. */
 .conferences-block {
   margin-top: clamp(6rem, 14vw, 11rem);
 }
@@ -2060,58 +2060,237 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  columns: 19rem 3;
   column-gap: clamp(1.5rem, 4vw, 3rem);
 }
 .conferences li {
+  break-inside: avoid;
   margin: 0;
   padding: 0.7rem 0;
   border-top: 1px solid oklch(1 0 0 / 0.2);
   font-size: 1.125rem;
   line-height: 1.3;
-  white-space: nowrap;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 1rem;
+  min-width: 0;
 }
 /* The year is written in *asterisks* in talks.md: set quieter and apart from the name. */
 .conferences li em {
-  font: 400 0.875rem / 1 var(--font-ui);
+  font: 400 0.875rem / 1.4 var(--font-ui);
   font-style: normal;
   font-variant-numeric: tabular-nums;
   color: var(--fg-muted);
+  flex: none;
+  max-width: 60%;
+  text-align: right;
+  text-wrap: balance;
 }
 
-/* Essays: the list on the left, the book on the right. */
-.essays-layout {
+/* Essays: ruled like the rest of the page. A hairline over each piece, vertical hairlines between
+   the columns, no boxes. The newest one is the feature; the book is a quiet row beneath. Each piece is
+   clickable end to end through its title link. */
+.essays {
   display: grid;
-  gap: clamp(2rem, 5vw, 4rem);
-  align-items: start;
+  gap: 0;
+  border-top: 1px solid currentColor;
 }
-.essays-layout .list {
-  max-width: var(--measure);
+.essay-feature,
+.essay-panel,
+.book {
+  position: relative;
+}
+.essay-feature,
+.book {
+  border-bottom: 1px solid var(--hairline);
+}
+.essay-feature {
+  display: grid;
+}
+.essay-feature-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.essay-feature-body,
+.essay-panel {
+  padding-block: clamp(1.5rem, 3vw, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.essay-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
   margin: 0;
+  font: 500 var(--text-sm) / 1.3 var(--font-ui);
+  color: var(--fg-muted);
+}
+.essay-tag {
+  color: var(--fg);
+}
+.essay-feature h3,
+.essay-panel h3 {
+  margin: 0;
+  font: 400 clamp(1.3rem, 1.15rem + 0.5vw, 1.6rem) / 1.2 var(--font-display);
+  max-width: none;
+}
+.essay-feature h3 {
+  font-size: clamp(2rem, 1.4rem + 2vw, 3.25rem);
+}
+.essay-feature h3 a,
+.essay-panel h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+.essay-feature h3 a::after,
+.essay-panel h3 a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.essay-summary {
+  margin: 0;
+  color: var(--fg-muted);
+  max-width: 42rem;
+}
+.essay-panel .essay-summary {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.essay-more {
+  margin: auto 0 0;
+  padding-top: 0.5rem;
+  font: 600 var(--text-sm) / 1 var(--font-ui);
+}
+.essay-panel:is(:hover, :focus-within) .essay-more,
+.essay-feature:is(:hover, :focus-within) .essay-more {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.essay-panels {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+.essay-panel + .essay-panel {
+  border-top: 1px solid var(--hairline);
+}
+.book {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 1.25rem;
+  align-items: start;
+  padding-block: clamp(1.25rem, 3vw, 1.75rem);
+  border-bottom: 0;
+  border-top: 1px solid var(--hairline);
 }
 .book h3 {
-  margin: 0 0 1rem;
-  font: 600 1rem / 1.35 var(--font-ui);
+  margin: 0 0 0.5rem;
+  font: 600 1rem / 1.2 var(--font-ui);
 }
 .book .book-cover {
   display: block;
-  width: min(13rem, 100%);
-  margin: 0 0 1.25rem;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: 3px;
 }
 .book p {
+  margin: 0 0 0.5rem;
   font-size: var(--text-sm);
   color: var(--fg-muted);
-  max-width: 28rem;
+  max-width: 40rem;
+}
+@media (min-width: 760px) {
+  .essay-panels {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .essay-panel + .essay-panel {
+    border-top: 0;
+  }
+  .essay-panel {
+    padding-inline: clamp(1.25rem, 2.5vw, 2rem);
+    border-left: 1px solid var(--hairline);
+  }
+  .essay-panel:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .essay-panel:last-child {
+    padding-right: 0;
+  }
 }
 @media (min-width: 900px) {
-  .essays-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  .essay-feature[data-image] {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: clamp(1.5rem, 3vw, 2.5rem);
+    padding-block: clamp(1.5rem, 3vw, 2.25rem);
   }
+  .essay-feature[data-image] .essay-feature-body {
+    justify-content: center;
+    padding-block: 0;
+  }
+}
+
+/* Each piece fades up as it scrolls into view, and its top rule draws in from the left.
+   Scroll-driven, so there is no script; browsers without support, and reduced motion, just show it. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .essay-feature-body,
+    .essay-feature-image,
+    .essay-panel,
+    .book {
+      animation: essay-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+    .essays {
+      border-top-color: transparent;
+    }
+    .essays::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: currentColor;
+      transform-origin: left center;
+      animation: essay-rule linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    @keyframes essay-in {
+      from {
+        opacity: 0;
+        translate: 0 1.5rem;
+      }
+    }
+    @keyframes essay-rule {
+      from {
+        transform: scaleX(0);
+      }
+    }
+  }
+}
+.essays {
+  position: relative;
+}
+
+/* The lead image at the top of an essay shares the reading column's width. */
+.article-hero {
+  margin: 0 0 clamp(1.75rem, 4vw, 3rem);
+}
+.article-hero img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
 }
 
 /* A figure inside a case row: the image keeps its own proportions and a quiet caption sits under it. */
@@ -2177,4 +2356,24 @@ figure.media:has(.placeholder[style*="3 / 4"]) {
 }
 .case-row p + ul {
   margin-top: 1rem;
+}
+
+/* Speaking engagements fade in as they scroll into view: each row a beat after the one above it
+   (top down), and each column a beat after the one to its left (left to right). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .conferences li {
+      animation: conf-in linear both;
+      animation-timeline: view();
+      animation-range: entry calc(var(--c, 0) * 9%) entry calc(60% + var(--c, 0) * 9%);
+    }
+    .conferences li:nth-child(n + 5) { --c: 1; }
+    .conferences li:nth-child(n + 9) { --c: 2; }
+    @keyframes conf-in {
+      from {
+        opacity: 0;
+        translate: -0.75rem 0.5rem;
+      }
+    }
+  }
 }

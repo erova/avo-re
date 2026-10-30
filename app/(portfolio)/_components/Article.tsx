@@ -17,6 +17,7 @@ export function Article({
   facts,
   back,
   body,
+  image,
 }: {
   tone: "rose" | "green";
   kicker: string;
@@ -25,6 +26,7 @@ export function Article({
   facts: Fact[];
   back: { label: string; href: string };
   body: string;
+  image?: { src: string; width: number; height: number; alt: string };
 }) {
   const toc = tocFromBody(body);
   const rail = [{ id: "top", label: title }, ...toc.map((t) => ({ id: t.id, label: t.title }))];
@@ -66,6 +68,11 @@ export function Article({
 
       <div className="article-body">
         <div className="container article-grid">
+          {image && (
+            <figure className="article-hero">
+              <img src={image.src} width={image.width} height={image.height} alt={image.alt} decoding="async" />
+            </figure>
+          )}
           <div className="prose">
             <MDXRemote source={body} options={{ blockJS: false }} components={articleComponents} />
           </div>

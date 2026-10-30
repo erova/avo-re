@@ -9,6 +9,10 @@ export type WritingPost = {
   summary: string;
   tags: string[];
   category?: string;
+  /** For case studies written after the fact: the year the work happened. `date` stays the year it was written. */
+  workYear?: string;
+  /** Lead image: shown on the home page panel and at the top of the article. */
+  image?: { src: string; width: number; height: number; alt: string };
 };
 
 const WRITING_DIR = path.join(process.cwd(), "content", "writing");
@@ -32,6 +36,8 @@ export function getWritingPostMeta(slug: string): WritingPost {
     summary: String(data.summary ?? ""),
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     category: data.category ? String(data.category) : undefined,
+    workYear: data.workYear ? String(data.workYear) : undefined,
+    image: data.image?.src ? { src: String(data.image.src), width: Number(data.image.width), height: Number(data.image.height), alt: String(data.image.alt ?? "") } : undefined,
   };
 }
 

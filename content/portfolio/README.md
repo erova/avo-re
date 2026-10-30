@@ -14,7 +14,7 @@ Everything you read on the home page lives in these files (plus `content/cases/`
 | "One thing I got wrong" | `wrong.md` |
 | The speaking stage (photo, card, video) and the talk paragraph | `speaking.md` |
 | Earlier talks | `talks.md` |
-| Liftoff! and other publications | `publications.md` |
+| Liftoff! (the book beside Essays) | `publications.md` |
 | Contact links and closing lines | `contact.md` |
 | Quotes | one file per quote in `../quotes/` (fields: quote, name, title, relationship, order) |
 | Essays | the existing `content/writing/` posts |

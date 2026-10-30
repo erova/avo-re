@@ -400,23 +400,53 @@ export default function Home() {
         {essays.length > 0 && (
           <section className="section" id="essays" aria-labelledby="essays-h">
             <h2 id="essays-h">{titles.essays}</h2>
-            <div className="essays-layout">
-              <ul className="list">
-                {essays.map((e) => (
-                  <li key={e.slug}>
-                    <a href={`/writing/${e.slug}`}>{e.title}</a>
-                    <span className="item-date">{formatMonthYear(e.date)}</span>
-                    {e.summary && <p>{e.summary}</p>}
+            <div className="essays">
+              {essays[0] && (
+                <article className="essay-feature" data-image={essays[0].image ? "" : undefined}>
+                  {essays[0].image && (
+                    <a className="essay-feature-image" href={`/writing/${essays[0].slug}`} tabIndex={-1} aria-hidden="true">
+                      <img {...essays[0].image} decoding="async" loading="lazy" />
+                    </a>
+                  )}
+                  <div className="essay-feature-body">
+                    <p className="essay-meta">
+                      <span className="essay-tag">Latest</span>
+                      {essays[0].category && <span>{essays[0].category}</span>}
+                      <span>{essays[0].workYear ? `Work from ${essays[0].workYear}` : formatMonthYear(essays[0].date)}</span>
+                    </p>
+                    <h3>
+                      <a href={`/writing/${essays[0].slug}`}>{essays[0].title}</a>
+                    </h3>
+                    {essays[0].summary && <p className="essay-summary">{essays[0].summary}</p>}
+                    <p className="essay-more" aria-hidden="true">Read the essay →</p>
+                  </div>
+                </article>
+              )}
+
+              <ul className="essay-panels">
+                {essays.slice(1).map((e) => (
+                  <li key={e.slug} className="essay-panel">
+                    <p className="essay-meta">
+                      {e.category && <span>{e.category}</span>}
+                      <span>{e.workYear ? `Work from ${e.workYear}` : formatMonthYear(e.date)}</span>
+                    </p>
+                    <h3>
+                      <a href={`/writing/${e.slug}`}>{e.title}</a>
+                    </h3>
+                    {e.summary && <p className="essay-summary">{e.summary}</p>}
+                    <p className="essay-more" aria-hidden="true">Read →</p>
                   </li>
                 ))}
               </ul>
 
               <aside className="book" aria-labelledby="book-h">
-                <h3 id="book-h">
-                  <Emph text={pubs.data.title} />
-                </h3>
-                <img className="book-cover" {...pubs.data.cover} decoding="async" />
-                <Md source={pubs.body} />
+                <img className="book-cover" {...pubs.data.cover} decoding="async" loading="lazy" />
+                <div>
+                  <h3 id="book-h">
+                    <Emph text={pubs.data.title} />
+                  </h3>
+                  <Md source={pubs.body} />
+                </div>
               </aside>
             </div>
           </section>
